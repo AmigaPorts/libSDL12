@@ -955,7 +955,7 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 	video->info.current_h = SDL_VideoSurface->h;
 
 #ifdef __AMIGA__
-	if (flags&SDL_FULLSCREEN)
+	if (!(flags&SDL_FULLSCREEN))
 		ac68080 = 0;
 #endif
 	/* We're done! */
