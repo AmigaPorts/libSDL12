@@ -18,8 +18,6 @@ VASM := $(PREFX)/bin/vasmm68k_mot
 
 CPU := 68040
 
-DEFINES= DEFINE=ENABLE_CYBERGRAPHICS DEFINE=inline=__inline  DEFINE=NO_SIGNAL_H DEFINE=HAVE_STDIO_H DEFINE=ENABLE_AHI
-# DEFINE=HAVE_OPENGL
 INCLUDES = IDIR=./include/SDL
 
 GCCFLAGS = -I$(PREFX)/include -I./include/ -I./include/SDL \
@@ -28,9 +26,6 @@ GCCFLAGS = -I$(PREFX)/include -I./include/ -I./include/SDL \
 GLFLAGS = -DSHARED_LIB -lamiga
 GCCFLAGS += -DNO_AMIGADEBUG
 GLFLAGS  += -DNO_AMIGADEBUG
-
-GCCDEFINES = -DENABLE_CYBERGRAPHICS -DNO_SIGNAL_H -D__MEM_AMIGA -DENABLE_AHI
-#-DNO_INLINE_STDARG
 
 GOBJS = audio/SDL_audio.go audio/SDL_audiocvt.go audio/SDL_mixer.go audio/SDL_wave.go audio/amigaos/SDL_ahiaudio.go \
 	SDL_error.go SDL_fatal.go video/SDL_RLEaccel.go video/SDL_blit.go video/SDL_blit_0.go \
@@ -51,8 +46,8 @@ GOBJS = audio/SDL_audio.go audio/SDL_audiocvt.go audio/SDL_mixer.go audio/SDL_wa
 # ( build vasm: make CPU=m68k SYNTAX=mot )
 #
 VFLAGS = -devpac -I$(PREFX)/m68k-amigaos/ndk-include -Fhunk
-GCCFLAGS += -DAPOLLO_BLIT -I./video/apollo
-#GCCFLAGS += -DAPOLLO_BLITDBG
+GCCFLAGS += -DAPOLLO_BLIT -I./video/apollo 
+# -DAPOLLO_BLITDBG
 GOBJS += video/apollo/blitapollo.ao video/apollo/apolloammxenable.ao video/apollo/colorkeyapollo.ao
 
 %.ao: %.asm

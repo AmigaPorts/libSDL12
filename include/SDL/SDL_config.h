@@ -38,6 +38,8 @@
 #include "SDL_config_win32.h"
 #elif defined(__OS2__)
 #include "SDL_config_os2.h"
+#elif defined(__amigaos4__)
+#include "SDL_config_amigaos4.h"
 #elif defined(__AMIGA__)
 #include "SDL_config_amiga.h"
 #else
