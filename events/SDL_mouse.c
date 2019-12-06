@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,7 @@ int SDL_MouseInit(void)
 	SDL_MouseY = 0;
 	SDL_DeltaX = 0;
 	SDL_DeltaY = 0;
-        SDL_MouseMaxX = 0;
+	SDL_MouseMaxX = 0;
 	SDL_MouseMaxY = 0;
 	SDL_ButtonState = 0;
 
@@ -62,7 +62,7 @@ void SDL_MouseQuit(void)
 void SDL_ResetMouse(void)
 {
 	Uint8 i;
-	for ( i = 0; i < sizeof(SDL_ButtonState)*8; ++i ) {
+	for ( i = 1; i < sizeof(SDL_ButtonState)*8; ++i ) {
 		if ( SDL_ButtonState & SDL_BUTTON(i) ) {
 			SDL_PrivateMouseButton(SDL_RELEASED, i, 0, 0);
 		}
@@ -103,12 +103,12 @@ static void ClipOffset(Sint16 *x, Sint16 *y)
 	}
 }
 
-
 void SDL_SetMouseRange(int maxX, int maxY)
 {
 	SDL_MouseMaxX = (Sint16)maxX;
 	SDL_MouseMaxY = (Sint16)maxY;
 }
+
 /* These are global for SDL_eventloop.c */
 int SDL_PrivateMouseMotion(Uint8 buttonstate, int relative, Sint16 x, Sint16 y)
 {

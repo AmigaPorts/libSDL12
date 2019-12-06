@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,7 @@ typedef struct SDL_error {
 		unsigned char value_c;
 #endif
 		int value_i;
+		long value_l;
 		double value_f;
 		char buf[ERR_MAX_STRLEN];
 	} args[ERR_MAX_ARGS];

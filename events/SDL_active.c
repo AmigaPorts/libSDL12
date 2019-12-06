@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -86,6 +86,10 @@ int SDL_PrivateAppActive(Uint8 gain, Uint8 state)
 	/* If we lost keyboard focus, post key-up events */
 	if ( (state & SDL_APPINPUTFOCUS) && !gain ) {
 		SDL_ResetKeyboard();
+	}
+	/* If we were minimized, post button-up events */
+	if ( (state & SDL_APPACTIVE) && !gain ) {
+		SDL_ResetMouse();
 	}
 	return(posted);
 }

@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,29 @@
 #include "SDL_error.h"
 #include "SDL_version.h"
 
+#ifndef SDL_PROTOTYPES_ONLY
+# if defined(SDL_VIDEO_DRIVER_X11)
+#  if defined(__APPLE__) && defined(__MACH__)
+#   define Cursor X11Cursor /* conflicts with Quickdraw.h */
+#  endif
+#  include <X11/Xlib.h>
+#  include <X11/Xatom.h>
+#  if defined(__APPLE__) && defined(__MACH__)
+#   undef Cursor
+#  endif
+# elif defined(SDL_VIDEO_DRIVER_NANOX)
+#  include <microwin/nano-X.h>
+# elif defined(SDL_VIDEO_DRIVER_WINDIB) || defined(SDL_VIDEO_DRIVER_DDRAW) || defined(SDL_VIDEO_DRIVER_GAPI)
+#  ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+# elif defined(SDL_VIDEO_DRIVER_PHOTON)
+#  include <sys/neutrino.h>
+#  include <Ph.h>
+# endif
+#endif
+
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
@@ -43,25 +66,13 @@ extern "C" {
  *  an unhandled window event occurs.  This event is ignored by default, but
  *  you can enable it with SDL_EventState()
  */
-#ifdef SDL_PROTOTYPES_ONLY
 struct SDL_SysWMinfo;
 typedef struct SDL_SysWMinfo SDL_SysWMinfo;
-#else
+
+#ifndef SDL_PROTOTYPES_ONLY
 
 /* This is the structure for custom window manager events */
 #if defined(SDL_VIDEO_DRIVER_X11)
-#if defined(__APPLE__) && defined(__MACH__)
-/* conflicts with Quickdraw.h */
-#define Cursor X11Cursor
-#endif
-
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-
-#if defined(__APPLE__) && defined(__MACH__)
-/* matches the re-define above */
-#undef Cursor
-#endif
 
 /** These are the various supported subsystems under UNIX */
 typedef enum {
@@ -81,7 +92,7 @@ struct SDL_SysWMmsg {
  *  When this structure is returned, it holds information about which
  *  low level system it is using, and will be one of SDL_SYSWM_TYPE.
  */
-typedef struct SDL_SysWMinfo {
+struct SDL_SysWMinfo {
 	SDL_version version;
 	SDL_SYSWM_TYPE subsystem;
 	union {
@@ -111,10 +122,9 @@ typedef struct SDL_SysWMinfo {
                 /*@}*/
 	    } x11;
 	} info;
-} SDL_SysWMinfo;
+};
 
 #elif defined(SDL_VIDEO_DRIVER_NANOX)
-#include <microwin/nano-X.h>
 
 /** The generic custom event structure */
 struct SDL_SysWMmsg {
@@ -123,14 +133,12 @@ struct SDL_SysWMmsg {
 };
 
 /** The windows custom window manager information structure */
-typedef struct SDL_SysWMinfo {
+struct SDL_SysWMinfo {
 	SDL_version version ;
 	GR_WINDOW_ID window ;	/* The display window */
-} SDL_SysWMinfo;
+};
 
 #elif defined(SDL_VIDEO_DRIVER_WINDIB) || defined(SDL_VIDEO_DRIVER_DDRAW) || defined(SDL_VIDEO_DRIVER_GAPI)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 
 /** The windows custom event structure */
 struct SDL_SysWMmsg {
@@ -142,11 +150,11 @@ struct SDL_SysWMmsg {
 };
 
 /** The windows custom window manager information structure */
-typedef struct SDL_SysWMinfo {
+struct SDL_SysWMinfo {
 	SDL_version version;
 	HWND window;			/**< The Win32 display window */
 	HGLRC hglrc;			/**< The OpenGL context, if any */
-} SDL_SysWMinfo;
+};
 
 #elif defined(SDL_VIDEO_DRIVER_RISCOS)
 
@@ -158,16 +166,14 @@ struct SDL_SysWMmsg {
 };
 
 /** The RISC OS custom window manager information structure */
-typedef struct SDL_SysWMinfo {
+struct SDL_SysWMinfo {
 	SDL_version version;
 	int wimpVersion;    /**< Wimp version running under */
 	int taskHandle;     /**< The RISC OS task handle */
 	int window;		/**< The RISC OS display window */
-} SDL_SysWMinfo;
+};
 
 #elif defined(SDL_VIDEO_DRIVER_PHOTON)
-#include <sys/neutrino.h>
-#include <Ph.h>
 
 /** The QNX custom event structure */
 struct SDL_SysWMmsg {
@@ -176,10 +182,24 @@ struct SDL_SysWMmsg {
 };
 
 /** The QNX custom window manager information structure */
-typedef struct SDL_SysWMinfo {
+struct SDL_SysWMinfo {
 	SDL_version version;
 	int data;
-} SDL_SysWMinfo;
+};
+
+#elif defined(SDL_VIDEO_DRIVER_AMIGAOS4)
+
+/* The AmigaOS4 custom event structure */
+struct SDL_SysWMmsg {
+	SDL_version version;
+	struct Window *window;	
+};
+
+/* The AmigaOS4 custom window manager information structure */
+struct SDL_SysWMinfo {
+	SDL_version version;
+	struct Window *window;	
+};
 
 #else
 
@@ -190,10 +210,10 @@ struct SDL_SysWMmsg {
 };
 
 /** The generic custom window manager information structure */
-typedef struct SDL_SysWMinfo {
+struct SDL_SysWMinfo {
 	SDL_version version;
 	int data;
-} SDL_SysWMinfo;
+};
 
 #endif /* video driver type */
 
@@ -203,12 +223,13 @@ typedef struct SDL_SysWMinfo {
 /**
  * This function gives you custom hooks into the window manager information.
  * It fills the structure pointed to by 'info' with custom information and
- * returns 1 if the function is implemented.  If it's not implemented, or
- * the version member of the 'info' structure is invalid, it returns 0. 
+ * returns 0 if the function is not implemented, 1 if the function is 
+ * implemented and no error occurred, and -1 if the version member of
+ * the 'info' structure is not filled in or not supported.
  *
  * You typically use this function like this:
  * @code
- * SDL_SysWMInfo info;
+ * SDL_SysWMinfo info;
  * SDL_VERSION(&info.version);
  * if ( SDL_GetWMInfo(&info) ) { ... }
  * @endcode

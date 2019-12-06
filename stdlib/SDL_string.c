@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -284,6 +284,38 @@ void *SDL_memcpy(void *dst, const void *src, size_t len)
 }
 #endif
 
+#ifdef SDL_revcpy /* so that the export won't be missing in the dll */
+#if defined(__GNUC__) && defined(__i386__)
+#undef SDL_revcpy
+DECLSPEC void* SDLCALL SDL_revcpy(void *dst, const void *src, size_t len) {
+/* EXACT MATCH to macro in SDL_stdinc.h */
+    int u0, u1, u2;
+    char *dstp = SDL_static_cast(char *, dst);
+    char *srcp = SDL_static_cast(char *, src);
+    int n = (len);
+    if (n >= 4) {
+        __asm__ __volatile__ (
+            "std\n\t"
+            "rep ; movsl\n\t"
+            "cld\n\t"
+            : "=&c" (u0), "=&D" (u1), "=&S" (u2)
+            : "0" (n >> 2),
+              "1" (dstp+(n-4)), "2" (srcp+(n-4))
+            : "memory" );
+    }
+    switch (n & 3) {
+    case 3: dstp[2] = srcp[2];
+    case 2: dstp[1] = srcp[1];
+    case 1: dstp[0] = srcp[0];
+        break;
+    default:
+        break;
+    }
+    return dst;
+}
+#define SDL_revcpy SDL_revcpy
+#endif
+#endif
 #ifndef SDL_revcpy
 void *SDL_revcpy(void *dst, const void *src, size_t len)
 {
@@ -327,7 +359,7 @@ size_t SDL_strlen(const char *string)
 
 #ifndef HAVE_STRLCPY
 size_t SDL_strlcpy(char *dst, const char *src, size_t maxlen)
-{ 
+{
     size_t srclen = SDL_strlen(src);
     if ( maxlen > 0 ) {
         size_t len = SDL_min(srclen, maxlen-1);
@@ -561,11 +593,9 @@ char *SDL_lltoa(Sint64 value, char *string, int radix)
         value = -value;
     }
     if ( value ) {
-		int i=0;
         while ( value > 0 ) {
             *bufp++ = ntoa_table[value % radix];
             value /= radix;
-			i++;
         }
     } else {
         *bufp++ = '0';
@@ -605,7 +635,7 @@ char *SDL_ulltoa(Uint64 value, char *string, int radix)
 }
 #endif
 
-#ifndef HAVE_STRTOLL
+#if !defined(HAVE_STRTOLL) && !defined(HAVE__STRTOI64)
 Sint64 SDL_strtoll(const char *string, char **endp, int base)
 {
     size_t len;
@@ -625,9 +655,18 @@ Sint64 SDL_strtoll(const char *string, char **endp, int base)
     }
     return value;
 }
+#elif defined(__WIN32__) /* so that the export won't be missing */
+#undef SDL_strtoll
+DECLSPEC Sint64 SDLCALL SDL_strtoll(const char *string, char **endp, int base) {
+    #ifdef HAVE__STRTOI64
+    return _strtoi64 (string, endp, base);
+    #else
+    return strtoll (string, endp, base);
+    #endif
+}
 #endif
 
-#ifndef HAVE_STRTOULL
+#if !defined(HAVE_STRTOULL) && !defined(HAVE__STRTOUI64)
 Uint64 SDL_strtoull(const char *string, char **endp, int base)
 {
     size_t len;
@@ -646,6 +685,15 @@ Uint64 SDL_strtoull(const char *string, char **endp, int base)
         *endp = (char *)string + len;
     }
     return value;
+}
+#elif defined(__WIN32__) /* so that the export won't be missing */
+#undef SDL_strtoull
+DECLSPEC Uint64 SDLCALL SDL_strtoull(const char *string, char **endp, int base) {
+    #ifdef HAVE__STRTOUI64
+    return _strtoui64(string, endp, base);
+    #else
+    return strtoull(string, endp, base);
+    #endif
 }
 #endif
 
@@ -997,7 +1045,7 @@ int SDL_sscanf(const char *text, const char *fmt, ...)
 }
 #endif
 
-#ifndef HAVE_SNPRINTF
+#if defined(__WATCOMC__) || defined(_WIN32) || !defined(HAVE_SNPRINTF)
 int SDL_snprintf(char *text, size_t maxlen, const char *fmt, ...)
 {
     va_list ap;
@@ -1011,7 +1059,15 @@ int SDL_snprintf(char *text, size_t maxlen, const char *fmt, ...)
 }
 #endif
 
-#ifndef HAVE_VSNPRINTF
+#if (defined(__WATCOMC__) || defined(_WIN32)) && defined(HAVE_LIBC)
+int SDL_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap)
+{
+    int retval = _vsnprintf(text, maxlen, fmt, ap);
+    if (maxlen > 0) text[maxlen-1] = '\0';
+    if (retval < 0) retval = (int) maxlen;
+    return retval;
+}
+#elif !defined(HAVE_VSNPRINTF)
 static size_t SDL_PrintLong(char *text, long value, int radix, size_t maxlen)
 {
     char num[130];
@@ -1045,7 +1101,7 @@ static size_t SDL_PrintLongLong(char *text, Sint64 value, int radix, size_t maxl
 {
     char num[130];
     size_t size;
-    
+
     SDL_lltoa(value, num, radix);
     size = SDL_strlen(num);
     if ( size >= maxlen ) {

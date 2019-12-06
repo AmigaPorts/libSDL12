@@ -1,29 +1,25 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998, 1999, 2000, 2001  Sam Lantinga
+    Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
+    modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    version 2.1 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Sam Lantinga
     slouken@libsdl.org
 */
-
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_thread.c,v 1.2 2002/11/20 08:52:39 gabry Exp $";
-#endif
+#include "SDL_config.h"
 
 /* System independent thread management routines for SDL */
 
@@ -89,16 +85,16 @@ static void SDL_AddThread(SDL_Thread *thread)
 			SDL_numthreads, SDL_maxthreads);
 #endif
 	if ( SDL_numthreads == SDL_maxthreads ) {
-		threads=(SDL_Thread **)malloc((SDL_maxthreads+ARRAY_CHUNKSIZE)*
+		threads=(SDL_Thread **)SDL_malloc((SDL_maxthreads+ARRAY_CHUNKSIZE)*
 		                              (sizeof *threads));
 		if ( threads == NULL ) {
 			SDL_OutOfMemory();
 			goto done;
-		} 
-		memcpy(threads, SDL_Threads, SDL_numthreads*(sizeof *threads));
+		}
+		SDL_memcpy(threads, SDL_Threads, SDL_numthreads*(sizeof *threads));
 		SDL_maxthreads += ARRAY_CHUNKSIZE;
 		if ( SDL_Threads ) {
-			free(SDL_Threads);
+			SDL_free(SDL_Threads);
 		}
 		SDL_Threads = threads;
 	}
@@ -106,7 +102,7 @@ static void SDL_AddThread(SDL_Thread *thread)
 done:
 	ReleaseSemaphore(&thread_lock);
 }
- 
+
 static void SDL_DelThread(SDL_Thread *thread)
 {
 	int i;
@@ -206,19 +202,19 @@ SDL_Thread *SDL_CreateThread(int (*fn)(void *), void *data)
 	int ret;
 
 	/* Allocate memory for the thread info structure */
-	thread = (SDL_Thread *)malloc(sizeof(*thread));
+	thread = (SDL_Thread *)SDL_malloc(sizeof(*thread));
 	if ( thread == NULL ) {
 		SDL_OutOfMemory();
 		return(NULL);
 	}
-	memset(thread, 0, (sizeof *thread));
+	SDL_memset(thread, 0, (sizeof *thread));
 	thread->status = -1;
 
 	/* Set up the arguments for the thread */
-	args = (thread_args *)malloc(sizeof(*args));
+	args = (thread_args *)SDL_malloc(sizeof(*args));
 	if ( args == NULL ) {
 		SDL_OutOfMemory();
-		free(thread);
+		SDL_free(thread);
 		return(NULL);
 	}
 	args->func = fn;
@@ -226,8 +222,8 @@ SDL_Thread *SDL_CreateThread(int (*fn)(void *), void *data)
 	args->info = thread;
 	args->wait = FindTask(NULL);
 	if ( args->wait == NULL ) {
-		free(thread);
-		free(args);
+		SDL_free(thread);
+		SDL_free(args);
 		SDL_OutOfMemory();
 		return(NULL);
 	}
@@ -235,7 +231,7 @@ SDL_Thread *SDL_CreateThread(int (*fn)(void *), void *data)
 	/* Add the thread to the list of available threads */
 	SDL_AddThread(thread);
 
-	D(bug("Starting thread with args %lx...\n", args));
+	D(bug("Starting thread...\n"));
 
 	/* Create the thread and go! */
 	ret = SDL_SYS_CreateThread(thread, args);
@@ -247,10 +243,10 @@ SDL_Thread *SDL_CreateThread(int (*fn)(void *), void *data)
 	} else {
 		/* Oops, failed.  Gotta free everything */
 		SDL_DelThread(thread);
-		free(thread);
+		SDL_free(thread);
 		thread = NULL;
 	}
-	free(args);
+	SDL_free(args);
 
 	/* Everything is running now */
 	return(thread);
@@ -264,7 +260,7 @@ void SDL_WaitThread(SDL_Thread *thread, int *status)
 			*status = thread->status;
 		}
 		SDL_DelThread(thread);
-		free(thread);
+		SDL_free(thread);
 	}
 }
 

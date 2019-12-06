@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@
 #include "SDL_blit.h"
 
 /* Functions to blit from N-bit surfaces to other surfaces */
-#ifdef APOLLO_BLIT
+#if defined(APOLLO_BLIT)
 #include "blitapollo.h"
 #include "colorkeyapollo.h"
 #endif
@@ -61,7 +61,7 @@ static size_t GetL3CacheSize( void )
     return 2097152;
 }
 #endif /* __MACOSX__ */
-#define static
+
 #if (defined(__MACOSX__) && (__GNUC__ < 4))
     #define VECUINT8_LITERAL(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) \
         (vector unsigned char) ( a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p )
@@ -149,6 +149,34 @@ static vector unsigned char calc_swizzle32(const SDL_PixelFormat *srcfmt,
     vswiz = vec_add(plus, (vector unsigned char)vec_splat(srcvec, 0));
     return(vswiz);
 }
+
+#if defined(__powerpc__) && (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+/* reorder bytes for PowerPC little endian */
+static vector unsigned char reorder_ppc64le_vec(vector unsigned char vpermute)
+{
+    /* The result vector of calc_swizzle32 reorder bytes using vec_perm.
+       The LE transformation for vec_perm has an implicit assumption
+       that the permutation is being used to reorder vector elements,
+       not to reorder bytes within those elements.  
+       Unfortunatly the result order is not the expected one for powerpc
+       little endian when the two first vector parameters of vec_perm are
+       not of type 'vector char'. This is because the numbering from the
+       left for BE, and numbering from the right for LE, produces a
+       different interpretation of what the odd and even lanes are.
+       Refer to fedora bug 1392465
+     */
+
+    const vector unsigned char ppc64le_reorder = VECUINT8_LITERAL(
+                                      0x01, 0x00, 0x03, 0x02,
+                                      0x05, 0x04, 0x07, 0x06,
+                                      0x09, 0x08, 0x0B, 0x0A,
+                                      0x0D, 0x0C, 0x0F, 0x0E );
+
+    vector unsigned char vswiz_ppc64le;
+    vswiz_ppc64le = vec_perm(vpermute, vpermute, ppc64le_reorder);
+    return(vswiz_ppc64le);
+}
+#endif
 
 static void Blit_RGB888_RGB565(SDL_BlitInfo *info);
 static void Blit_RGB888_RGB565Altivec(SDL_BlitInfo *info) {
@@ -634,6 +662,10 @@ static void Blit32to32KeyAltivec(SDL_BlitInfo *info)
                 /* vsel is set for items that match the key */
                 vsel = (vector unsigned char)vec_and(vs, vrgbmask);
                 vsel = (vector unsigned char)vec_cmpeq(vs, vckey);
+#if defined(__powerpc__) && (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+                /* reorder bytes for PowerPC little endian */
+                vpermute = reorder_ppc64le_vec(vpermute);
+#endif
                 /* permute the src vec to the dest format */
                 vs = vec_perm(vs, valpha, vpermute);
                 /* load the destination vec */
@@ -693,6 +725,8 @@ static void ConvertAltivec32to32_noprefetch(SDL_BlitInfo *info)
         while ((UNALIGNED_PTR(dst)) && (width)) {
             bits = *(src++);
             RGBA_FROM_8888(bits, srcfmt, r, g, b, a);
+            if(!srcfmt->Amask)
+              a = srcfmt->alpha;
             *(dst++) = MAKE8888(dstfmt, r, g, b, a);
             width--;
         }
@@ -708,6 +742,10 @@ static void ConvertAltivec32to32_noprefetch(SDL_BlitInfo *info)
             src += 4;
             width -= 4;
             vbits = vec_perm(vbits, voverflow, valigner);  /* src is ready. */
+#if defined(__powerpc__) && (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+            /* reorder bytes for PowerPC little endian */
+            vpermute = reorder_ppc64le_vec(vpermute);
+#endif
             vbits = vec_perm(vbits, vzero, vpermute);  /* swizzle it. */
             vec_st(vbits, 0, dst);  /* store it back out. */
             dst += 4;
@@ -720,6 +758,8 @@ static void ConvertAltivec32to32_noprefetch(SDL_BlitInfo *info)
         while (extrawidth) {
             bits = *(src++);  /* max 7 pixels, don't bother with prefetch. */
             RGBA_FROM_8888(bits, srcfmt, r, g, b, a);
+            if(!srcfmt->Amask)
+              a = srcfmt->alpha;
             *(dst++) = MAKE8888(dstfmt, r, g, b, a);
             extrawidth--;
         }
@@ -773,6 +813,8 @@ static void ConvertAltivec32to32_prefetch(SDL_BlitInfo *info)
             vec_dstst(dst+scalar_dst_lead, DST_CTRL(2,32,1024), DST_CHAN_DEST);
             bits = *(src++);
             RGBA_FROM_8888(bits, srcfmt, r, g, b, a);
+            if(!srcfmt->Amask)
+              a = srcfmt->alpha;
             *(dst++) = MAKE8888(dstfmt, r, g, b, a);
             width--;
         }
@@ -790,6 +832,10 @@ static void ConvertAltivec32to32_prefetch(SDL_BlitInfo *info)
             src += 4;
             width -= 4;
             vbits = vec_perm(vbits, voverflow, valigner);  /* src is ready. */
+#if defined(__powerpc__) && (SDL_BYTEORDER == SDL_LIL_ENDIAN)
+            /* reorder bytes for PowerPC little endian */
+            vpermute = reorder_ppc64le_vec(vpermute);
+#endif
             vbits = vec_perm(vbits, vzero, vpermute);  /* swizzle it. */
             vec_st(vbits, 0, dst);  /* store it back out. */
             dst += 4;
@@ -802,6 +848,8 @@ static void ConvertAltivec32to32_prefetch(SDL_BlitInfo *info)
         while (extrawidth) {
             bits = *(src++);  /* max 7 pixels, don't bother with prefetch. */
             RGBA_FROM_8888(bits, srcfmt, r, g, b, a);
+            if(!srcfmt->Amask)
+              a = srcfmt->alpha;
             *(dst++) = MAKE8888(dstfmt, r, g, b, a);
             extrawidth--;
         }
@@ -1213,7 +1261,6 @@ static void Blit_RGB888_RGB565(SDL_BlitInfo *info)
 }
 
 #endif /* SDL_HERMES_BLITTERS */
-
 
 
 /* Special optimized blit for RGB 5-6-5 --> 32-bit RGB surfaces */
@@ -2036,6 +2083,30 @@ static void Blit4to4MaskAlpha(SDL_BlitInfo *info)
 	}
 }
 
+/* blits 32 bit RGBA<->RGBA with both surfaces having the same R,G,B,A fields */
+static void Blit4to4CopyAlpha(SDL_BlitInfo *info)
+{
+	int width = info->d_width;
+	int height = info->d_height;
+	Uint32 *src = (Uint32 *)info->s_pixels;
+	int srcskip = info->s_skip;
+	Uint32 *dst = (Uint32 *)info->d_pixels;
+	int dstskip = info->d_skip;
+
+	/* RGBA->RGBA, COPY_ALPHA */
+	while ( height-- ) {
+		DUFFS_LOOP(
+		{
+			*dst = *src;
+			++dst;
+			++src;
+		},
+		width);
+		src = (Uint32*)((Uint8*)src + srcskip);
+		dst = (Uint32*)((Uint8*)dst + dstskip);
+	}
+}
+
 static void BlitNtoN(SDL_BlitInfo *info)
 {
 	int width = info->d_width;
@@ -2162,7 +2233,7 @@ static void BlitNto1Key(SDL_BlitInfo *info)
 
 static void Blit2to2Key(SDL_BlitInfo *info)
 {
-#ifdef APOLLO_BLIT
+#if defined(APOLLO_BLIT)
 	ApolloKeyRGB565toRGB565(	// works with 555, too (unless 1 bit is defined as alpha, ofc)
 				(Uint8 *)info->s_pixels,
 				(Uint8 *)info->d_pixels,
@@ -2286,7 +2357,7 @@ static void BlitNtoNKeyCopyAlpha(SDL_BlitInfo *info)
 	}
 }
 
-#ifdef APOLLO_BLIT
+#if defined(APOLLO_BLIT)
 
 #define APOLLOCONVERT( __a__ ) \
 static void Convert##__a__ (SDL_BlitInfo *info);\
@@ -2345,19 +2416,19 @@ static const struct blit_table normal_blit_2[] = {
       2, NULL, Blit_RGB555_32Altivec, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
 #endif
     { 0x0000F800,0x000007E0,0x0000001F, 4, 0x00FF0000,0x0000FF00,0x000000FF,
-      0, NULL, Blit_RGB565_ARGB8888, SET_ALPHA },
+      0, NULL, Blit_RGB565_ARGB8888, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
     { 0x0000F800,0x000007E0,0x0000001F, 4, 0x000000FF,0x0000FF00,0x00FF0000,
-      0, NULL, Blit_RGB565_ABGR8888, SET_ALPHA },
+      0, NULL, Blit_RGB565_ABGR8888, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
     { 0x0000F800,0x000007E0,0x0000001F, 4, 0xFF000000,0x00FF0000,0x0000FF00,
-      0, NULL, Blit_RGB565_RGBA8888, SET_ALPHA },
+      0, NULL, Blit_RGB565_RGBA8888, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
     { 0x0000F800,0x000007E0,0x0000001F, 4, 0x0000FF00,0x00FF0000,0xFF000000,
-      0, NULL, Blit_RGB565_BGRA8888, SET_ALPHA },
+      0, NULL, Blit_RGB565_BGRA8888, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
 
     /* Default for 16-bit RGB source, used if no other blitter matches */
     { 0,0,0, 0, 0,0,0, 0, NULL, BlitNtoN, 0 }
 };
 static const struct blit_table normal_blit_3[] = {
-#ifdef APOLLO_BLIT
+#if defined(APOLLO_BLIT)
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000F800,0x000007E0,0x0000001F,
       0, (void*)(1), ConvertApolloRGBtoRGB565, NO_ALPHA  },
     { 0x000000FF,0x0000FF00,0x00FF0000, 2, 0x0000F800,0x000007E0,0x0000001F,
@@ -2387,6 +2458,8 @@ static const struct blit_table normal_blit_4[] = {
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000001F,0x000003E0,0x00007C00,
       0, ConvertX86p32_16BGR555, ConvertX86, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 3, 0x00FF0000,0x0000FF00,0x000000FF,
+      1, ConvertMMXpII32_24RGB888, ConvertMMX, NO_ALPHA },
+    { 0x00FF0000,0x0000FF00,0x000000FF, 3, 0x00FF0000,0x0000FF00,0x000000FF,
       0, ConvertX86p32_24RGB888, ConvertX86, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 3, 0x000000FF,0x0000FF00,0x00FF0000,
       0, ConvertX86p32_24BGR888, ConvertX86, NO_ALPHA },
@@ -2408,7 +2481,7 @@ static const struct blit_table normal_blit_4[] = {
     { 0x00000000,0x00000000,0x00000000, 2, 0x0000F800,0x000007E0,0x0000001F,
       2, NULL, Blit_RGB888_RGB565Altivec, NO_ALPHA },
 #endif
-#ifdef APOLLO_BLIT
+#if defined(APOLLO_BLIT)
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000F800,0x000007E0,0x0000001F,
       0, (void*)(1), ConvertApolloARGBtoRGB565, NO_ALPHA  },
     { 0x0000FF00,0x00FF0000,0xFF000000, 2, 0x0000001F,0x000007E0,0x0000F800,
@@ -2452,7 +2525,7 @@ SDL_loblit SDL_CalculateBlitN(SDL_Surface *surface, int blit_index)
 	srcfmt = surface->format;
 	dstfmt = surface->map->dst->format;
 
-#ifdef APOLLO_BLITDBG
+#if defined(APOLLO_BLITDBG)
 	printf("SDL_CalculateBlitN from BPP %d to BPP %d blit_index %d AMask %x ",srcfmt->BytesPerPixel,dstfmt->BytesPerPixel,blit_index,srcfmt->Amask);
 	printf("Src %x %x %x Dst %x %x %x\n",
 		     srcfmt->Rmask,
@@ -2539,19 +2612,28 @@ SDL_loblit SDL_CalculateBlitN(SDL_Surface *surface, int blit_index)
 		blitfun = table[which].blitfunc;
 
 		if(blitfun == BlitNtoN) {  /* default C fallback catch-all. Slow! */
-			/* Fastpath C fallback: 32bit RGB<->RGBA blit with matching RGB */
 			if ( srcfmt->BytesPerPixel == 4 && dstfmt->BytesPerPixel == 4 &&
 			     srcfmt->Rmask == dstfmt->Rmask &&
 			     srcfmt->Gmask == dstfmt->Gmask &&
 			     srcfmt->Bmask == dstfmt->Bmask ) {
-				blitfun = Blit4to4MaskAlpha;
+				if( a_need == COPY_ALPHA ) {
+				    if( srcfmt->Amask == dstfmt->Amask ) {
+				    /* Fastpath C fallback: 32bit RGBA<->RGBA blit with matching RGBA */
+					blitfun = Blit4to4CopyAlpha;
+				    } else {
+					blitfun = BlitNtoNCopyAlpha;
+				    }
+				} else {
+				    /* Fastpath C fallback: 32bit RGB<->RGBA blit with matching RGB */
+				    blitfun = Blit4to4MaskAlpha;
+				}
 			} else if ( a_need == COPY_ALPHA ) {
 			    blitfun = BlitNtoNCopyAlpha;
 			}
 		}
 	}
 
-#ifdef APOLLO_BLITDBG
+#if defined(APOLLO_BLITDBG)
 	if( sdata->aux_data == (void*)(1) )
 	{
 		printf("AMMX blit ");

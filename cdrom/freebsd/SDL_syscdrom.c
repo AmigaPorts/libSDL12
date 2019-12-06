@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -188,7 +188,7 @@ int  SDL_SYS_CDInit(void)
 			char *insert;
 			exists = 1;
 			for ( j=checklist[i][1]; exists; ++j ) {
-				SDL_snprintf(drive, SDL_arraysize(drive), "/dev/%sc", &checklist[i][3]);
+				SDL_snprintf(drive, SDL_arraysize(drive), "/dev/%s", &checklist[i][3]);
 				insert = SDL_strchr(drive, '?');
 				if ( insert != NULL ) {
 					*insert = j;

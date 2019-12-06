@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,7 +27,7 @@
 	Patrice Mandin
 */
 
-#if defined(__M68000__) && defined(__GNUC__)
+#if (defined(__m68k__) && !defined(__mcoldfire__)) && defined(__GNUC__)
 void SDL_MixAudio_m68k_U8(char* dst, char* src, long len, long volume, char* mix8)
 {
     __asm__ __volatile__ (
@@ -82,6 +82,7 @@ void SDL_MixAudio_m68k_S8(char* dst, char* src, long len, long volume)
 "	moveq	#0,%%d1\n"
 
 "	moveb	%1@+,%%d0\n"	/* d0 = *src++ */
+"	extw	%%d0\n"
 "	muls	%3,%%d0\n"	/* d0 *= volume (0<=volume<=128) */
 "	moveb	%0@,%%d1\n"	/* d1 = *dst */
 "	asr	#7,%%d0\n"	/* d0 /= 128 (SDL_MIX_MAXVOLUME) */
@@ -208,4 +209,3 @@ void SDL_MixAudio_m68k_S16LSB(short* dst, short* src, long len, long volume)
 	 );
 }
 #endif
-

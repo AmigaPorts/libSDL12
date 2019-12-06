@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -34,10 +34,12 @@
    into the general blitting mechanism.
 */
 
-#if ((defined(_MFC_VER) && defined(_M_IX86)/* && !defined(_WIN32_WCE) still needed? */) || \
-     defined(__WATCOMC__) || \
+#if ((defined(_MSC_VER) && defined(_M_IX86)) || \
+     (defined(__WATCOMC__) && defined(__386__)) || \
      (defined(__GNUC__) && defined(__i386__))) && SDL_ASSEMBLY_ROUTINES
-#define USE_ASM_STRETCH
+/* There's a bug with gcc 4.4.1 and -O2 where srcp doesn't get the correct
+ * value after the first scanline.  FIXME? */
+/*#define USE_ASM_STRETCH*/
 #endif
 
 #ifdef USE_ASM_STRETCH
@@ -52,7 +54,7 @@
 #define PAGE_ALIGNED
 #endif
 
-#if defined(_M_IX86) || defined(i386)
+#if defined(_M_IX86) || defined(__i386__) || defined(__386__)
 #define PREFIX16	0x66
 #define STORE_BYTE	0xAA
 #define STORE_WORD	0xAB
@@ -76,7 +78,7 @@ static int generate_rowbytes(int src_w, int dst_w, int bpp)
 
 	int i;
 	int pos, inc;
-	unsigned char *eip;
+	unsigned char *eip, *fence;
 	unsigned char load, store;
 
 	/* See if we need to regenerate the copy buffer */
@@ -103,16 +105,30 @@ static int generate_rowbytes(int src_w, int dst_w, int bpp)
 		SDL_SetError("ASM stretch of %d bytes isn't supported\n", bpp);
 		return(-1);
 	}
+#ifdef HAVE_MPROTECT
+	/* Make the code writeable */
+	if ( mprotect(copy_row, sizeof(copy_row), PROT_READ|PROT_WRITE) < 0 ) {
+		SDL_SetError("Couldn't make copy buffer writeable");
+		return(-1);
+	}
+#endif
 	pos = 0x10000;
 	inc = (src_w << 16) / dst_w;
 	eip = copy_row;
+	fence = copy_row+sizeof(copy_row)-2;
 	for ( i=0; i<dst_w; ++i ) {
 		while ( pos >= 0x10000L ) {
+			if ( eip == fence ) {
+				return -1;
+			}
 			if ( bpp == 2 ) {
 				*eip++ = PREFIX16;
 			}
 			*eip++ = load;
 			pos -= 0x10000L;
+		}
+		if ( eip == fence ) {
+			return -1;
 		}
 		if ( bpp == 2 ) {
 			*eip++ = PREFIX16;
@@ -122,14 +138,9 @@ static int generate_rowbytes(int src_w, int dst_w, int bpp)
 	}
 	*eip++ = RETURN;
 
-	/* Verify that we didn't overflow (too late!!!) */
-	if ( eip > (copy_row+sizeof(copy_row)) ) {
-		SDL_SetError("Copy buffer overflow");
-		return(-1);
-	}
 #ifdef HAVE_MPROTECT
-	/* Make the code executable */
-	if ( mprotect(copy_row, sizeof(copy_row), PROT_READ|PROT_WRITE|PROT_EXEC) < 0 ) {
+	/* Make the code executable but not writeable */
+	if ( mprotect(copy_row, sizeof(copy_row), PROT_READ|PROT_EXEC) < 0 ) {
 		SDL_SetError("Couldn't make copy buffer executable");
 		return(-1);
 	}
@@ -194,7 +205,6 @@ int SDL_SoftStretch(SDL_Surface *src, SDL_Rect *srcrect,
 	int src_locked;
 	int dst_locked;
 	int pos, inc;
-	int dst_width;
 	int dst_maxrow;
 	int src_row, dst_row;
 	Uint8 *srcp = NULL;
@@ -271,7 +281,6 @@ int SDL_SoftStretch(SDL_Surface *src, SDL_Rect *srcrect,
 	inc = (srcrect->h << 16) / dstrect->h;
 	src_row = srcrect->y;
 	dst_row = dstrect->y;
-	dst_width = dstrect->w*bpp;
 
 #ifdef USE_ASM_STRETCH
 	/* Write the opcodes for this stretch */

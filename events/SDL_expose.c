@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@
 
 
 /* This is global for SDL_eventloop.c */
-int SDL_PrivateExpose(void) 
+int SDL_PrivateExpose(void)
 {
 	int posted;
 	SDL_Event events[32];

@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002  Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -134,28 +134,36 @@ int ReadTOCData (FSVolumeRefNum theVolume, SDL_CD *theCD)
 {
     HFSUniStr255      dataForkName;
     OSStatus          theErr;
-    SInt16            forkRefNum;
+    FSIORefNum        forkRefNum;
     SInt64            forkSize;
     Ptr               forkData = 0;
     ByteCount         actualRead;
     CFDataRef         dataRef = 0;
     CFPropertyListRef propertyListRef = 0;
-
     FSRefParam      fsRefPB;
     FSRef           tocPlistFSRef;
-    
+    FSRef           rootRef;
     const char* error = "Unspecified Error";
-    
-    /* get stuff from .TOC.plist */
-    fsRefPB.ioCompletion = NULL;
-    fsRefPB.ioNamePtr = "\p.TOC.plist";
-    fsRefPB.ioVRefNum = theVolume;
-    fsRefPB.ioDirID = 0;
-    fsRefPB.newRef = &tocPlistFSRef;
-    
-    theErr = PBMakeFSRefSync (&fsRefPB);
+    const UniChar uniName[] = { '.','T','O','C','.','p','l','i','s','t' };
+
+    theErr = FSGetVolumeInfo(theVolume, 0, 0, kFSVolInfoNone, 0, 0, &rootRef);
     if(theErr != noErr) {
-        error = "PBMakeFSRefSync";
+        error = "FSGetVolumeInfo";
+        goto bail;
+    }
+
+    SDL_memset(&fsRefPB, '\0', sizeof (fsRefPB));
+
+    /* get stuff from .TOC.plist */
+    fsRefPB.ref = &rootRef;
+    fsRefPB.newRef = &tocPlistFSRef;
+    fsRefPB.nameLength = sizeof (uniName) / sizeof (uniName[0]);
+    fsRefPB.name = uniName;
+    fsRefPB.textEncodingHint = kTextEncodingUnknown;
+
+    theErr = PBMakeFSRefUnicodeSync (&fsRefPB);
+    if(theErr != noErr) {
+        error = "PBMakeFSRefUnicodeSync";
         goto bail;
     }
     
@@ -551,9 +559,9 @@ static OSStatus CheckInit ()
     { /*try {*/
         ComponentDescription desc;
     
-        desc.componentType = kAudioUnitComponentType;
-        desc.componentSubType = kAudioUnitSubType_Output;
-        desc.componentManufacturer = kAudioUnitID_DefaultOutput;
+        desc.componentType = kAudioUnitType_Output;
+        desc.componentSubType = kAudioUnitSubType_DefaultOutput;
+        desc.componentManufacturer = kAudioUnitManufacturer_Apple;
         desc.componentFlags = 0;
         desc.componentFlagsMask = 0;
         

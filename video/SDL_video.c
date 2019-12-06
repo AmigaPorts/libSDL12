@@ -1,6 +1,6 @@
-/* 
+/*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@
 #include "../events/SDL_sysevents.h"
 #include "../events/SDL_events_c.h"
 
+#ifdef __AMIGA__
 #include <dos/dos.h>
 #include <exec/exec.h>
 
@@ -47,18 +48,110 @@ static int is_vampire()
 	else
 		return 0;
 }
-
+#endif
 /* Available video drivers */
 static VideoBootStrap *bootstrap[] = {
+#if SDL_VIDEO_DRIVER_QUARTZ
+	&QZ_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_X11
+	&X11_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_DGA
+	&DGA_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_NANOX
+	&NX_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_IPOD
+	&iPod_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_QTOPIA
+	&Qtopia_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_WSCONS
+	&WSCONS_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_FBCON
+	&FBCON_bootstrap,
+#endif
 #if SDL_VIDEO_DRIVER_DIRECTFB
 	&DirectFB_bootstrap,
 #endif
-#ifdef SDL_VIDEO_DRIVER_AMIGAOS
+#if SDL_VIDEO_DRIVER_PS2GS
+	&PS2GS_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_PS3
+	&PS3_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_GGI
+	&GGI_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_VGL
+	&VGL_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_SVGALIB
+	&SVGALIB_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_GAPI
+	&GAPI_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_WINDIB
+	&WINDIB_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_DDRAW
+	&DIRECTX_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_BWINDOW
+	&BWINDOW_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_TOOLBOX
+	&TOOLBOX_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_DRAWSPROCKET
+	&DSp_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_CYBERGRAPHICS
 	&CGX_bootstrap,
 #endif
-
+#if SDL_VIDEO_DRIVER_PHOTON
+	&ph_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_EPOC
+	&EPOC_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_XBIOS
+	&XBIOS_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_GEM
+	&GEM_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_PICOGUI
+	&PG_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_DC
+	&DC_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_NDS
+	&NDS_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_RISCOS
+	&RISCOS_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_OS2FS
+	&OS2FSLib_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_AALIB
+	&AALIB_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_CACA
+	&CACA_bootstrap,
+#endif
 #if SDL_VIDEO_DRIVER_DUMMY
 	&DUMMY_bootstrap,
+#endif
+#if SDL_VIDEO_DRIVER_AMIGAOS4
+	&os4video_bootstrap,
 #endif
 	NULL
 };
@@ -86,9 +179,9 @@ int SDL_VideoInit (const char *driver_name, Uint32 flags)
 	int i;
 	SDL_PixelFormat vformat;
 	Uint32 video_flags;
-	
+#ifdef __AMIGA__	
 	ac68080 = is_vampire();
-	
+#endif
 	/* Toggle the event thread flags, based on OS requirements */
 #if defined(MUST_THREAD_EVENTS)
 	flags |= SDL_INIT_EVENTTHREAD;
@@ -296,7 +389,12 @@ static Uint8 SDL_closest_depths[4][8] = {
 	{ 0, 32, 16, 15, 24, 8, 0, 0 }
 };
 
+
+#ifdef __MACOS__ /* MPW optimization bug? */
+#define NEGATIVE_ONE 0xFFFFFFFF
+#else
 #define NEGATIVE_ONE -1
+#endif
 
 int SDL_VideoModeOK (int width, int height, int bpp, Uint32 flags)
 {
@@ -377,8 +475,6 @@ static int SDL_GetVideoMode (int *w, int *h, int *BitsPerPixel, Uint32 flags)
 
 	/* Try the original video mode, get the closest depth */
 	native_bpp = SDL_VideoModeOK(*w, *h, *BitsPerPixel, flags);
-	kprintf("screen depth %ld\n",native_bpp);
-	
 	if ( native_bpp == *BitsPerPixel ) {
 		return(1);
 	}
@@ -439,11 +535,13 @@ static void SDL_ClearSurface(SDL_Surface *surface)
 		SDL_Flip(surface);
 		SDL_FillRect(surface, NULL, black);
 	}
-
-	//if (surface->flags&SDL_FULLSCREEN) {
+#ifndef__AMIGA__
+	if (surface->flags&SDL_FULLSCREEN) {
+#endif
 		SDL_Flip(surface);
-	//}
-
+#ifndef __AMIGA__
+	}
+#endif
 }
 
 /*
@@ -505,6 +603,10 @@ static void SDL_CreateShadowSurface(int depth)
     #include <sys/neutrino.h>
 #endif /* __QNXNTO__ */
 
+#ifdef WIN32
+	extern int sysevents_mouse_pressed;
+#endif
+
 /*
  * Set the requested video mode, allocating a shadow buffer if necessary.
  */
@@ -516,8 +618,12 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 	int video_h;
 	int video_bpp;
 	int is_opengl;
-	//int flags2 = flags;
 	SDL_GrabMode saved_grab;
+
+	#ifdef WIN32
+		sysevents_mouse_pressed = 0;
+	#endif
+
 #ifdef __AMIGA__
 #ifndef APOLLO_BLIT
 	flags &= ~SDL_DOUBLEBUF;
@@ -555,13 +661,18 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 	if ( ! SDL_GetVideoMode(&video_w, &video_h, &video_bpp, flags) ) {
 		return(NULL);
 	}
-    
+
 	/* Check the requested flags */
 	/* There's no palette in > 8 bits-per-pixel mode */
 	if ( video_bpp > 8 ) {
 		flags &= ~SDL_HWPALETTE;
 	}
-
+#if 0
+	if ( (flags&SDL_FULLSCREEN) != SDL_FULLSCREEN ) {
+		/* There's no windowed double-buffering */
+		flags &= ~SDL_DOUBLEBUF;
+	}
+#endif
 	if ( (flags&SDL_DOUBLEBUF) == SDL_DOUBLEBUF ) {
 		/* Use hardware surfaces when double-buffering */
 		flags |= SDL_HWSURFACE;
@@ -576,7 +687,7 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 	/* Reset the keyboard here so event callbacks can run */
 	SDL_ResetKeyboard();
 	SDL_ResetMouse();
-        SDL_SetMouseRange(width, height);
+	SDL_SetMouseRange(width, height);
 	SDL_cursorstate &= ~CURSOR_USINGSW;
 
 	/* Clean up any previous video mode */
@@ -607,7 +718,6 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 	SDL_LockCursor();
 	SDL_VideoSurface = NULL;	/* In case it's freed by driver */
 	mode = video->SetVideoMode(this, prev_mode,video_w,video_h,video_bpp,flags);
-	
 	if ( mode ) { /* Prevent resize events from mode change */
           /* But not on OS/2 */
 #ifndef __OS2__
@@ -632,7 +742,7 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 	 * that case?  Should we call SDL_VideoInit() again?
 	 */
 	SDL_VideoSurface = (mode != NULL) ? mode : prev_mode;
-    kprintf("surface depth of SDL_VideoSurface %ld \n",SDL_VideoSurface->format->BitsPerPixel);
+
 	if ( (mode != NULL) && (!is_opengl) ) {
 		/* Sanity check */
 		if ( (mode->w < width) || (mode->h < height) ) {
@@ -729,7 +839,6 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 
 	/* Set up a fake SDL surface for OpenGL "blitting" */
 	if ( (flags & SDL_OPENGLBLIT) == SDL_OPENGLBLIT ) {
-		
 		/* Load GL functions for performing the texture updates */
 #if SDL_VIDEO_OPENGL
 
@@ -786,9 +895,7 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 		SDL_FreeSurface(mode);
 
 		/* Set the surface completely opaque & white by default */
-		
 		SDL_memset( SDL_VideoSurface->pixels, 255, SDL_VideoSurface->h * SDL_VideoSurface->pitch );
-
 		video->glGenTextures( 1, &video->texture );
 		video->glBindTexture( GL_TEXTURE_2D, video->texture );
 		video->glTexImage2D(
@@ -819,7 +926,6 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 		2.  We need a hardware palette and didn't get one.
 		3.  We need a software surface and got a hardware surface.
 	*/
-	//printf("FLAGS %d BPPa %d BPPb %d\n",flags,SDL_VideoSurface->format->BitsPerPixel,bpp);
 	if ( !(SDL_VideoSurface->flags & SDL_OPENGL) &&
 	     (
 	     (  !(flags&SDL_ANYFORMAT) &&
@@ -834,37 +940,25 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 	     (   (flags&SDL_DOUBLEBUF) &&
 				(SDL_VideoSurface->flags&SDL_HWSURFACE) &&
 				!(SDL_VideoSurface->flags&SDL_DOUBLEBUF))
-	     ) ) 
-	     
-	  //if  (!(SDL_VideoSurface->flags & SDL_OPENGL) &&
-	  //    !(flags2 & SDL_HWSURFACE))
-	  {
-       		kprintf("Create Shadow surface\n");
-		 
-		SDL_CreateShadowSurface(bpp);//mode->format->BitsPerPixel);
-
+	     ) ) {
+		SDL_CreateShadowSurface(bpp);
 		if ( SDL_ShadowSurface == NULL ) {
-				SDL_SetError("Couldn't create shadow surface");
-				return(NULL);
-		        }
-				SDL_PublicSurface = SDL_ShadowSurface;
-	   }
-		else 
-		{
-		kprintf("Using no Shadowsurface \n");
-
-		SDL_PublicSurface = SDL_VideoSurface;
+			SDL_SetError("Couldn't create shadow surface");
+			return(NULL);
 		}
-	 
+		SDL_PublicSurface = SDL_ShadowSurface;
+	} else {
+		SDL_PublicSurface = SDL_VideoSurface;
+	}
 	video->info.vfmt = SDL_VideoSurface->format;
 	video->info.current_w = SDL_VideoSurface->w;
 	video->info.current_h = SDL_VideoSurface->h;
 
+#ifdef __AMIGA__
 	if (flags&SDL_FULLSCREEN)
 		ac68080 = 0;
-
+#endif
 	/* We're done! */
-	
 	return(SDL_PublicSurface);
 }
 
@@ -934,6 +1028,11 @@ SDL_Surface *SDL_DisplayFormatAlpha(SDL_Surface *surface)
 		if ( (vf->Rmask == 0xff) && (vf->Bmask == 0xff0000) ) {
 			rmask = 0xff;
 			bmask = 0xff0000;
+		} else if ( vf->Rmask == 0xFF00 && (vf->Bmask == 0xFF000000) ) {
+			amask = 0x000000FF;
+			rmask = 0x0000FF00;
+			gmask = 0x00FF0000;
+			bmask = 0xFF000000;
 		}
 		break;
 
@@ -1044,19 +1143,25 @@ void SDL_UpdateRects (SDL_Surface *screen, int numrects, SDL_Rect *rects)
 /*
  * Performs hardware double buffering, if possible, or a full update if not.
  */
-int SDL_Flip_m68k(SDL_Surface *screen)
+int SDL_Flip
+#ifdef __AMIGA__
+_m68k
+#endif
+(SDL_Surface *screen)
 {
+#ifdef __AMIGA__
 	extern int skipframe,toggle;
-	SDL_VideoDevice *video;
+	
 	if (skipframe)
 	{
 		if (toggle < skipframe){toggle++;return 0;}
 		toggle =0;
 	}
-	video = current_video;
+#endif
+
+	SDL_VideoDevice *video = current_video;
 	/* Copy the shadow surface to the video surface */
 	if ( screen == SDL_ShadowSurface ) {
-		
 		SDL_Rect rect;
 		SDL_Palette *pal = screen->format->palette;
 		SDL_Color *saved_colors = NULL;
@@ -1079,11 +1184,11 @@ int SDL_Flip_m68k(SDL_Surface *screen)
 		if ( SHOULD_DRAWCURSOR(SDL_cursorstate) ) {
 			SDL_LockCursor();
 			SDL_DrawCursor(SDL_ShadowSurface);
-			SDL_LowerBlit(SDL_ShadowSurface, &rect,    
+			SDL_LowerBlit(SDL_ShadowSurface, &rect,
 					SDL_VideoSurface, &rect);
 			SDL_EraseCursor(SDL_ShadowSurface);
 			SDL_UnlockCursor();
-		} else { 
+		} else {
 			SDL_LowerBlit(SDL_ShadowSurface, &rect,
 					SDL_VideoSurface, &rect);
 		}
@@ -1092,17 +1197,20 @@ int SDL_Flip_m68k(SDL_Surface *screen)
 		}
 
 		/* Fall through to video surface update */
-		//screen = SDL_VideoSurface;
+#ifndef __AMIGA__
+		screen = SDL_VideoSurface;
+#endif
 	}
 	if ( (screen->flags & SDL_DOUBLEBUF) == SDL_DOUBLEBUF ) {
 		SDL_VideoDevice *this  = current_video;
 		return(video->FlipHWSurface(this, SDL_VideoSurface));
 	} else {
-		SDL_UpdateRect(screen, 0, 0, 0, 0);           // only here it is blit 
+		SDL_UpdateRect(screen, 0, 0, 0, 0);
 	}
 	return(0);
 }
 
+#ifdef __AMIGA__
 int SDL_Flip(SDL_Surface *screen)
 {
 	if (ac68080)	{
@@ -1114,7 +1222,7 @@ int SDL_Flip(SDL_Surface *screen)
 	else
 		return SDL_Flip_m68k(screen);
 }
- 
+#endif
 
 static void SetPalette_logical(SDL_Surface *screen, SDL_Color *colors,
 			       int firstcolor, int ncolors)
@@ -1307,13 +1415,12 @@ int SDL_SetColors(SDL_Surface *screen, SDL_Color *colors, int firstcolor,
 void SDL_VideoQuit (void)
 {
 	SDL_Surface *ready_to_go;
-    
+
 	if ( current_video ) {
 		SDL_VideoDevice *video = current_video;
 		SDL_VideoDevice *this  = current_video;
 
 		/* Halt event processing before doing anything else */
-		
 		SDL_StopEventLoop();
 
 		/* Clean up allocated window manager items */
@@ -1653,6 +1760,9 @@ void SDL_GL_Unlock()
 #endif
 }
 
+
+void SDL_Audio_SetCaption(const char *caption);
+
 /*
  * Sets/Gets the title and icon text of the display window, if any.
  */
@@ -1678,7 +1788,11 @@ void SDL_WM_SetCaption (const char *title, const char *icon)
 			video->SetCaption(this, video->wm_title,video->wm_icon);
 		}
 	}
+
+	/* PulseAudio can make use of this information. */
+	SDL_Audio_SetCaption(title);
 }
+
 void SDL_WM_GetCaption (char **title, char **icon)
 {
 	SDL_VideoDevice *video = current_video;

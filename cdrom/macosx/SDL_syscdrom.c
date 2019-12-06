@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -263,6 +263,14 @@ void SDL_SYS_CDQuit(void)
 /* Get the Unix disk name of the volume */
 static const char *SDL_SYS_CDName (int drive)
 {
+    /*
+     * !!! FIXME: PBHGetVolParmsSync() is gone in 10.6,
+     * !!! FIXME:  replaced with FSGetVolumeParms(), which
+     * !!! FIXME:  isn't available before 10.5.  :/
+     */
+    return "Mac OS X CD-ROM Device";
+
+#if 0
     OSStatus     err = noErr;
     HParamBlockRec  pb;
     GetVolParmsInfoBuffer   volParmsInfo;
@@ -282,6 +290,7 @@ static const char *SDL_SYS_CDName (int drive)
     }
 
     return volParmsInfo.vMDeviceID;
+#endif
 }
 
 /* Open the "device" */

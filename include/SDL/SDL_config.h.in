@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -117,6 +117,8 @@
 #undef HAVE__UI64TOA
 #undef HAVE_STRTOLL
 #undef HAVE_STRTOULL
+#undef HAVE__STRTOI64
+#undef HAVE__STRTOUI64
 #undef HAVE_STRTOD
 #undef HAVE_ATOI
 #undef HAVE_ATOF
@@ -131,12 +133,13 @@
 #undef HAVE_VSNPRINTF
 #undef HAVE_ICONV
 #undef HAVE_SIGACTION
+#undef HAVE_SA_SIGACTION
 #undef HAVE_SETJMP
 #undef HAVE_NANOSLEEP
 #undef HAVE_CLOCK_GETTIME
-#undef HAVE_DLVSYM
 #undef HAVE_GETPAGESIZE
 #undef HAVE_MPROTECT
+#undef HAVE_SEM_TIMEDWAIT
 
 #else
 /* We may need some replacement for stdarg.h here */
@@ -156,8 +159,10 @@
 #undef SDL_VIDEO_DISABLED
 
 /* Enable various audio drivers */
+#undef SDL_AUDIO_DRIVER_AHI
 #undef SDL_AUDIO_DRIVER_ALSA
 #undef SDL_AUDIO_DRIVER_ALSA_DYNAMIC
+#undef SDL_AUDIO_DRIVER_AMIGAOS4
 #undef SDL_AUDIO_DRIVER_ARTS
 #undef SDL_AUDIO_DRIVER_ARTS_DYNAMIC
 #undef SDL_AUDIO_DRIVER_BAUDIO
@@ -176,10 +181,12 @@
 #undef SDL_AUDIO_DRIVER_MINT
 #undef SDL_AUDIO_DRIVER_MMEAUDIO
 #undef SDL_AUDIO_DRIVER_NAS
+#undef SDL_AUDIO_DRIVER_NAS_DYNAMIC
 #undef SDL_AUDIO_DRIVER_OSS
 #undef SDL_AUDIO_DRIVER_OSS_SOUNDCARD_H
 #undef SDL_AUDIO_DRIVER_PAUD
 #undef SDL_AUDIO_DRIVER_QNXNTO
+#undef SDL_AUDIO_DRIVER_SNDIO
 #undef SDL_AUDIO_DRIVER_SNDMGR
 #undef SDL_AUDIO_DRIVER_SUNAUDIO
 #undef SDL_AUDIO_DRIVER_WAVEOUT
@@ -204,6 +211,8 @@
 /* Enable various input drivers */
 #undef SDL_INPUT_LINUXEV
 #undef SDL_INPUT_TSLIB
+#undef SDL_JOYSTICK_AMIGA
+#undef SDL_JOYSTICK_AMIGAINPUT
 #undef SDL_JOYSTICK_BEOS
 #undef SDL_JOYSTICK_DC
 #undef SDL_JOYSTICK_DUMMY
@@ -228,6 +237,8 @@
 #undef SDL_LOADSO_WIN32
 
 /* Enable various threading systems */
+#undef SDL_THREAD_AMIGA
+#undef SDL_THREAD_AMIGAOS4
 #undef SDL_THREAD_BEOS
 #undef SDL_THREAD_DC
 #undef SDL_THREAD_OS2
@@ -239,6 +250,8 @@
 #undef SDL_THREAD_WIN32
 
 /* Enable various timer systems */
+#undef SDL_TIMER_AMIGA
+#undef SDL_TIMER_AMIGAOS4
 #undef SDL_TIMER_BEOS
 #undef SDL_TIMER_DC
 #undef SDL_TIMER_DUMMY
@@ -252,7 +265,10 @@
 
 /* Enable various video drivers */
 #undef SDL_VIDEO_DRIVER_AALIB
+#undef SDL_VIDEO_DRIVER_AMIGAOS4
 #undef SDL_VIDEO_DRIVER_BWINDOW
+#undef SDL_VIDEO_DRIVER_CYBERGRAPHICS
+#undef SDL_VIDEO_DRIVER_CACA
 #undef SDL_VIDEO_DRIVER_DC
 #undef SDL_VIDEO_DRIVER_DDRAW
 #undef SDL_VIDEO_DRIVER_DGA
@@ -269,6 +285,7 @@
 #undef SDL_VIDEO_DRIVER_PHOTON
 #undef SDL_VIDEO_DRIVER_PICOGUI
 #undef SDL_VIDEO_DRIVER_PS2GS
+#undef SDL_VIDEO_DRIVER_PS3
 #undef SDL_VIDEO_DRIVER_QTOPIA
 #undef SDL_VIDEO_DRIVER_QUARTZ
 #undef SDL_VIDEO_DRIVER_RISCOS
@@ -278,8 +295,8 @@
 #undef SDL_VIDEO_DRIVER_WINDIB
 #undef SDL_VIDEO_DRIVER_WSCONS
 #undef SDL_VIDEO_DRIVER_X11
+#undef SDL_VIDEO_DRIVER_X11_CONST_PARAM_XDATA32
 #undef SDL_VIDEO_DRIVER_X11_DGAMOUSE
-#undef SDL_VIDEO_DRIVER_X11_DPMS
 #undef SDL_VIDEO_DRIVER_X11_DYNAMIC
 #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT
 #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XRANDR
@@ -297,6 +314,9 @@
 #undef SDL_VIDEO_OPENGL_WGL
 #undef SDL_VIDEO_OPENGL_OSMESA
 #undef SDL_VIDEO_OPENGL_OSMESA_DYNAMIC
+
+/* Disable screensaver */
+#undef SDL_VIDEO_DISABLE_SCREENSAVER
 
 /* Enable assembly routines */
 #undef SDL_ASSEMBLY_ROUTINES

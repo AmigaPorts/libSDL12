@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -377,6 +377,7 @@ void SDL_SYS_CDQuit(void)
 	if ( SDL_numcds > 0 ) {
 		for ( i=0; i<SDL_numcds; ++i ) {
 			SDL_free(SDL_cdlist[i]);
+			SDL_cdlist[i] = NULL;
 		}
 		SDL_numcds = 0;
 	}

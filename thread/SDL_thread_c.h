@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,10 @@
 /* Need the definitions of SYS_ThreadHandle */
 #if SDL_THREADS_DISABLED
 #include "generic/SDL_systhread_c.h"
+#elif SDL_THREAD_AMIGA
+#include "amigaos/SDL_systhread_c.h"
+#elif SDL_THREAD_AMIGAOS4
+#include "amigaos4/SDL_systhread_c.h"
 #elif SDL_THREAD_BEOS
 #include "beos/SDL_systhread_c.h"
 #elif SDL_THREAD_DC
@@ -43,8 +47,6 @@
 #include "win32/SDL_systhread_c.h"
 #elif SDL_THREAD_SYMBIAN
 #include "symbian/SDL_systhread_c.h"
-#elif SDL_THREAD_AMIGAOS
-#include "amigaos/SDL_systhread_c.h"
 #else
 #error Need thread implementation for this platform
 #include "generic/SDL_systhread_c.h"

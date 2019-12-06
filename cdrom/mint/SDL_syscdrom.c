@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2004 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
     slouken@libsdl.org
 */
 #include "SDL_config.h"
+#include "SDL_stdinc.h"
 
 #ifdef SDL_CDROM_MINT
 
@@ -31,8 +32,8 @@
 
 #include <errno.h>
 
-#include <cdromio.h>
-#include <metados.h>
+#include <mint/cdromio.h>
+#include <mint/metados.h>
 
 #include "SDL_cdrom.h"
 #include "../SDL_syscdrom.h"
@@ -49,7 +50,7 @@
 #define MAX_DRIVES	32	
 
 typedef struct {
-	unsigned char device[3];	/* Physical device letter + ':' + '\0' */
+	char		device[3];	/* Physical device letter + ':' + '\0' */
 	metaopen_t	metaopen;		/* Infos on opened drive */
 } metados_drive_t;
 
@@ -75,23 +76,24 @@ int SDL_SYS_CDInit(void)
 	int i, handle;
 	struct cdrom_subchnl info;
 
+	SDL_numcds = 0;
+	SDL_memset(metados_drives, 0, sizeof(metados_drives));
+
 	Metainit(&metainit);
 	if (metainit.version == NULL) {
 #ifdef DEBUG_CDROM
 		fprintf(stderr, "MetaDOS not installed\n");
 #endif
-		return -1;
+		return 0;
 	}
 
 	if (metainit.drives_map == 0) {
 #ifdef DEBUG_CDROM
 		fprintf(stderr, "No MetaDOS devices present\n");
 #endif
-		return -1;
+		return 0;
 	}
 
-	SDL_numcds = 0;
-	
 	for (i='A'; i<='Z'; i++) {
 		metados_drives[SDL_numcds].device[0] = 0;
 		metados_drives[SDL_numcds].device[1] = ':';

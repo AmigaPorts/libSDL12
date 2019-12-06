@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -237,7 +237,7 @@ int SDL_StartEventLoop(Uint32 flags)
 	SDL_EventOK = NULL;
 	SDL_memset(SDL_ProcessEvents,SDL_ENABLE,sizeof(SDL_ProcessEvents));
 	SDL_eventstate = ~0;
-	/* It's not save to call SDL_EventState() yet */
+	/* It's not safe to call SDL_EventState() yet */
 	SDL_eventstate &= ~(0x00000001 << SDL_SYSWMEVENT);
 	SDL_ProcessEvents[SDL_SYSWMEVENT] = SDL_IGNORE;
 

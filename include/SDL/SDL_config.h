@@ -39,7 +39,7 @@
 #elif defined(__OS2__)
 #include "SDL_config_os2.h"
 #elif defined(__AMIGA__)
-#include "SDL_config_amigaos.h"
+#include "SDL_config_amiga.h"
 #else
 #include "SDL_config_minimal.h"
 #endif /* platform config */

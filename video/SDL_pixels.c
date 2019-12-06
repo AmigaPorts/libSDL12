@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -29,17 +29,17 @@
 #include "SDL_blit.h"
 #include "SDL_pixels_c.h"
 #include "SDL_RLEaccel_c.h"
-#define static
+
 /* Helper functions */
 /*
  * Allocate a pixel format structure and fill it according to the given info.
  */
 SDL_PixelFormat *SDL_AllocFormat(int bpp,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
-{ 
+{
 	SDL_PixelFormat *format;
 	Uint32 mask;
- 
+
 	/* Allocate an empty pixel format structure */
 	format = SDL_malloc(sizeof(*format));
 	if ( format == NULL ) {
@@ -103,7 +103,7 @@ SDL_PixelFormat *SDL_AllocFormat(int bpp,
 		format->Rmask = ((0xFF>>format->Rloss)<<format->Rshift);
 		format->Gmask = ((0xFF>>format->Gloss)<<format->Gshift);
 		format->Bmask = ((0xFF>>format->Bloss)<<format->Bshift);
-	} else { 
+	} else {
 		/* Palettized formats have no mask info */
 		format->Rloss = 8;
 		format->Gloss = 8;
@@ -118,7 +118,6 @@ SDL_PixelFormat *SDL_AllocFormat(int bpp,
 		format->Bmask = 0;
 		format->Amask = 0;
 	}
-	
 	if ( bpp <= 8 ) {			/* Palettized mode */
 		int ncolors = 1<<bpp;
 #ifdef DEBUG_PALETTE
@@ -151,12 +150,12 @@ SDL_PixelFormat *SDL_AllocFormat(int bpp,
 				Rw=8-format->Rloss;
 				for(i=format->Rloss;i>0;i-=Rw)
 					Rm|=1<<i;
-			}  
-#ifdef DEBUG_PALETTE 
+			}
+#ifdef DEBUG_PALETTE
 			fprintf(stderr,"Rw=%d Rm=0x%02X\n",Rw,Rm);
-#endif 
+#endif
 			if(Gmask)
-			{ 
+			{
 				Gw=8-format->Gloss;
 				for(i=format->Gloss;i>0;i-=Gw)
 					Gm|=1<<i;
@@ -185,7 +184,7 @@ SDL_PixelFormat *SDL_AllocFormat(int bpp,
 # endif
 #endif
 			for(i=0; i < ncolors; ++i) {
-				int r,g,b,a;
+				int r,g,b;
 				r=(i&Rmask)>>format->Rshift;
 				r=(r<<format->Rloss)|((r*Rm)>>Rw);
 				format->palette->colors[i].r=r;
@@ -287,26 +286,54 @@ void SDL_DitherColors(SDL_Color *colors, int bpp)
 	}
 }
 /* 
- * Calculate the pad-aligned scanline width of a surface
+ * Calculate the pad-aligned scanline width of a surface. Return 0 in case of
+ * an error.
  */
 Uint16 SDL_CalculatePitch(SDL_Surface *surface)
 {
-	Uint16 pitch;
+	unsigned int pitch = 0;
+	Uint8 byte;
 
 	/* Surface should be 4-byte aligned for speed */
-	pitch = surface->w*surface->format->BytesPerPixel;
+	/* The code tries to prevent from an Uint16 overflow. */;
+	for (byte = surface->format->BytesPerPixel; byte; byte--) {
+		pitch += (unsigned int)surface->w;
+		if (pitch < surface->w) {
+			SDL_SetError("A scanline is too wide");
+			return(0);
+		}
+	}
 	switch (surface->format->BitsPerPixel) {
 		case 1:
-			pitch = (pitch+7)/8;
+			if (pitch % 8) {
+				pitch = pitch / 8 + 1;
+			} else {
+				pitch = pitch / 8;
+			}
 			break;
 		case 4:
-			pitch = (pitch+1)/2;
+			if (pitch % 2) {
+				pitch = pitch / 2 + 1;
+			} else {
+				pitch = pitch / 2;
+			}
 			break;
 		default:
 			break;
 	}
-	pitch = (pitch + 3) & ~3;	/* 4-byte aligning */
-	return(pitch);
+	/* 4-byte aligning */
+	if (pitch & 3) {
+		if (pitch + 3 < pitch) {
+			SDL_SetError("A scanline is too wide");
+			return(0);
+		}
+		pitch = (pitch + 3) & ~3;
+	}
+	if (pitch > 0xFFFF) {
+		SDL_SetError("A scanline is too wide");
+		return(0);
+	}
+	return((Uint16)pitch);
 }
 /*
  * Match an RGB value to a particular palette index
@@ -343,11 +370,6 @@ Uint32 SDL_MapRGB
  const Uint8 r, const Uint8 g, const Uint8 b)
 {
 	if ( format->palette == NULL ) {
-		//if (format->Bmask == 0xff000000 && format->BitsPerPixel == 32)  // amigaos for bgra32 format hwsurface
-		//{
-  //         return  (r << 16) | (g << 8) | (b << 0);// | (0xff << 24);          
-		//				  
-		//}                                
 		return (r >> format->Rloss) << format->Rshift
 		       | (g >> format->Gloss) << format->Gshift
 		       | (b >> format->Bloss) << format->Bshift
@@ -363,20 +385,16 @@ Uint32 SDL_MapRGBA
  const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
 {
 	if ( format->palette == NULL ) {
-		//if (format->Bmask == 0xff000000 && format->BitsPerPixel == 32)  // amigaos for bgra32 format hwsurface
-		//{
-  //         return  (r << 16) | (g << 8) | (b << 0) | (a << 24);          
-		//				  
-		//}                                
 	        return (r >> format->Rloss) << format->Rshift
 		    | (g >> format->Gloss) << format->Gshift
 		    | (b >> format->Bloss) << format->Bshift
 		    | ((a >> format->Aloss) << format->Ashift & format->Amask);
 	} else {
 		return SDL_FindColor(format->palette, r, g, b);
-	}}
- 
-void SDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat *fmt,
+	}
+}
+
+void SDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat * const fmt,
 		 Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
 {
 	if ( fmt->palette == NULL ) {
@@ -388,7 +406,7 @@ void SDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat *fmt,
 		 * and that opaque alpha is 255.
 		 * This only works for RGB bit fields at least 4 bit
 		 * wide, which is almost always the case.
-		 */  
+		 */
 	        unsigned v;
 		v = (pixel & fmt->Rmask) >> fmt->Rshift;
 		*r = (v << fmt->Rloss) + (v >> (8 - (fmt->Rloss << 1)));
@@ -410,7 +428,8 @@ void SDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat *fmt,
 	}
 }
 
-void SDL_GetRGB(Uint32 pixel, const SDL_PixelFormat *fmt, Uint8 *r,Uint8 *g,Uint8 *b)
+void SDL_GetRGB(Uint32 pixel, const SDL_PixelFormat * const fmt,
+                Uint8 *r,Uint8 *g,Uint8 *b)
 {
 	if ( fmt->palette == NULL ) {
 	        /* the note for SDL_GetRGBA above applies here too */
@@ -450,7 +469,6 @@ static Uint8 *Map1to1(SDL_Palette *src, SDL_Palette *dst, int *identical)
 	if ( identical ) {
 		if ( src->ncolors <= dst->ncolors ) {
 			/* If an identical palette, no need to map */
-			
 			if ( SDL_memcmp(src->colors, dst->colors, src->ncolors*
 						sizeof(SDL_Color)) == 0 ) {
 				*identical = 1;

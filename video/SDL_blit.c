@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -39,12 +39,9 @@
 #include "mmx.h"
 #endif
 
-#ifdef APOLLO_BLIT
+#if defined(APOLLO_BLIT)
 #include "blitapollo.h"
 #endif
-//surface->map->sw_blit = SDL_SoftBlit
-//surface->map->sw_data->blit = SDL_BlitCopy;
-
 
 /* The general purpose software blit routine */
 static int SDL_SoftBlit(SDL_Surface *src, SDL_Rect *srcrect,
@@ -98,7 +95,6 @@ static int SDL_SoftBlit(SDL_Surface *src, SDL_Rect *srcrect,
 		info.src = src->format;
 		info.table = src->map->table;
 		info.dst = dst->format;
-		
 		RunBlit = src->map->sw_data->blit;
 
 		/* Run the actual software blit */
@@ -162,7 +158,7 @@ static __inline__ void SDL_memcpySSE(Uint8 *to, const Uint8 *from, int len)
 
 static void SDL_BlitCopy(SDL_BlitInfo *info)
 {
-#ifdef APOLLO_BLIT
+#if defined(APOLLO_BLIT)
 	ApolloCopyRect( info->s_pixels, info->d_pixels,
 			info->s_skip, info->d_skip,
 			info->d_width*info->dst->BytesPerPixel,
@@ -229,7 +225,7 @@ static void SDL_BlitCopyOverlap(SDL_BlitInfo *info)
 	dstskip = w+info->d_skip;
 	if ( dst < src ) {
 		while ( h-- ) {
-			SDL_memcpy(dst, src, w);
+			SDL_memmove(dst, src, w);
 			src += srcskip;
 			dst += dstskip;
 		}
@@ -353,10 +349,9 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 	}
 
 	/* Choose software blitting function */
-
 	if(surface->flags & SDL_RLEACCELOK
 	   && (surface->flags & SDL_HWACCEL) != SDL_HWACCEL) {
-		   
+
 	        if(surface->map->identity
 		   && (blit_index == 1
 		       || (blit_index == 3 && !surface->format->Amask))) {

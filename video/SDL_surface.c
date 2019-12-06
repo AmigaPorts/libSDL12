@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -49,20 +49,16 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 		SDL_SetError("Width or height is too large");
 		return(NULL);
 	}
-    
+
 	/* Check to see if we desire the surface in video memory */
 	if ( video ) {
-		
 		screen = SDL_PublicSurface;
 	} else {
 		screen = NULL;
 	}
-	
 	if ( screen && ((screen->flags&SDL_HWSURFACE) == SDL_HWSURFACE) ) {
-		
 		if ( (flags&(SDL_SRCCOLORKEY|SDL_SRCALPHA)) != 0 ) {
 			flags |= SDL_HWSURFACE;
-			
 		}
 		if ( (flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY ) {
 			if ( ! current_video->info.blit_hw_CC ) {
@@ -93,7 +89,6 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 			Gmask = video->displayformatalphapixel->Gmask;
 			Bmask = video->displayformatalphapixel->Bmask;
 			Amask = video->displayformatalphapixel->Amask;
-			
 		}
 		else
 		{
@@ -103,7 +98,6 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 			Bmask = screen->format->Bmask;
 			Amask = screen->format->Amask;
 		}
-		 
 	}
 	surface->format = SDL_AllocFormat(depth, Rmask, Gmask, Bmask, Amask);
 	if ( surface->format == NULL ) {
@@ -124,9 +118,8 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	surface->unused1 = 0;
 	SDL_SetClipRect(surface, NULL);
 	SDL_FormatChanged(surface);
-     
+
 	/* Get the pixels */
-	
 	if ( ((flags&SDL_HWSURFACE) == SDL_SWSURFACE) || 
 				(video->AllocHWSurface(this, surface) < 0) ) {
 		if ( surface->w && surface->h ) {
@@ -400,6 +393,7 @@ void SDL_GetClipRect(SDL_Surface *surface, SDL_Rect *rect)
 		*rect = surface->clip_rect;
 	}
 }
+
 /* see SDL_video.h */
 void SDLA_SetQuickLazyBlit(SDL_Surface *surface, Uint32 yesno )
 {
@@ -411,7 +405,6 @@ void SDLA_SetQuickLazyBlit(SDL_Surface *surface, Uint32 yesno )
 			surface->flags &= ~SDLA_QUICKLAZY;
 	}
 }
-
 
 /* 
  * Set up a blit between two surfaces -- split into three parts:
@@ -430,6 +423,7 @@ int SDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
 	SDL_blit do_blit;
 	SDL_Rect hw_srcrect;
 	SDL_Rect hw_dstrect;
+#ifdef __AMIGA__
 	int skipflag = 0;
 
 	/* applies to software blitting only */
@@ -446,15 +440,17 @@ int SDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
 
 	if( !skipflag )
 	{
+#endif
 		/* Check to make sure the blit mapping is valid */
 		if ( (src->map->dst != dst) ||
-        	     (src->map->dst->format_version != src->map->format_version) ) 
-		     {
+                     (src->map->dst->format_version != src->map->format_version) ) {
 			if ( SDL_MapSurface(src, dst) < 0 ) {
 				return(-1);
-		     }
+			}
 		}
+#ifdef __AMIGA__
 	}
+#endif
 
 	/* Figure out which blitter to use */
 	if ( (src->flags & SDL_HWACCEL) == SDL_HWACCEL ) {
@@ -483,8 +479,9 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 {
         SDL_Rect fulldst;
 	int srcx, srcy, w, h;
+#ifdef __AMIGA__
 	extern int toggle,skipframe;
-    
+#endif
 	/* Make sure the surfaces aren't locked */
 	if ( ! src || ! dst ) {
 		SDL_SetError("SDL_UpperBlit: passed a NULL surface");
@@ -594,7 +591,7 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 	SDL_VideoDevice *this  = current_video;
 	int x, y;
 	Uint8 *row;
-    
+
 	/* This function doesn't work on surfaces < 8 bpp */
 	if ( dst->format->BitsPerPixel < 8 ) {
 		switch(dst->format->BitsPerPixel) {
@@ -608,7 +605,7 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 			SDL_SetError("Fill rect on unsupported surface format");
 			return(-1);
 			break;
-		} 
+		}
 	}
 
 	/* If 'dstrect' == NULL, then fill the whole surface */
@@ -631,10 +628,7 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 			hw_rect.y += current_video->offset_y;
 			dstrect = &hw_rect;
 		}
-		{
-			
 		return(video->FillHWRect(this, dst, dstrect, color));
-		}
 	}
 
 	/* Perform software fill */
@@ -651,18 +645,84 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 				SDL_memset4(row, 0, n);
 				row += dst->pitch;
 			}
-		} else {		
+		} else {
+#ifdef __powerpc__
+			/*
+			 * SDL_memset() on PPC (both glibc and codewarrior) uses
+			 * the dcbz (Data Cache Block Zero) instruction, which
+			 * causes an alignment exception if the destination is
+			 * uncachable, so only use it on software surfaces
+			 */
+			if((dst->flags & SDL_HWSURFACE) == SDL_HWSURFACE) {
+				if(dstrect->w >= 8) {
+					/*
+					 * 64-bit stores are probably most
+					 * efficient to uncached video memory
+					 */
+					double fill;
+					SDL_memset(&fill, color, (sizeof fill));
+					for(y = dstrect->h; y; y--) {
+						Uint8 *d = row;
+						unsigned n = x;
+						unsigned nn;
+						Uint8 c = color;
+						double f = fill;
+						while((unsigned long)d
+						      & (sizeof(double) - 1)) {
+							*d++ = c;
+							n--;
+						}
+						nn = n / (sizeof(double) * 4);
+						while(nn) {
+							((double *)d)[0] = f;
+							((double *)d)[1] = f;
+							((double *)d)[2] = f;
+							((double *)d)[3] = f;
+							d += 4*sizeof(double);
+							nn--;
+						}
+						n &= ~(sizeof(double) * 4 - 1);
+						nn = n / sizeof(double);
+						while(nn) {
+							*(double *)d = f;
+							d += sizeof(double);
+							nn--;
+						}
+						n &= ~(sizeof(double) - 1);
+						while(n) {
+							*d++ = c;
+							n--;
+						}
+						row += dst->pitch;
+					}
+				} else {
+					/* narrow boxes */
+					for(y = dstrect->h; y; y--) {
+						Uint8 *d = row;
+						Uint8 c = color;
+						int n = x;
+						while(n) {
+							*d++ = c;
+							n--;
+						}
+						row += dst->pitch;
+					}
+				}
+			} else
+#endif /* __powerpc__ */
+			{
 				for(y = dstrect->h; y; y--) {
 					SDL_memset(row, color, x);
 					row += dst->pitch;
-				}			
+				}
+			}
 		}
 	} else {
 		switch (dst->format->BytesPerPixel) {
 		    case 2:
 			for ( y=dstrect->h; y; --y ) {
 				Uint16 *pixels = (Uint16 *)row;
-				Uint16 c = (Uint16)(color);
+				Uint16 c = (Uint16)color;
 				Uint32 cc = (Uint32)c << 16 | c;
 				int n = dstrect->w;
 				if((uintptr_t)pixels & 3) {
@@ -796,7 +856,6 @@ SDL_Surface * SDL_ConvertSurface (SDL_Surface *surface,
 	}
 
 	/* Create a new surface with the desired format */
-	//kprintf("%ld %d %d\n",format->BitsPerPixel,format->Rmask,format->Amask);
 	convert = SDL_CreateRGBSurface(flags,
 				surface->w, surface->h, format->BitsPerPixel,
 		format->Rmask, format->Gmask, format->Bmask, format->Amask);
@@ -901,7 +960,6 @@ void SDL_FreeSurface (SDL_Surface *surface)
 		SDL_FreeBlitMap(surface->map);
 		surface->map = NULL;
 	}
-
 	if ( surface->hwdata ) {
 		SDL_VideoDevice *video = current_video;
 		SDL_VideoDevice *this  = current_video;

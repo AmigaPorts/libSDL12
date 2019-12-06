@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -165,7 +165,9 @@ int SDL_SemWaitTimeout(SDL_sem *sem, Uint32 timeout)
 		                             sem->count_lock, timeout);
 	}
 	--sem->waiters_count;
-	--sem->count;
+	if (retval == 0) {
+		--sem->count;
+	}
 	SDL_UnlockMutex(sem->count_lock);
 
 	return retval;

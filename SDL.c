@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -19,17 +19,6 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-/* 
- * public domain strtok_r() by Charlie Gordon
- *
- *   from comp.lang.c  9/14/2007
- *
- *      http://groups.google.com/group/comp.lang.c/msg/2ab1ecbb86646684
- *
- *     (Declaration that it's public domain):
- *      http://groups.google.com/group/comp.lang.c/msg/7c7b39328fefab9c
- */
-
 #include "SDL_config.h"
 
 /* Initialization code for SDL */
@@ -94,8 +83,12 @@ extern void SDL_TimerQuit(void);
 #endif
 
 /* The current SDL version */
-static SDL_version version = 
+static SDL_version version =
 	{ SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL };
+
+#if defined(__amigaos4__) || defined(__AMIGA__)
+static const char __attribute((used)) amiga_ver[] = "$VER: SDL1_2_15 1.4 (22.01.2018)\0";
+#endif
 
 /* The initialized subsystems */
 static Uint32 SDL_initialized = 0;
@@ -109,51 +102,6 @@ int surfaces_allocated = 0;
 
 int SDL_InitSubSystem(Uint32 flags)
 {
-#ifndef NO_AMIGADEBUG
-	fprintf(stderr,"SDL: Before Video Init\n");
-#endif
-
-#if !SDL_VIDEO_DISABLED
-	/* Initialize the video/event subsystem */
-	if ( (flags & SDL_INIT_VIDEO) && !(SDL_initialized & SDL_INIT_VIDEO) ) {
-		if ( SDL_VideoInit(SDL_getenv("SDL_VIDEODRIVER"),
-		                   (flags&SDL_INIT_EVENTTHREAD)) < 0 ) {
-			return(-1);
-		}
-		SDL_initialized |= SDL_INIT_VIDEO;
-	}
-#else
-	if ( flags & SDL_INIT_VIDEO ) {
-		SDL_SetError("SDL not built with video support");
-		return(-1);
-	}
-#endif
-
-#ifndef NO_AMIGADEBUG
-	fprintf(stderr,"SDL: After Video Init\n");
-#endif
-
-#if !SDL_AUDIO_DISABLED
-	/* Initialize the audio subsystem */
-	if ( (flags & SDL_INIT_AUDIO) && !(SDL_initialized & SDL_INIT_AUDIO) ) {
-		if ( SDL_AudioInit(SDL_getenv("SDL_AUDIODRIVER")) < 0 ) {
-			return(-1);
-		}
-		SDL_initialized |= SDL_INIT_AUDIO;
-	}
-#else
-	if ( flags & SDL_INIT_AUDIO ) {
-		SDL_SetError("SDL not built with audio support");
-		return(-1);
-	}
-#endif
-
-	D(bug("test"));
-#ifndef NO_AMIGADEBUG
-	fprintf(stderr,"SDL: After Audio Init\n");
-#endif
-
-
 #if !SDL_TIMERS_DISABLED
 	/* Initialize the timer subsystem */
 	if ( ! ticks_started ) {
@@ -173,10 +121,36 @@ int SDL_InitSubSystem(Uint32 flags)
 	}
 #endif
 
-#ifndef NO_AMIGADEBUG
-	fprintf(stderr,"SDL: After Timer Init\n");
+#if !SDL_VIDEO_DISABLED
+	/* Initialize the video/event subsystem */
+	if ( (flags & SDL_INIT_VIDEO) && !(SDL_initialized & SDL_INIT_VIDEO) ) {
+		if ( SDL_VideoInit(SDL_getenv("SDL_VIDEODRIVER"),
+		                   (flags&SDL_INIT_EVENTTHREAD)) < 0 ) {
+			return(-1);
+		}
+		SDL_initialized |= SDL_INIT_VIDEO;
+	}
+#else
+	if ( flags & SDL_INIT_VIDEO ) {
+		SDL_SetError("SDL not built with video support");
+		return(-1);
+	}
 #endif
 
+#if !SDL_AUDIO_DISABLED
+	/* Initialize the audio subsystem */
+	if ( (flags & SDL_INIT_AUDIO) && !(SDL_initialized & SDL_INIT_AUDIO) ) {
+		if ( SDL_AudioInit(SDL_getenv("SDL_AUDIODRIVER")) < 0 ) {
+			return(-1);
+		}
+		SDL_initialized |= SDL_INIT_AUDIO;
+	}
+#else
+	if ( flags & SDL_INIT_AUDIO ) {
+		SDL_SetError("SDL not built with audio support");
+		return(-1);
+	}
+#endif
 
 #if !SDL_JOYSTICK_DISABLED
 	/* Initialize the joystick subsystem */
@@ -211,8 +185,61 @@ int SDL_InitSubSystem(Uint32 flags)
 	return(0);
 }
 
+#ifdef __amigaos4__
+
+//#define DEBUG
+#include "main/amigaos4/SDL_os4debug.h"
+
+void os4thread_initialize(void);
+void os4thread_quit(void);
+
+void os4timer_initialize(void);
+void os4timer_quit();
+
+void os4video_initialize(void);
+void os4video_quit();
+
+static SDL_bool initialized = SDL_FALSE;
+
+static void os4_initialize(void)
+{
+	dprintf("SDL %d.%d.%d\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+
+	if (!initialized) {
+		// Call "constructor" functions manually
+		os4timer_initialize();
+		os4thread_initialize();
+		os4video_initialize();
+
+		initialized = SDL_TRUE;
+	} else {
+		dprintf("Already initialized\n");
+	}
+}
+
+static void os4_quit(void)
+{
+	if (initialized) {
+		// Call "destructor" functions manually
+		os4video_quit();
+		os4thread_quit();
+		os4timer_quit();
+
+		initialized = SDL_FALSE;
+	} else {
+		dprintf("Not initialized\n");
+	}
+
+	dprintf("SDL QUIT\n");
+}
+#endif
+
 int SDL_Init(Uint32 flags)
 {
+#ifdef __amigaos4__
+	os4_initialize();
+#endif
+
 #if !SDL_THREADS_DISABLED && SDL_THREAD_PTH
 	if (!pth_init()) {
 		return -1;
@@ -249,12 +276,6 @@ void SDL_QuitSubSystem(Uint32 flags)
 		SDL_initialized &= ~SDL_INIT_JOYSTICK;
 	}
 #endif
-#if !SDL_TIMERS_DISABLED
-	if ( (flags & SDL_initialized & SDL_INIT_TIMER) ) {
-		SDL_TimerQuit();
-		SDL_initialized &= ~SDL_INIT_TIMER;
-	}
-#endif
 #if !SDL_AUDIO_DISABLED
 	if ( (flags & SDL_initialized & SDL_INIT_AUDIO) ) {
 		SDL_AudioQuit();
@@ -265,6 +286,12 @@ void SDL_QuitSubSystem(Uint32 flags)
 	if ( (flags & SDL_initialized & SDL_INIT_VIDEO) ) {
 		SDL_VideoQuit();
 		SDL_initialized &= ~SDL_INIT_VIDEO;
+	}
+#endif
+#if !SDL_TIMERS_DISABLED
+	if ( (flags & SDL_initialized & SDL_INIT_TIMER) ) {
+		SDL_TimerQuit();
+		SDL_initialized &= ~SDL_INIT_TIMER;
 	}
 #endif
 }
@@ -284,7 +311,7 @@ void SDL_Quit(void)
   printf("[SDL_Quit] : Enter! Calling QuitSubSystem()\n"); fflush(stdout);
 #endif
 	SDL_QuitSubSystem(SDL_INIT_EVERYTHING);
- 
+
 #ifdef CHECK_LEAKS
 #ifdef DEBUG_BUILD
   printf("[SDL_Quit] : CHECK_LEAKS\n"); fflush(stdout);
@@ -292,10 +319,10 @@ void SDL_Quit(void)
 
 	/* Print the number of surfaces not freed */
 	if ( surfaces_allocated != 0 ) {
-		fprintf(stderr, "SDL Warning: %d SDL surfaces extant\n", 
+		fprintf(stderr, "SDL Warning: %d SDL surfaces extant\n",
 							surfaces_allocated);
 	}
-#endif 
+#endif
 #ifdef DEBUG_BUILD
   printf("[SDL_Quit] : SDL_UninstallParachute()\n"); fflush(stdout);
 #endif
@@ -309,8 +336,13 @@ void SDL_Quit(void)
 #ifdef DEBUG_BUILD
   printf("[SDL_Quit] : Returning!\n"); fflush(stdout);
 #endif
-    
-    amiga_quit_timer();  //amigaos add
+
+#ifdef __amigaos4__
+	os4_quit();
+#endif
+#ifdef __AMIGA__
+    amiga_quit_timer();
+#endif
 }
 
 /* Return the library version number */
@@ -397,8 +429,8 @@ unsigned _System LibMain(unsigned hmod, unsigned termination)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-BOOL APIENTRY _DllMainCRTStartup( HANDLE hModule, 
-                       DWORD  ul_reason_for_call, 
+BOOL APIENTRY _DllMainCRTStartup( HANDLE hModule,
+                       DWORD  ul_reason_for_call,
                        LPVOID lpReserved )
 {
 	switch (ul_reason_for_call) {

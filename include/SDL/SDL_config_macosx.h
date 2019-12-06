@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -133,6 +133,7 @@
 #define SDL_VIDEO_DRIVER_X11_XME 1
 #define SDL_VIDEO_DRIVER_X11_XRANDR 1
 #define SDL_VIDEO_DRIVER_X11_XV 1
+#define SDL_VIDEO_DRIVER_X11_CONST_PARAM_XDATA32 1
 
 /* Enable OpenGL support */
 #define SDL_VIDEO_OPENGL	1

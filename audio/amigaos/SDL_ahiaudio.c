@@ -1,37 +1,29 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998  Sam Lantinga
+    Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
+    modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    version 2.1 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Sam Lantinga
-    5635-34 Springhouse Dr.
-    Pleasanton, CA 94588 (USA)
     slouken@libsdl.org
 */
+#include "SDL_config.h"
 
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_ahiaudio.c,v 1.2 2002/11/20 08:51:16 gabry Exp $";
-#endif
+/* Allow access to a raw mixing buffer (for AmigaOS) */
 
-/* Allow access to a raw mixing buffer (For IRIX 6.5 and higher) */
-
-#include "SDL_endian.h"
 #include "SDL_audio.h"
-#include "../SDL_audiomem.h"
 #include "../SDL_audio_c.h"
 #include "SDL_ahiaudio.h"
 
@@ -43,13 +35,12 @@ static Uint8 *AHI_GetAudioBuf(_THIS);
 static void AHI_CloseAudio(_THIS);
 
 #ifndef __SASC
-	#define mymalloc(x) AllocVec(x,MEMF_PUBLIC)
+	#define mymalloc(x) AllocVec(x,MEMF_PUBLIC) 
 	#define myfree FreeVec
 #else
 	#define mymalloc malloc
 	#define myfree free
 #endif
-
 
 /* Audio driver bootstrap functions */
 
@@ -82,8 +73,8 @@ static int Audio_Available(void)
 
 static void Audio_DeleteDevice(SDL_AudioDevice *device)
 {
-	free(device->hidden);
-	free(device);
+	SDL_free(device->hidden);
+	SDL_free(device);
 }
 
 static SDL_AudioDevice *Audio_CreateDevice(int devindex)
@@ -95,20 +86,20 @@ static SDL_AudioDevice *Audio_CreateDevice(int devindex)
 #endif
 
 	/* Initialize all variables that we clean on shutdown */
-	this = (SDL_AudioDevice *)malloc(sizeof(SDL_AudioDevice));
+	this = (SDL_AudioDevice *)SDL_malloc(sizeof(SDL_AudioDevice));
 	if ( this ) {
-		memset(this, 0, sizeof(SDL_AudioDevice));
+		SDL_memset(this, 0, (sizeof *this));
 		this->hidden = (struct SDL_PrivateAudioData *)
-				malloc(sizeof(struct SDL_PrivateAudioData));
+				SDL_malloc((sizeof *this->hidden));
 	}
 	if ( (this == NULL) || (this->hidden == NULL) ) {
 		SDL_OutOfMemory();
 		if ( this ) {
-			free(this);
+			SDL_free(this);
 		}
 		return(0);
 	}
-	memset(this->hidden, 0, sizeof(struct SDL_PrivateAudioData) );
+	SDL_memset(this->hidden, 0, (sizeof *this->hidden));
 
 	/* Set the function pointers */
 	this->OpenAudio = AHI_OpenAudio;
@@ -168,9 +159,11 @@ static void AHI_CloseAudio(_THIS)
 {
 	D(bug("Closing audio...\n"));
 
+	playing=0;
+
 	if(audio_req[0])
 	{
-		if(audio_req[1]  && playing>1)
+		if(audio_req[1])
 		{
 			D(bug("Break req[1]...\n"));
 
@@ -183,7 +176,7 @@ static void AHI_CloseAudio(_THIS)
 		AbortIO((struct IORequest *)audio_req[0]);
 		WaitIO((struct IORequest *)audio_req[0]);
 
-		if(audio_req[1] && playing>1)
+		if(audio_req[1])
 		{
 			D(bug("Break AGAIN req[1]...\n"));
 			AbortIO((struct IORequest *)audio_req[1]);
@@ -191,20 +184,16 @@ static void AHI_CloseAudio(_THIS)
 		}
 // Double abort to be sure to break the dbuffering process.
 
-		
+		SDL_Delay(200);
 
 		D(bug("Reqs breaked, closing device...\n"));
 		CloseDevice((struct IORequest *)audio_req[0]);
 		D(bug("Device closed, freeing memory...\n"));
 		myfree(audio_req[1]);
-		D(bug("Memory freed, deleting IOReq...\n"));
+		D(bug("Memory freed, deleting IOReq...\n")); 
 		DeleteIORequest((struct IORequest *)audio_req[0]);
 		audio_req[0]=audio_req[1]=NULL;
-
-		Delay(3); // wait 60 ms to be safe
 	}
-
-	playing=0;
 
 	D(bug("Freeing mixbuf[0]...\n"));
 	if ( mixbuf[0] != NULL ) {
@@ -230,16 +219,11 @@ static void AHI_CloseAudio(_THIS)
 }
 
 static int AHI_OpenAudio(_THIS, SDL_AudioSpec *spec)
-{
+{	
 //	int width;
 
 	D(bug("AHI opening...\n"));
-/*    if (spec->channels > 2)
-	{
-		kprintf("More than 2 channels not currently supported, forcing conversion...\n");
-		spec->channels = 2;
-	}
-*/
+
 	/* Determine the audio parameters from the AudioSpec */
 	switch ( spec->format & 0xFF ) {
 
@@ -308,7 +292,7 @@ static int AHI_OpenAudio(_THIS, SDL_AudioSpec *spec)
 		DeleteMsgPort(audio_port);
 		return -1;
 	}
-
+	
 	D(bug("AFTER opendevice\n"));
 
 	/* Set output frequency and size */
@@ -328,10 +312,10 @@ static int AHI_OpenAudio(_THIS, SDL_AudioSpec *spec)
 		SDL_OutOfMemory();
 		return(-1);
 	}
-
+	
 	D(bug("Before audio_req memcpy\n"));
 
-	memcpy(audio_req[1],audio_req[0],sizeof(struct AHIRequest));
+	SDL_memcpy(audio_req[1],audio_req[0],sizeof(struct AHIRequest));
 
 	if ( mixbuf[0] == NULL || mixbuf[1] == NULL ) {
 		SDL_OutOfMemory();
@@ -340,8 +324,8 @@ static int AHI_OpenAudio(_THIS, SDL_AudioSpec *spec)
 
 	D(bug("Before mixbuf memset\n"));
 
-	memset(mixbuf[0], spec->silence, spec->size);
-	memset(mixbuf[1], spec->silence, spec->size);
+	SDL_memset(mixbuf[0], spec->silence, spec->size);
+	SDL_memset(mixbuf[1], spec->silence, spec->size);
 
 	current_buffer=0;
 	playing=0;
@@ -351,5 +335,3 @@ static int AHI_OpenAudio(_THIS, SDL_AudioSpec *spec)
 	/* We're ready to rock and roll. :-) */
 	return(0);
 }
-
-

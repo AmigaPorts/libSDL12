@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -94,6 +94,17 @@ int SDL_CondBroadcast(SDL_cond *cond)
 	}
 	return retval;
 }
+
+#ifdef __amigaos4__
+
+/* FIXME: hack to get compile working. At least my SDK defines timespec only for CLIB2 */
+struct timespec
+{
+	unsigned int tv_sec;
+	unsigned int tv_nsec;
+};
+
+#endif  
 
 int SDL_CondWaitTimeout(SDL_cond *cond, SDL_mutex *mutex, Uint32 ms)
 {

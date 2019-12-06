@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -99,7 +99,7 @@ void SDL_SYS_SetupThread(void)
 /* WARNING:  This may not work for systems with 64-bit pid_t */
 Uint32 SDL_ThreadID(void)
 {
-	return((Uint32)pthread_self());
+	return((Uint32)((size_t)pthread_self()));
 }
 
 void SDL_SYS_WaitThread(SDL_Thread *thread)

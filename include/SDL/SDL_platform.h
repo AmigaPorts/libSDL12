@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,10 @@
 #if defined(_AIX)
 #undef __AIX__
 #define __AIX__		1
+#endif
+#if defined(AMIGA) || defined(__AMIGA) || defined(__amigados__)
+#undef __AMIGA__
+#define __AMIGA__	1
 #endif
 #if defined(__BEOS__)
 #undef __BEOS__
@@ -82,7 +86,7 @@
 #undef __OPENBSD__
 #define __OPENBSD__	1
 #endif
-#if defined(__OS2__)
+#if defined(__OS2__) || defined(__EMX__)
 #undef __OS2__
 #define __OS2__		1
 #endif

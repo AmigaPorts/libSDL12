@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#define static 
 #include "SDL_config.h"
 
 /* This is the software implementation of the YUV video overlay support */
@@ -291,7 +290,7 @@ static void Color32DitherYV12Mod1X( int *colortab, Uint32 *rgb_2_pix,
                                     unsigned char *lum, unsigned char *cr,
                                     unsigned char *cb, unsigned char *out,
                                     int rows, int cols, int mod )
-{ // for mp4 used 
+{
     unsigned int* row1;
     unsigned int* row2;
     unsigned char* lum2;
@@ -1000,7 +999,7 @@ SDL_Overlay *SDL_CreateYUV_SW(_THIS, int width, int height, Uint32 format, SDL_S
 	int i;
 	int CR, CB;
 	Uint32 Rmask, Gmask, Bmask;
-    //new start
+
 	/* Only RGB packed pixel conversion supported */
 	if ( (display->format->BytesPerPixel != 1) &&
 	     (display->format->BytesPerPixel != 2) &&
@@ -1009,18 +1008,19 @@ SDL_Overlay *SDL_CreateYUV_SW(_THIS, int width, int height, Uint32 format, SDL_S
 		SDL_SetError("Can't use YUV data on non 16/24/32 bit surfaces");
 		return(NULL);
 	}
-    if (display->format->BytesPerPixel == 1)
+
+	if (display->format->BytesPerPixel == 1)
 	{
-	 struct SDL_Color color;
-      for (i=0;i<256;i++)
-	  {
-		  color.r=i;
-		  color.g=i;
-		  color.b=i;
-		  SDL_SetColors(display,&color,i,1);
-	  }
+		struct SDL_Color color;
+		for (i=0;i<256;i++)
+		{
+			color.r=i;
+			color.g=i;
+			color.b=i;
+			SDL_SetColors(display,&color,i,1);
+		}
 	}
-	//new end
+
 	/* Verify that we support the format */
 	switch (format) {
 	    case SDL_YV12_OVERLAY:
@@ -1197,7 +1197,6 @@ SDL_Overlay *SDL_CreateYUV_SW(_THIS, int width, int height, Uint32 format, SDL_S
 			swdata->Display1X = Color32DitherYUY2Mod1X;
 			swdata->Display2X = Color32DitherYUY2Mod2X;
 		}
-
 		break;
 	    default:
 		/* We should never get here (caught above) */
@@ -1255,7 +1254,7 @@ int SDL_DisplayYUV_SW(_THIS, SDL_Overlay *overlay, SDL_Rect *src, SDL_Rect *dst)
 	Uint8 *lum, *Cr, *Cb;
 	Uint8 *dstp;
 	int mod;
-    
+
 	swdata = overlay->hwdata;
 	stretch = 0;
 	scale_2x = 0;
@@ -1349,7 +1348,6 @@ int SDL_DisplayYUV_SW(_THIS, SDL_Overlay *overlay, SDL_Rect *src, SDL_Rect *dst)
 		SDL_UnlockSurface(display);
 	}
 	if ( stretch ) {
-		
 		display = swdata->display;
 		SDL_SoftStretch(swdata->stretch, src, display, dst);
 	}
@@ -1377,5 +1375,6 @@ void SDL_FreeYUV_SW(_THIS, SDL_Overlay *overlay)
 			SDL_free(swdata->rgb_2_pix);
 		}
 		SDL_free(swdata);
+		overlay->hwdata = NULL;
 	}
 }

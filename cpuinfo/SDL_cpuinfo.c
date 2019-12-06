@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -26,11 +26,31 @@
 #include "SDL.h"
 #include "SDL_cpuinfo.h"
 
-#if defined(__MACOSX__) && defined(__ppc__)
+#if defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))
 #include <sys/sysctl.h> /* For AltiVec check */
+#elif defined(__OpenBSD__) && defined(__powerpc__)
+#include <sys/param.h>
+#include <sys/sysctl.h> /* For AltiVec check */
+#include <machine/cpu.h>
 #elif SDL_ALTIVEC_BLITTERS && HAVE_SETJMP
 #include <signal.h>
 #include <setjmp.h>
+#endif
+
+#if defined(WARPUP)
+#include <stdlib.h>
+
+#pragma pack(2)
+#include <exec/execbase.h>
+#endif
+#if defined(__amigaos4__)
+#include <proto/exec.h>
+#include <exec/exectags.h>
+#elif defined(WARPUP)
+#include <proto/exec.h>
+#include <powerpc/powerpc.h>
+#include <powerpc/powerpc_protos.h>
+#pragma pack()
 #endif
 
 #define CPU_HAS_RDTSC	0x00000001
@@ -42,7 +62,7 @@
 #define CPU_HAS_SSE2	0x00000080
 #define CPU_HAS_ALTIVEC	0x00000100
 
-#if SDL_ALTIVEC_BLITTERS && HAVE_SETJMP && !__MACOSX__
+#if SDL_ALTIVEC_BLITTERS && HAVE_SETJMP && !__MACOSX__ && !__OpenBSD__
 /* This is the brute force way of detecting instruction sets...
    the idea is borrowed from the libmpeg2 library - thanks!
  */
@@ -146,52 +166,80 @@ done:
 static __inline__ int CPU_getCPUIDFeatures(void)
 {
 	int features = 0;
-#if defined(__GNUC__) && ( defined(i386) || defined(__x86_64__) )
+#if defined(__GNUC__) && defined(i386)
 	__asm__ (
-"        movl    %%ebx,%%edi\n"
 "        xorl    %%eax,%%eax         # Set up for CPUID instruction    \n"
+"        pushl   %%ebx                                                 \n"
 "        cpuid                       # Get and save vendor ID          \n"
+"        popl    %%ebx                                                 \n"
 "        cmpl    $1,%%eax            # Make sure 1 is valid input for CPUID\n"
 "        jl      1f                  # We dont have the CPUID instruction\n"
 "        xorl    %%eax,%%eax                                           \n"
 "        incl    %%eax                                                 \n"
+"        pushl   %%ebx                                                 \n"
 "        cpuid                       # Get family/model/stepping/features\n"
+"        popl    %%ebx                                                 \n"
 "        movl    %%edx,%0                                              \n"
 "1:                                                                    \n"
-"        movl    %%edi,%%ebx\n"
 	: "=m" (features)
 	:
-	: "%eax", "%ecx", "%edx", "%edi"
+	: "%eax", "%ecx", "%edx"
+	);
+#elif defined(__GNUC__) && defined(__x86_64__)
+	__asm__ (
+"        xorl    %%eax,%%eax         # Set up for CPUID instruction    \n"
+"        pushq   %%rbx                                                 \n"
+"        cpuid                       # Get and save vendor ID          \n"
+"        popq    %%rbx                                                 \n"
+"        cmpl    $1,%%eax            # Make sure 1 is valid input for CPUID\n"
+"        jl      1f                  # We dont have the CPUID instruction\n"
+"        xorl    %%eax,%%eax                                           \n"
+"        incl    %%eax                                                 \n"
+"        pushq   %%rbx                                                 \n"
+"        cpuid                       # Get family/model/stepping/features\n"
+"        popq    %%rbx                                                 \n"
+"        movl    %%edx,%0                                              \n"
+"1:                                                                    \n"
+	: "=m" (features)
+	:
+	: "%rax", "%rcx", "%rdx"
 	);
 #elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
 	__asm {
         xor     eax, eax            ; Set up for CPUID instruction
+        push    ebx
         cpuid                       ; Get and save vendor ID
+        pop     ebx
         cmp     eax, 1              ; Make sure 1 is valid input for CPUID
         jl      done                ; We dont have the CPUID instruction
         xor     eax, eax
         inc     eax
+        push    ebx
         cpuid                       ; Get family/model/stepping/features
+        pop     ebx
         mov     features, edx
 done:
 	}
 #elif defined(__sun) && (defined(__i386) || defined(__amd64))
 	    __asm(
-"        movl    %ebx,%edi\n"
 "        xorl    %eax,%eax         \n"
+"        pushl   %ebx              \n"
 "        cpuid                     \n"
+"        popl    %ebx              \n"
 "        cmpl    $1,%eax           \n"
 "        jl      1f                \n"
 "        xorl    %eax,%eax         \n"
 "        incl    %eax              \n"
+"        pushl   %ebx              \n"
 "        cpuid                     \n"
+"        popl    %ebx              \n"
 #ifdef __i386
 "        movl    %edx,-8(%ebp)     \n"
 #else
 "        movl    %edx,-8(%rbp)     \n"
 #endif
 "1:                                \n"
-"        movl    %edi,%ebx\n" );
+	    );
 #endif
 	return features;
 }
@@ -199,49 +247,75 @@ done:
 static __inline__ int CPU_getCPUIDFeaturesExt(void)
 {
 	int features = 0;
-#if defined(__GNUC__) && (defined(i386) || defined (__x86_64__) )
+#if defined(__GNUC__) && defined(i386)
 	__asm__ (
-"        movl    %%ebx,%%edi\n"
 "        movl    $0x80000000,%%eax   # Query for extended functions    \n"
+"        pushl   %%ebx                                                 \n"
 "        cpuid                       # Get extended function limit     \n"
+"        popl    %%ebx                                                 \n"
 "        cmpl    $0x80000001,%%eax                                     \n"
 "        jl      1f                  # Nope, we dont have function 800000001h\n"
 "        movl    $0x80000001,%%eax   # Setup extended function 800000001h\n"
+"        pushl   %%ebx                                                 \n"
 "        cpuid                       # and get the information         \n"
+"        popl    %%ebx                                                 \n"
 "        movl    %%edx,%0                                              \n"
 "1:                                                                    \n"
-"        movl    %%edi,%%ebx\n"
 	: "=m" (features)
 	:
-	: "%eax", "%ecx", "%edx", "%edi"
+	: "%eax", "%ecx", "%edx"
+	);
+#elif defined(__GNUC__) && defined (__x86_64__)
+	__asm__ (
+"        movl    $0x80000000,%%eax   # Query for extended functions    \n"
+"        pushq   %%rbx                                                 \n"
+"        cpuid                       # Get extended function limit     \n"
+"        popq    %%rbx                                                 \n"
+"        cmpl    $0x80000001,%%eax                                     \n"
+"        jl      1f                  # Nope, we dont have function 800000001h\n"
+"        movl    $0x80000001,%%eax   # Setup extended function 800000001h\n"
+"        pushq   %%rbx                                                 \n"
+"        cpuid                       # and get the information         \n"
+"        popq    %%rbx                                                 \n"
+"        movl    %%edx,%0                                              \n"
+"1:                                                                    \n"
+	: "=m" (features)
+	:
+	: "%rax", "%rcx", "%rdx"
 	);
 #elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
 	__asm {
         mov     eax,80000000h       ; Query for extended functions
+        push    ebx
         cpuid                       ; Get extended function limit
+        pop     ebx
         cmp     eax,80000001h
         jl      done                ; Nope, we dont have function 800000001h
         mov     eax,80000001h       ; Setup extended function 800000001h
+        push    ebx
         cpuid                       ; and get the information
+        pop     ebx
         mov     features,edx
 done:
 	}
 #elif defined(__sun) && ( defined(__i386) || defined(__amd64) )
 	    __asm (
-"        movl    %ebx,%edi\n"
 "        movl    $0x80000000,%eax \n"
+"        pushl   %ebx             \n"
 "        cpuid                    \n"
+"        popl    %ebx             \n"
 "        cmpl    $0x80000001,%eax \n"
 "        jl      1f               \n"
 "        movl    $0x80000001,%eax \n"
+"        pushl   %ebx             \n"
 "        cpuid                    \n"
+"        popl    %ebx             \n"
 #ifdef __i386
 "        movl    %edx,-8(%ebp)   \n"
 #else
 "        movl    %edx,-8(%rbp)   \n"
 #endif
 "1:                               \n"
-"        movl    %edi,%ebx\n"
 	    );
 #endif
 	return features;
@@ -305,14 +379,39 @@ static __inline__ int CPU_haveSSE2(void)
 
 static __inline__ int CPU_haveAltiVec(void)
 {
+#ifndef WARPUP
 	volatile int altivec = 0;
-#if defined(__MACOSX__) && defined(__ppc__)
-	int selectors[2] = { CTL_HW, HW_VECTORUNIT }; 
+#endif
+
+#if (defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))) || (defined(__OpenBSD__) && defined(__powerpc__))
+# ifdef __OpenBSD__
+	int selectors[2] = { CTL_MACHDEP, CPU_ALTIVEC };
+# else
+	int selectors[2] = { CTL_HW, HW_VECTORUNIT };
+# endif
 	int hasVectorUnit = 0; 
 	size_t length = sizeof(hasVectorUnit); 
 	int error = sysctl(selectors, 2, &hasVectorUnit, &length, NULL, 0); 
 	if( 0 == error )
-		altivec = (hasVectorUnit != 0); 
+		altivec = (hasVectorUnit != 0);
+#elif defined(__amigaos4__)
+	{
+		uint32 vec_unit;
+
+		IExec->GetCPUInfoTags(GCIT_VectorUnit, &vec_unit, TAG_DONE);
+		altivec = (vec_unit == VECTORTYPE_ALTIVEC);
+	}
+#elif defined(WARPUP)
+	int altivec = 0;
+	if (PowerPCBase->lib_Version >= 17)
+	{
+		struct TagItem cputags[2] = { {GETINFO_CPU, 0}, {TAG_END,0} };
+		GetInfo(cputags);
+		if (cputags[0].ti_Data & CPUF_G4)
+		{
+			altivec = 1;
+		}
+	}
 #elif SDL_ALTIVEC_BLITTERS && HAVE_SETJMP
 	void (*handler)(int sig);
 	handler = signal(SIGILL, illegal_instruction);
