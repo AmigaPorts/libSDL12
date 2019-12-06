@@ -535,7 +535,7 @@ static void SDL_ClearSurface(SDL_Surface *surface)
 		SDL_Flip(surface);
 		SDL_FillRect(surface, NULL, black);
 	}
-#ifndef__AMIGA__
+#ifndef __AMIGA__
 	if (surface->flags&SDL_FULLSCREEN) {
 #endif
 		SDL_Flip(surface);
@@ -1143,15 +1143,15 @@ void SDL_UpdateRects (SDL_Surface *screen, int numrects, SDL_Rect *rects)
 /*
  * Performs hardware double buffering, if possible, or a full update if not.
  */
-int SDL_Flip
-#ifdef __AMIGA__
-_m68k
+#if defined(__AMIGA__)
+int SDL_Flip_m68k(SDL_Surface *screen)
+#else
+int SDL_Flip(SDL_Surface *screen)
 #endif
-(SDL_Surface *screen)
 {
 #ifdef __AMIGA__
 	extern int skipframe,toggle;
-	
+
 	if (skipframe)
 	{
 		if (toggle < skipframe){toggle++;return 0;}

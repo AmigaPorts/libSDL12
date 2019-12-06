@@ -1,4 +1,7 @@
 #objects
 *.go
 *.a
+*.ao
+*.o
+*.ll
 /Default/

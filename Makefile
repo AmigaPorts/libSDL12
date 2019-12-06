@@ -8,7 +8,7 @@
 #  12-Feb: - deleted redundant includes, now only SDL/ directory remains (as it should)
 
 PREFX := /opt/m68k-amigaos/
-	  
+
 CC := $(PREFX)/bin/m68k-amigaos-gcc
 AS := $(PREFX)/bin/m68k-amigaos-as
 AR := $(PREFX)/bin/m68k-amigaos-ar
@@ -29,7 +29,7 @@ GLFLAGS = -DSHARED_LIB -lamiga
 GCCFLAGS += -DNO_AMIGADEBUG
 GLFLAGS  += -DNO_AMIGADEBUG
 
-GCCDEFINES = -DENABLE_CYBERGRAPHICS -DNO_SIGNAL_H -D__MEM_AMIGA -DENABLE_AHI 
+GCCDEFINES = -DENABLE_CYBERGRAPHICS -DNO_SIGNAL_H -D__MEM_AMIGA -DENABLE_AHI
 #-DNO_INLINE_STDARG
 
 GOBJS = audio/SDL_audio.go audio/SDL_audiocvt.go audio/SDL_mixer.go audio/SDL_wave.go audio/amigaos/SDL_ahiaudio.go \
