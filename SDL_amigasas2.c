@@ -13,7 +13,7 @@
 /*                                                                            */
 /******************************************************************************/
 
-extern void kprintf(char *,...);
+extern void D(bug(char *, ...);
 
 extern struct ExecBase *SysBase;
 extern struct DosLibrary *DOSBase;
@@ -27,26 +27,26 @@ extern struct Library *UtilityBase;
 /*                                                                            */
 /******************************************************************************/
 
-int __saveds __asm __UserLibInit(register __a6 struct Library *libbase)
-{
-  /* required !!! */
-  SysBase=*(struct ExecBase **)4;
+int __saveds __asm
 
-  kprintf("***SDL.library init: %lx\n",libbase);
+__UserLibInit(register __a6 struct Library *libbase) {
+	/* required !!! */
+	SysBase = *(struct ExecBase **)4;
 
+	D(bug("***SDL.library init: %lx\n", libbase));
 
-  if(!(DOSBase=(struct DosLibrary *)OpenLibrary("dos.library",39L))) {
-	kprintf("unable to open dos.library\n");
-	return 1;
-  }
+	if ( !(DOSBase = (struct DosLibrary *)OpenLibrary("dos.library", 39L))) {
+		D(bug("unable to open dos.library\n"));
+		return 1;
+	}
 
-  if(!(UtilityBase=OpenLibrary("utility.library",37L))) {
-        kprintf("***unable to open utility.library.\n");
-	CloseLibrary((struct Library *)DOSBase);
-	return 1;
-  }
+	if ( !(UtilityBase = OpenLibrary("utility.library", 37L))) {
+		D(bug("***unable to open utility.library.\n"));
+		CloseLibrary((struct Library *)DOSBase);
+		return 1;
+	}
 
-  return 0;
+	return 0;
 }
 
 /******************************************************************************/
@@ -57,11 +57,12 @@ int __saveds __asm __UserLibInit(register __a6 struct Library *libbase)
 /*                                                                            */
 /******************************************************************************/
 
-void __saveds __asm __UserLibCleanup(register __a6 struct Library *myLib)
-{
-  kprintf("***SDL.library cleanup\n");
-  CloseLibrary(UtilityBase);
-  CloseLibrary((struct Library *)DOSBase);
+void __saveds __asm
+
+__UserLibCleanup(register __a6 struct Library *myLib) {
+	D(bug("***SDL.library cleanup\n"));
+	CloseLibrary(UtilityBase);
+	CloseLibrary((struct Library *)DOSBase);
 }
 
 /******************************************************************************/
@@ -70,47 +71,74 @@ void __saveds __asm __UserLibCleanup(register __a6 struct Library *myLib)
 /*                                                                            */
 /******************************************************************************/
 
-#define ADDTABL_0(x)  __saveds __asm LIB ## x (void) { kprintf("Chiamata " #x "()\n"); }
-#define ADDTABL_1(x,y)  __saveds __asm LIB ## x (register __ ## y long arg1) {kprintf("Chiamata " #x "(%ld)\n",arg1); }
-#define ADDTABL_2(x,y,z)  __saveds __asm LIB ## x (register __ ## y long arg1, register __ ## z long arg2) { kprintf("Chiamata " #x "(%ld,%ld)\n",arg1,arg2); }
-#define ADDTABL_3(x,y,z,t)  __saveds __asm LIB ## x (register __ ## y long arg1, register __ ## z long arg2,register __ ## t long arg3) { kprintf("Chiamata " #x "(%ld,%ld,%ld)\n",arg1,arg2,arg3); }
-#define ADDTABL_4(x,y,z,t,v)  __saveds __asm LIB ## x (register __ ## y long arg1, register __ ## z long arg2,register __ ## t long arg3,register __ ## v long arg4) { kprintf("Chiamata " #x "(%ld,%ld,%ld,%ld)\n",arg1,arg2,arg3,arg4); }
-#define ADDTABL_5(x,y,z,t,v,k)  __saveds __asm LIB ## x (register __ ## y long arg1, register __ ## z long arg2,register __ ## t long arg3,register __ ## v long arg4,register __ ## k long arg5) {kprintf("Chiamata " #x "(%ld,%ld,%ld,%ld,%ld)\n",arg1,arg2,arg3,arg4,arg5);}
+#define ADDTABL_0(x) \
+  __saveds __asm LIB##x(void) {D(bug("Chiamata " #x "()\n")); }
+#define ADDTABL_1(x, y) \
+  __saveds __asm LIB##x(register __##y long arg1) {D(bug("Chiamata " #x "(%ld)\n", arg1)); }
+#define ADDTABL_2(x, y, z) \
+  __saveds __asm LIB##x(register __##y long arg1, register __##z long arg2) {D(bug("Chiamata " #x "(%ld,%ld)\n", arg1, arg2)); }
+#define ADDTABL_3(x, y, z, t) \
+  __saveds __asm LIB##x(register __##y long arg1, register __##z long arg2, register __##t long arg3) {D(bug("Chiamata " #x "(%ld,%ld,%ld)\n", arg1, arg2, arg3)); }
+#define ADDTABL_4(x, y, z, t, v) \
+  __saveds __asm LIB##x(register __##y long arg1, register __##z long arg2, register __##t long arg3, register __##v long arg4) {D(bug("Chiamata " #x "(%ld,%ld,%ld,%ld)\n", arg1, arg2, arg3, arg4)); }
+#define ADDTABL_5(x, y, z, t, v, k) \
+  __saveds __asm LIB##x(register __##y long arg1, register __##z long arg2, register __##t long arg3, register __##v long arg4, register __##k long arg5) {D(bug("Chiamata " #x "(%ld,%ld,%ld,%ld,%ld)\n", arg1, arg2, arg3, arg4, arg5)); }
 
 
-ADDTABL_1(SDL_Init,d0) /* One Argument in d0 */
+ADDTABL_1(SDL_Init, d0) /* One Argument in d0 */
 ADDTABL_0(SDL_Quit)
-ADDTABL_1(SDL_InitSubSystem,d0)
-ADDTABL_1(SDL_QuitSubSystem,d0)
-ADDTABL_1(SDL_WasInit,d0)
+
+ADDTABL_1(SDL_InitSubSystem, d0)
+
+ADDTABL_1(SDL_QuitSubSystem, d0)
+
+ADDTABL_1(SDL_WasInit, d0)
+
 ADDTABL_0(SDL_GetError)
-ADDTABL_2(SDL_RWFromFile,a0,d0)
-ADDTABL_2(SDL_RWFromFP,a0,d0)
-ADDTABL_2(SDL_RWFromMem,a0,d0)
+
+ADDTABL_2(SDL_RWFromFile, a0, d0)
+
+ADDTABL_2(SDL_RWFromFP, a0, d0)
+
+ADDTABL_2(SDL_RWFromMem, a0, d0)
 
 // video
 
-ADDTABL_2(SDL_LoadBMP_RW,a0,d0)
-ADDTABL_3(SDL_SetColorKey,a0,d0,d1)
-ADDTABL_1(SDL_DisplayFormat,a0)
-ADDTABL_1(SDL_FreeSurface,a0)
-ADDTABL_3(SDL_FillRect,a0,a1,d0)
-ADDTABL_4(SDL_UpperBlit,a0,d0,a1,d1)
-ADDTABL_1(SDL_Flip,a0)
-ADDTABL_3(SDL_UpdateRects,a0,d0,a1)
-ADDTABL_5(SDL_UpdateRect,a0,d0,d1,d2,d3)
+ADDTABL_2(SDL_LoadBMP_RW, a0, d0)
+
+ADDTABL_3(SDL_SetColorKey, a0, d0, d1)
+
+ADDTABL_1(SDL_DisplayFormat, a0)
+
+ADDTABL_1(SDL_FreeSurface, a0)
+
+ADDTABL_3(SDL_FillRect, a0, a1, d0)
+
+ADDTABL_4(SDL_UpperBlit, a0, d0, a1, d1)
+
+ADDTABL_1(SDL_Flip, a0)
+
+ADDTABL_3(SDL_UpdateRects, a0, d0, a1)
+
+ADDTABL_5(SDL_UpdateRect, a0, d0, d1, d2, d3)
+
 ADDTABL_0(SDL_GetVideoInfo)
-ADDTABL_4(SDL_SetVideoMode,d0,d1,d2,d3)
-ADDTABL_4(SDL_MapRGB,a0,d0,d1,d2)
+
+ADDTABL_4(SDL_SetVideoMode, d0, d1, d2, d3)
+
+ADDTABL_4(SDL_MapRGB, a0, d0, d1, d2)
 
 // timer
 ADDTABL_0(SDL_GetTicks)
-ADDTABL_1(SDL_Delay,d0)
+
+ADDTABL_1(SDL_Delay, d0)
 
 // events
-ADDTABL_1(SDL_PollEvent,a0)
-ADDTABL_1(SDL_WaitEvent,a0)
-ADDTABL_4(SDL_PeepEvents,a0,d0,d1,d2)
+ADDTABL_1(SDL_PollEvent, a0)
+
+ADDTABL_1(SDL_WaitEvent, a0)
+
+ADDTABL_4(SDL_PeepEvents, a0, d0, d1, d2)
 
 /******************************************************************************/
 /*                                                                            */
@@ -120,9 +148,8 @@ ADDTABL_4(SDL_PeepEvents,a0,d0,d1,d2)
 
 // ADDTABL_END()
 
-void _XCEXIT(void)
-{
-	kprintf("Warning SDL.library attempted exit, sleeping forever!\n");
+void _XCEXIT(void) {
+	D(bug("Warning SDL.library attempted exit, sleeping forever!\n"));
 	Wait(0); // resto in wait forever
 }
 

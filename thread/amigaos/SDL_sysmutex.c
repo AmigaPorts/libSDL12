@@ -42,8 +42,7 @@ struct SDL_mutex {
 };
 
 /* Create a mutex */
-SDL_mutex *SDL_CreateMutex(void)
-{
+SDL_mutex *SDL_CreateMutex(void) {
 	SDL_mutex *mutex;
 
 	/* Allocate mutex memory */
@@ -53,7 +52,7 @@ SDL_mutex *SDL_CreateMutex(void)
 		mutex->sem = SDL_CreateSemaphore(1);
 		mutex->recursive = 0;
 		mutex->owner = 0;
-		if ( ! mutex->sem ) {
+		if ( !mutex->sem ) {
 			free(mutex);
 			mutex = NULL;
 		}
@@ -64,8 +63,7 @@ SDL_mutex *SDL_CreateMutex(void)
 }
 
 /* Free the mutex */
-void SDL_DestroyMutex(SDL_mutex *mutex)
-{
+void SDL_DestroyMutex(SDL_mutex *mutex) {
 	if ( mutex ) {
 		if ( mutex->sem ) {
 			SDL_DestroySemaphore(mutex->sem);
@@ -75,8 +73,7 @@ void SDL_DestroyMutex(SDL_mutex *mutex)
 }
 
 /* Lock the semaphore */
-int SDL_mutexP(SDL_mutex *mutex)
-{
+int SDL_mutexP(SDL_mutex *mutex) {
 #ifdef DISABLE_THREADS
 	return 0;
 #else
@@ -105,8 +102,7 @@ int SDL_mutexP(SDL_mutex *mutex)
 }
 
 /* Unlock the mutex */
-int SDL_mutexV(SDL_mutex *mutex)
-{
+int SDL_mutexV(SDL_mutex *mutex) {
 #ifdef DISABLE_THREADS
 	return 0;
 #else

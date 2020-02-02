@@ -31,7 +31,17 @@ static char rcsid =
 #ifndef _SDL_main_h
 #define _SDL_main_h
 
-* Redefine main() on Win32 and MacOS so that it is called by winmain.c */
+*
+
+Redefine main()
+
+on Win32
+and
+MacOS so
+that it
+is called
+by winmain
+.c */
 
 #if defined(WIN32) || defined(_WIN32) || \
     (defined(__MWERKS__) && !defined(__BEOS__)) || \

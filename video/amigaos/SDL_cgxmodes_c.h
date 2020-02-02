@@ -38,13 +38,20 @@ static char rcsid =
 #define GRAB_FULLSCREEN
 
 extern int CGX_GetVideoModes(_THIS);
-extern SDL_Rect **CGX_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags);
+
+extern SDL_Rect **CGX_ListModes(_THIS,
+SDL_PixelFormat *format, Uint32
+flags);
+
 extern void CGX_FreeVideoModes(_THIS);
+
 extern int CGX_ResizeFullScreen(_THIS);
+
 /*
 extern void CGX_WaitMapped(_THIS, Window win);
 extern void CGX_WaitUnmapped(_THIS, Window win);
 extern void CGX_QueueEnterFullScreen(_THIS);
 */
 extern int CGX_EnterFullScreen(_THIS);
+
 extern int CGX_LeaveFullScreen(_THIS);

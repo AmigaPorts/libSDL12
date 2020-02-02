@@ -69,16 +69,16 @@ SDL_Overlay *X11_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, S
 
 	xv_port = -1;
 	if ( (Success == XvQueryExtension(GFX_Display, &j, &j, &j, &j, &j)) &&
-	     (Success == XvQueryAdaptors(GFX_Display,
-	                                 RootWindow(GFX_Display, SDL_Screen),
-	                                 &adaptors, &ainfo)) ) {
+		 (Success == XvQueryAdaptors(GFX_Display,
+									 RootWindow(GFX_Display, SDL_Screen),
+									 &adaptors, &ainfo)) ) {
 		for ( i=0; (i<adaptors) && (xv_port == -1); ++i ) {
 			if ( (ainfo[i].type & XvInputMask) &&
-			     (ainfo[i].type & XvImageMask) ) {
+				 (ainfo[i].type & XvImageMask) ) {
 				int num_formats;
 				XvImageFormatValues *formats;
 				formats = XvListImageFormats(GFX_Display,
-				              ainfo[i].base_id, &num_formats);
+							  ainfo[i].base_id, &num_formats);
 				for ( j=0; j<num_formats; ++j ) {
 					if ( (Uint32)formats[j].id == format ) {
 						xv_port = ainfo[i].base_id;
@@ -121,17 +121,17 @@ SDL_Overlay *X11_CreateYUVOverlay(_THIS, int width, int height, Uint32 format, S
 	memset(yuvshm, 0, sizeof(*yuvshm));
 	hwdata->port = xv_port;
 	hwdata->image = XvShmCreateImage(GFX_Display, xv_port, format,
-	                                 0, width, height, yuvshm);
+									 0, width, height, yuvshm);
 	if ( hwdata->image == NULL ) {
 		SDL_OutOfMemory();
 		SDL_FreeYUVOverlay(overlay);
 		return(NULL);
 	}
 	yuvshm->shmid = shmget(IPC_PRIVATE, hwdata->image->data_size,
-	                       IPC_CREAT | 0777);
+						   IPC_CREAT | 0777);
 	if ( yuvshm->shmid < 0 ) {
 		SDL_SetError("Unable to get %d bytes shared memory",
-		             hwdata->image->data_size);
+					 hwdata->image->data_size);
 		SDL_FreeYUVOverlay(overlay);
 		return(NULL);
 	}
@@ -165,8 +165,8 @@ int X11_DisplayYUVOverlay(_THIS, SDL_Overlay *overlay, SDL_Rect *dstrect)
 
 	hwdata = overlay->hwdata;
 	XvShmPutImage(GFX_Display, hwdata->port, SDL_Window, SDL_GC,
-	              hwdata->image, 0, 0, overlay->w, overlay->h,
-	              dstrect->x, dstrect->y, dstrect->w, dstrect->h, False);
+				  hwdata->image, 0, 0, overlay->w, overlay->h,
+				  dstrect->x, dstrect->y, dstrect->w, dstrect->h, False);
 	XSync(GFX_Display, False);
 	return(0);
 }

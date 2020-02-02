@@ -30,10 +30,10 @@ struct SDL_mutex {
 	int recursive;
 	Uint32 owner;
 	SDL_sem *sem;
-};	
+};
 
 #endif
 
 
-#endif /* _SDL_mutex_c_h */ 
+#endif /* _SDL_mutex_c_h */
 

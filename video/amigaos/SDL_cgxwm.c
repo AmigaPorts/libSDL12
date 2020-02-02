@@ -22,7 +22,9 @@
 #ifdef AROS
 #  define _STRUCT_TIMEVAL	1
 #endif
+
 #include <SDL_config.h>
+
 #ifdef SAVE_RCSID
 static char rcsid =
  "@(#) $Id: SDL_cgxwm.c,v 1.2 2002/11/20 08:51:53 gabry Exp $";
@@ -41,8 +43,7 @@ static char rcsid =
 /* This is necessary for working properly with Enlightenment, etc. */
 #define USE_ICON_WINDOW
 
-void CGX_SetIcon(_THIS, SDL_Surface *icon, Uint8 *mask)
-{
+void CGX_SetIcon(_THIS, SDL_Surface *icon, Uint8 *mask) {
 #if 0
 	SDL_Surface *sicon;
 	XWMHints *wmhints;
@@ -67,17 +68,17 @@ void CGX_SetIcon(_THIS, SDL_Surface *icon, Uint8 *mask)
 	dbpp = DefaultDepth(SDL_Display, SDL_Screen);
 	switch(dbpp) {
 	case 15:
-	    dbpp = 16; break;
+		dbpp = 16; break;
 	case 24:
-	    dbpp = 32; break;
+		dbpp = 32; break;
 	}
 	dvis = DefaultVisual(SDL_Display, SDL_Screen);
 
 	/* The Visual struct is supposed to be opaque but we cheat a little */
 	sicon = SDL_CreateRGBSurface(SDL_SWSURFACE, icon->w, icon->h,
-				     dbpp,
-				     dvis->red_mask, dvis->green_mask,
-				     dvis->blue_mask, 0);
+					 dbpp,
+					 dvis->red_mask, dvis->green_mask,
+					 dvis->blue_mask, 0);
 
 	if ( sicon == NULL ) {
 		goto done;
@@ -86,7 +87,7 @@ void CGX_SetIcon(_THIS, SDL_Surface *icon, Uint8 *mask)
 	   copy them */
 	if(SDL_Visual == dvis && SDL_XColorMap == SDL_DisplayColormap
 	   && this->screen->format->palette && sicon->format->palette) {
-	    memcpy(sicon->format->palette->colors,
+		memcpy(sicon->format->palette->colors,
 		   this->screen->format->palette->colors,
 		   this->screen->format->palette->ncolors * sizeof(SDL_Color));
 	}
@@ -121,9 +122,9 @@ void CGX_SetIcon(_THIS, SDL_Surface *icon, Uint8 *mask)
 		}
 		memset(color_tried, 0, palette->ncolors);
 		memset(SDL_iconcolors, 0,
-		       palette->ncolors * sizeof(*SDL_iconcolors));
+			   palette->ncolors * sizeof(*SDL_iconcolors));
 
-		p = (Uint8 *)sicon->pixels; 
+		p = (Uint8 *)sicon->pixels;
 		for ( i = sicon->w*sicon->h; i > 0; --i, ++p ) {
 			if ( ! color_tried[*p] ) {
 				wanted.pixel = *p;
@@ -205,15 +206,13 @@ void CGX_SetIcon(_THIS, SDL_Surface *icon, Uint8 *mask)
 	return;
 }
 
-void CGX_SetCaption(_THIS, const char *title, const char *icon)
-{
-	if(SDL_Window)
-		SetWindowTitles(SDL_Window,(char *)title,(char *)icon);
+void CGX_SetCaption(_THIS, const char *title, const char *icon) {
+	if ( SDL_Window)
+		SetWindowTitles(SDL_Window, (char *)title, (char *)icon);
 }
 
 /* Iconify the window */
-int CGX_IconifyWindow(_THIS)
-{
+int CGX_IconifyWindow(_THIS) {
 #if 0
 	int result;
 
@@ -309,26 +308,25 @@ static void unlock_display(void)
 
 #endif
 
-int CGX_GetWMInfo(_THIS, SDL_SysWMinfo *info)
-{
+int CGX_GetWMInfo(_THIS, SDL_SysWMinfo *info) {
 	if ( info->version.major <= SDL_MAJOR_VERSION ) {
 #if 0
 		info->subsystem = SDL_SYSWM_X11;
 		info->info.x11.display = SDL_Display;
 		info->info.x11.window = SDL_Window;
 		if ( SDL_VERSIONNUM(info->version.major,
-		                    info->version.minor,
-		                    info->version.patch) >= 1002 ) {
+							info->version.minor,
+							info->version.patch) >= 1002 ) {
 			info->info.x11.fswindow = FSwindow;
 			info->info.x11.wmwindow = WMwindow;
 		}
 		info->info.x11.lock_func = lock_display;
 		info->info.x11.unlock_func = unlock_display;
 #endif
-		return(1);
+		return (1);
 	} else {
 		SDL_SetError("Application not compiled with SDL %d.%d\n",
-					SDL_MAJOR_VERSION, SDL_MINOR_VERSION);
-		return(-1);
+					 SDL_MAJOR_VERSION, SDL_MINOR_VERSION);
+		return (-1);
 	}
 }

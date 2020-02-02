@@ -24,6 +24,7 @@
 #include <exec/exec.h>
 #include <dos/dos.h>
 #include <dos/dostags.h>
+
 #if defined (__SASC) || defined(WARPOS) || defined(AROS)
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -32,15 +33,21 @@
 #include <ppcinline/dos.h>
 #include <ppcinline/exec.h>
 #else
+
 #include <inline/dos.h>
 #include <inline/exec.h>
+
 #endif
 #endif
 
 #include <stdio.h>
+
 #ifndef AROS
+
 #include <stdlib.h>
+
 #endif
+
 #include <string.h>
 #include "../../mydebug.h"
 

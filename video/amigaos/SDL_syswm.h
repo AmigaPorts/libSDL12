@@ -51,48 +51,48 @@ typedef struct SDL_SysWMinfo SDL_SysWMinfo;
 /* This is the structure for custom window manager events */
 #if (defined(unix) || defined(__unix__) || defined(_AIX) || defined(__OpenBSD__)) && \
     (!defined(DISABLE_X11) && !defined(__CYGWIN32__) && !defined(ENABLE_NANOX))
- /* AIX is unix, of course, but the native compiler CSet doesn't define unix */
+/* AIX is unix, of course, but the native compiler CSet doesn't define unix */
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
 /* These are the various supported subsystems under UNIX */
 typedef enum {
-	SDL_SYSWM_X11
+   SDL_SYSWM_X11
 } SDL_SYSWM_TYPE;
 
 /* The UNIX custom event structure */
 struct SDL_SysWMmsg {
-	SDL_version version;
-	SDL_SYSWM_TYPE subsystem;
-	union {
-	    XEvent xevent;
-	} event;
+   SDL_version version;
+   SDL_SYSWM_TYPE subsystem;
+   union {
+	   XEvent xevent;
+   } event;
 };
 
 /* The UNIX custom window manager information structure.
-   When this structure is returned, it holds information about which
-   low level system it is using, and will be one of SDL_SYSWM_TYPE.
- */
+  When this structure is returned, it holds information about which
+  low level system it is using, and will be one of SDL_SYSWM_TYPE.
+*/
 typedef struct {
-	SDL_version version;
-	SDL_SYSWM_TYPE subsystem;
-	union {
-	    struct {
-	    	Display *display;	/* The X11 display */
-	    	Window window;		/* The X11 display window */
-		/* These locking functions should be called around
-                   any X11 functions using the display variable.
-                   They lock the event thread, so should not be
-		   called around event functions or from event filters.
-		 */
-		void (*lock_func)(void);
-		void (*unlock_func)(void);
+   SDL_version version;
+   SDL_SYSWM_TYPE subsystem;
+   union {
+	   struct {
+		   Display *display;	/* The X11 display */
+		   Window window;		/* The X11 display window */
+	   /* These locking functions should be called around
+				  any X11 functions using the display variable.
+				  They lock the event thread, so should not be
+		  called around event functions or from event filters.
+		*/
+	   void (*lock_func)(void);
+	   void (*unlock_func)(void);
 
-		/* Introduced in SDL 1.0.2 */
-	    	Window fswindow;	/* The X11 fullscreen window */
-	    	Window wmwindow;	/* The X11 managed input window */
-	    } x11;
-	} info;
+	   /* Introduced in SDL 1.0.2 */
+		   Window fswindow;	/* The X11 fullscreen window */
+		   Window wmwindow;	/* The X11 managed input window */
+	   } x11;
+   } info;
 } SDL_SysWMinfo;
 
 #elif defined(ENABLE_NANOX)
@@ -170,15 +170,18 @@ typedef struct {
  * This function gives you custom hooks into the window manager information.
  * It fills the structure pointed to by 'info' with custom information and
  * returns 1 if the function is implemented.  If it's not implemented, or
- * the version member of the 'info' structure is invalid, it returns 0. 
+ * the version member of the 'info' structure is invalid, it returns 0.
  */
-extern DECLSPEC int SDLCALL SDL_GetWMInfo(SDL_SysWMinfo *info);
+extern DECLSPEC int SDLCALL
+SDL_GetWMInfo(SDL_SysWMinfo
+*info);
 
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
 }
 #endif
+
 #include "close_code.h"
 
 #endif /* _SDL_syswm_h */

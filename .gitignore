@@ -5,3 +5,4 @@
 *.o
 *.ll
 /Default/
+.idea/

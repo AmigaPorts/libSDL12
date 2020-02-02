@@ -24,9 +24,9 @@
 static char rcsid =
  "@(#) $Id: SDL_cgxgl.c,v 1.2 2002/11/20 08:51:36 gabry Exp $";
 #endif
- 
+
 /* StormMesa implementation of SDL OpenGL support */
-#include <SDL_config.h> 
+#include <SDL_config.h>
 #include "SDL_error.h"
 #include "SDL_cgxgl_c.h"
 //#include <GL/amigamesa.h>
@@ -37,78 +37,76 @@ AmigaMesaContext glcont=NULL;
 #endif
 
 /* Init OpenGL */
-int CGX_GL_Init(_THIS)
-{
+int CGX_GL_Init(_THIS) {
 #ifdef SDL_VIDEO_OPENGL
-   int i = 0;
-	struct TagItem attributes [ 14 ]; /* 14 should be more than enough :) */
-   struct Window *win = (struct Window *)SDL_Window;
-  
-	// default config. Always used...
-	attributes[i].ti_Tag = AMA_Window;	attributes[i++].ti_Data = (unsigned long)win;
-	attributes[i].ti_Tag = AMA_Left;		attributes[i++].ti_Data = 0;
-	attributes[i].ti_Tag = AMA_Bottom;	attributes[i++].ti_Data = 0;
-	attributes[i].ti_Tag = AMA_Width;	attributes[i++].ti_Data = win->Width-win->BorderLeft-win->BorderRight;
-	attributes[i].ti_Tag = AMA_Height;	attributes[i++].ti_Data = win->Height-win->BorderBottom-win->BorderTop;
-	attributes[i].ti_Tag = AMA_DirectRender; attributes[i++].ti_Data = GL_TRUE;
+	int i = 0;
+	 struct TagItem attributes [ 14 ]; /* 14 should be more than enough :) */
+	struct Window *win = (struct Window *)SDL_Window;
 
-	// double buffer ?
-	//attributes[i].ti_Tag = AMA_DoubleBuf;attributes[i++].ti_Data = GL_TRUE;
-	if ( this->gl_config.double_buffer ) {
-		attributes[i++].ti_Data = GL_TRUE;
-	}
-	else {
-		attributes[i++].ti_Data = GL_FALSE;
-	}
-	// RGB(A) Mode ?
+	 // default config. Always used...
+	 attributes[i].ti_Tag = AMA_Window;	attributes[i++].ti_Data = (unsigned long)win;
+	 attributes[i].ti_Tag = AMA_Left;		attributes[i++].ti_Data = 0;
+	 attributes[i].ti_Tag = AMA_Bottom;	attributes[i++].ti_Data = 0;
+	 attributes[i].ti_Tag = AMA_Width;	attributes[i++].ti_Data = win->Width-win->BorderLeft-win->BorderRight;
+	 attributes[i].ti_Tag = AMA_Height;	attributes[i++].ti_Data = win->Height-win->BorderBottom-win->BorderTop;
+	 attributes[i].ti_Tag = AMA_DirectRender; attributes[i++].ti_Data = GL_TRUE;
 
-	attributes[i].ti_Tag = AMA_RGBMode;
-	if ( this->gl_config.red_size   != 0 &&
-	     this->gl_config.blue_size  != 0 &&
-	     this->gl_config.green_size != 0 ) {
-		attributes[i++].ti_Data = GL_TRUE;
-	}
-	else {
-		attributes[i++].ti_Data = GL_FALSE;
-	}
-	// no depth buffer ?
-	if ( this->gl_config.depth_size == 0 ) {
-		attributes[i].ti_Tag = AMA_NoDepth;
-		attributes[i++].ti_Data = GL_TRUE;
-	}
-	// no stencil buffer ?
-	if ( this->gl_config.stencil_size == 0 ) {
-		attributes[i].ti_Tag = AMA_NoStencil;
-		attributes[i++].ti_Data = GL_TRUE;
-	}
-	// no accum buffer ?
-	if ( this->gl_config.accum_red_size   != 0 &&
-	     this->gl_config.accum_blue_size  != 0 &&
-	     this->gl_config.accum_green_size != 0 ) {
-		attributes[i].ti_Tag = AMA_NoAccum;
-		attributes[i++].ti_Data = GL_TRUE;
-	}
-	 //done...
-	attributes[i].ti_Tag	= TAG_DONE;
+	 // double buffer ?
+	 //attributes[i].ti_Tag = AMA_DoubleBuf;attributes[i++].ti_Data = GL_TRUE;
+	 if ( this->gl_config.double_buffer ) {
+		 attributes[i++].ti_Data = GL_TRUE;
+	 }
+	 else {
+		 attributes[i++].ti_Data = GL_FALSE;
+	 }
+	 // RGB(A) Mode ?
 
-	glcont = AmigaMesaCreateContext(attributes);
-	if ( glcont == NULL ) {
-		SDL_SetError("Couldn't create OpenGL context");
-		return(-1);
-	}
-	this->gl_data->gl_active = 1;
-	this->gl_config.driver_loaded = 1;
+	 attributes[i].ti_Tag = AMA_RGBMode;
+	 if ( this->gl_config.red_size   != 0 &&
+		  this->gl_config.blue_size  != 0 &&
+		  this->gl_config.green_size != 0 ) {
+		 attributes[i++].ti_Data = GL_TRUE;
+	 }
+	 else {
+		 attributes[i++].ti_Data = GL_FALSE;
+	 }
+	 // no depth buffer ?
+	 if ( this->gl_config.depth_size == 0 ) {
+		 attributes[i].ti_Tag = AMA_NoDepth;
+		 attributes[i++].ti_Data = GL_TRUE;
+	 }
+	 // no stencil buffer ?
+	 if ( this->gl_config.stencil_size == 0 ) {
+		 attributes[i].ti_Tag = AMA_NoStencil;
+		 attributes[i++].ti_Data = GL_TRUE;
+	 }
+	 // no accum buffer ?
+	 if ( this->gl_config.accum_red_size   != 0 &&
+		  this->gl_config.accum_blue_size  != 0 &&
+		  this->gl_config.accum_green_size != 0 ) {
+		 attributes[i].ti_Tag = AMA_NoAccum;
+		 attributes[i++].ti_Data = GL_TRUE;
+	 }
+	  //done...
+	 attributes[i].ti_Tag	= TAG_DONE;
 
-	return(0);
+	 glcont = AmigaMesaCreateContext(attributes);
+	 if ( glcont == NULL ) {
+		 SDL_SetError("Couldn't create OpenGL context");
+		 return(-1);
+	 }
+	 this->gl_data->gl_active = 1;
+	 this->gl_config.driver_loaded = 1;
+
+	 return(0);
 #else
 	SDL_SetError("OpenGL support not configured");
-	return(-1);
+	return (-1);
 #endif
 }
 
 /* Quit OpenGL */
-void CGX_GL_Quit(_THIS)
-{
+void CGX_GL_Quit(_THIS) {
 #ifdef SDL_VIDEO_OPENGL
 	if ( glcont != NULL ) {
 		AmigaMesaDestroyContext(glcont);
@@ -120,8 +118,7 @@ void CGX_GL_Quit(_THIS)
 }
 
 /* Attach context to another window */
-int CGX_GL_Update(_THIS)
-{
+int CGX_GL_Update(_THIS) {
 #ifdef SDL_VIDEO_OPENGL
 	struct TagItem tags[2];
 	struct Window *win = (struct Window*)SDL_Window;
@@ -131,7 +128,7 @@ int CGX_GL_Update(_THIS)
 	tags[0].ti_Tag = AMA_Window;
 	tags[0].ti_Data = (unsigned long)win;
 	tags[1].ti_Tag = TAG_DONE;
-	
+
 	AmigaMesaSetRast(glcont, tags);
 
 	return 0;

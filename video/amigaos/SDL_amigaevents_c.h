@@ -29,5 +29,6 @@ static char rcsid =
 
 /* Functions to be exported */
 extern void amiga_InitOSKeymap(_THIS);
+
 extern void amiga_PumpEvents(_THIS);
 

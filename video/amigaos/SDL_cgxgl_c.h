@@ -28,6 +28,7 @@ static char rcsid =
 /* StormMesa implementation of SDL OpenGL support */
 
 #include "../SDL_sysvideo.h"
+
 #define _THIS   SDL_VideoDevice *_this
 
 #ifdef SDL_VIDEO_OPENGL
@@ -41,8 +42,11 @@ struct SDL_PrivateGLData {
 
 /* OpenGL functions */
 extern int CGX_GL_Init(_THIS);
+
 extern void CGX_GL_Quit(_THIS);
+
 extern int CGX_GL_Update(_THIS);
+
 #ifdef SDL_VIDEO_OPENGL
 extern int CGX_GL_MakeCurrent(_THIS);
 extern int CGX_GL_GetAttribute(_THIS, SDL_GLattr attrib, int* value);

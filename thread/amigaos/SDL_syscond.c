@@ -37,8 +37,7 @@ static char rcsid =
 #include "SDL_error.h"
 #include "SDL_thread.h"
 
-struct SDL_cond
-{
+struct SDL_cond {
 	SDL_mutex *lock;
 	int waiting;
 	int signals;
@@ -47,29 +46,27 @@ struct SDL_cond
 };
 
 /* Create a condition variable */
-SDL_cond * SDL_CreateCond(void)
-{
+SDL_cond *SDL_CreateCond(void) {
 	SDL_cond *cond;
 
-	cond = (SDL_cond *) malloc(sizeof(SDL_cond));
+	cond = (SDL_cond *)malloc(sizeof(SDL_cond));
 	if ( cond ) {
 		cond->lock = SDL_CreateMutex();
 		cond->wait_sem = SDL_CreateSemaphore(0);
 		cond->wait_done = SDL_CreateSemaphore(0);
 		cond->waiting = cond->signals = 0;
-		if ( ! cond->lock || ! cond->wait_sem || ! cond->wait_done ) {
+		if ( !cond->lock || !cond->wait_sem || !cond->wait_done ) {
 			SDL_DestroyCond(cond);
 			cond = NULL;
 		}
 	} else {
 		SDL_OutOfMemory();
 	}
-	return(cond);
+	return (cond);
 }
 
 /* Destroy a condition variable */
-void SDL_DestroyCond(SDL_cond *cond)
-{
+void SDL_DestroyCond(SDL_cond *cond) {
 	if ( cond ) {
 		if ( cond->wait_sem ) {
 			SDL_DestroySemaphore(cond->wait_sem);
@@ -85,9 +82,8 @@ void SDL_DestroyCond(SDL_cond *cond)
 }
 
 /* Restart one of the threads that are waiting on the condition variable */
-int SDL_CondSignal(SDL_cond *cond)
-{
-	if ( ! cond ) {
+int SDL_CondSignal(SDL_cond *cond) {
+	if ( !cond ) {
 		SDL_SetError("Passed a NULL condition variable");
 		return -1;
 	}
@@ -109,9 +105,8 @@ int SDL_CondSignal(SDL_cond *cond)
 }
 
 /* Restart all threads that are waiting on the condition variable */
-int SDL_CondBroadcast(SDL_cond *cond)
-{
-	if ( ! cond ) {
+int SDL_CondBroadcast(SDL_cond *cond) {
+	if ( !cond ) {
 		SDL_SetError("Passed a NULL condition variable");
 		return -1;
 	}
@@ -125,14 +120,14 @@ int SDL_CondBroadcast(SDL_cond *cond)
 
 		num_waiting = (cond->waiting - cond->signals);
 		cond->signals = cond->waiting;
-		for ( i=0; i<num_waiting; ++i ) {
+		for ( i = 0; i < num_waiting; ++i ) {
 			SDL_SemPost(cond->wait_sem);
 		}
 		/* Now all released threads are blocked here, waiting for us.
 		   Collect them all (and win fabulous prizes!) :-)
 		 */
 		SDL_UnlockMutex(cond->lock);
-		for ( i=0; i<num_waiting; ++i ) {
+		for ( i = 0; i < num_waiting; ++i ) {
 			SDL_SemWait(cond->wait_done);
 		}
 	} else {
@@ -162,11 +157,10 @@ Thread B:
 	...
 	SDL_UnlockMutex(lock);
  */
-int SDL_CondWaitTimeout(SDL_cond *cond, SDL_mutex *mutex, Uint32 ms)
-{
+int SDL_CondWaitTimeout(SDL_cond *cond, SDL_mutex *mutex, Uint32 ms) {
 	int retval;
 
-	if ( ! cond ) {
+	if ( !cond ) {
 		SDL_SetError("Passed a NULL condition variable");
 		return -1;
 	}
@@ -217,7 +211,6 @@ int SDL_CondWaitTimeout(SDL_cond *cond, SDL_mutex *mutex, Uint32 ms)
 }
 
 /* Wait on the condition variable forever */
-int SDL_CondWait(SDL_cond *cond, SDL_mutex *mutex)
-{
+int SDL_CondWait(SDL_cond *cond, SDL_mutex *mutex) {
 	return SDL_CondWaitTimeout(cond, mutex, SDL_MUTEX_MAXWAIT);
 }

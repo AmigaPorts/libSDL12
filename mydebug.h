@@ -3,7 +3,9 @@
 #ifndef NO_AMIGADEBUG
 #define D(x) x
 #define bug kprintf
-extern void kprintf(const char *,...);
+
+extern void kprintf(const char *, ...);
+
 #else
 #define D(x)
 #endif
