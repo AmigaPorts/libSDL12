@@ -131,6 +131,8 @@ add_library(${LIBNAME}
 			# TIMER
 			${PROJECT_SOURCE_DIR}/timer/amigaos/SDL_systimer.c
 			${PROJECT_SOURCE_DIR}/timer/SDL_timer.c
+
+			# JOYSTICK
 			${PROJECT_SOURCE_DIR}/joystick/SDL_joystick.c
 			${PROJECT_SOURCE_DIR}/joystick/SDL_sysjoystick.c
 
@@ -200,9 +202,9 @@ if(AMIGA)
 		target_sources(${LIBNAME}
 				PRIVATE
 					# APOLLO AMMX
-				${PROJECT_SOURCE_DIR}/video/apollo/blitapollo.asm
-				${PROJECT_SOURCE_DIR}/video/apollo/apolloammxenable.asm
-				${PROJECT_SOURCE_DIR}/video/apollo/colorkeyapollo.asm)
+					${PROJECT_SOURCE_DIR}/video/apollo/blitapollo.asm
+					${PROJECT_SOURCE_DIR}/video/apollo/apolloammxenable.asm
+					${PROJECT_SOURCE_DIR}/video/apollo/colorkeyapollo.asm)
 
 	endif()
 endif()
