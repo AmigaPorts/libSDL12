@@ -180,7 +180,7 @@ static void AHI_CloseAudio(_THIS) {
 		CloseDevice((struct IORequest *)audio_req[0]);
 		D(bug("Device closed, freeing memory...\n"));
 		myfree(audio_req[1]);
-		D(bug("Memory freed, deleting IOReq...\n")); 
+		D(bug("Memory freed, deleting IOReq...\n"));
 		DeleteIORequest((struct IORequest *)audio_req[0]);
 		audio_req[0]=audio_req[1]=NULL;
 
