@@ -1,0 +1,4 @@
+#ifndef SDL_AMIGAVERSION_H
+#define SDL_AMIGAVERSION_H
+static const char __attribute((used)) amiga_ver[] = "$VER: SDL.library ${AMIGA_VERSION} (${VER_DAY}.${VER_MONTH}.${VER_YEAR}) Amiga port of SDL v${SDL_MAJOR_VERSION}.${SDL_MINOR_VERSION}.${SDL_PATCHLEVEL}\0";
+#endif /* SDL_AMIGAVERSION_H */

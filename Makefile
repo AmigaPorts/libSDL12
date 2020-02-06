@@ -20,7 +20,7 @@ CPU := 68040
 
 INCLUDES = IDIR=./include/SDL
 
-GCCFLAGS = -I$(PREFX)/include -I./include/ -I./include/SDL \
+GCCFLAGS = -I$(PREFX)/include -I./include/ -I./include/SDL -I./makefile-support \
 		-O3 -fomit-frame-pointer -m$(CPU) -mhard-float -ffast-math -noixemul \
 		-DNOIXEMUL -D_HAVE_STDINT_H
 GLFLAGS = -DSHARED_LIB -lamiga
@@ -46,7 +46,7 @@ GOBJS = audio/SDL_audio.go audio/SDL_audiocvt.go audio/SDL_mixer.go audio/SDL_wa
 # ( build vasm: make CPU=m68k SYNTAX=mot )
 #
 VFLAGS = -devpac -I$(PREFX)/m68k-amigaos/ndk-include -Fhunk
-GCCFLAGS += -DAPOLLO_BLIT -I./video/apollo 
+GCCFLAGS += -DAPOLLO_BLIT -I./video/apollo
 # -DAPOLLO_BLITDBG
 GOBJS += video/apollo/blitapollo.ao video/apollo/apolloammxenable.ao video/apollo/colorkeyapollo.ao
 

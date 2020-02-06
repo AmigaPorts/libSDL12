@@ -30,45 +30,55 @@
 /* This is a set of defines to configure the SDL features */
 
 #ifndef _INT8_T_DECLARED
-typedef signed char         int8_t;
+typedef signed char         			int8_t;
 #define _INT8_T_DECLARED
 #endif
+
 #ifndef _UINT8_T_DECLARED
-typedef unsigned char       uint8_t;
+typedef unsigned char       			uint8_t;
 #define _UINT8_T_DECLARED
 #endif
+
 #ifndef _INT16_T_DECLARED
-typedef signed short        int16_t;
+typedef signed short        			int16_t;
 #define _INT16_T_DECLARED
 #endif
+
 #ifndef _UINT16_T_DECLARED
-typedef unsigned short      uint16_t;
+typedef unsigned short      			uint16_t;
 #define _UINT16_T_DECLARED
 #endif
+
 #ifndef _INT32_T_DECLARED
-typedef signed int          int32_t;
+typedef signed int          			int32_t;
 #define _INT32_T_DECLARED
 #endif
+
 #ifndef _UINT32_T_DECLARED
-typedef unsigned int        uint32_t;
+typedef unsigned int					uint32_t;
 #define _UINT32_T_DECLARED
 #endif
+
 #ifndef size_t
 //typedef unsigned int        size_t;
 #endif
+
 #ifndef _UINTPTR_T_DECLARED
-typedef unsigned int       uintptr_t;
+typedef unsigned int					uintptr_t;
 #define _UINTPTR_T_DECLARED
 #endif
+
 #ifndef _INT64_T_DECLARED
-typedef signed long long    int64_t;
+typedef signed long long				int64_t;
 #define _INT64_T_DECLARED
 #endif
+
 #ifndef _UINT64_T_DECLARED
-typedef unsigned long long  uint64_t;
+typedef unsigned long long				uint64_t;
 #define _UINT64_T_DECLARED
 #endif
-#endif
+
+#endif /* _HAVE_STDINT_H */
 
 #define SDL_HAS_64BIT_TYPE				1
 #define SDL_BYTEORDER					SDL_BIG_ENDIAN

@@ -19,7 +19,7 @@
 /******************************************************************************/
 
 const BYTE LibName[] = "SDL.library";
-const BYTE LibIdString[] = "$VER: SDL.library 12.6 (7.9.2003) Amiga port of SDL 1.2.6 by Gabriele Greco";
+#include "SDL_amigaversion.h"
 
 const UWORD LibVersion = 12;
 const UWORD LibRevision = 6;

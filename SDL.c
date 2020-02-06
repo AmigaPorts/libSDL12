@@ -35,8 +35,8 @@
 #endif
 
 char* strtok_r(
-    char *str, 
-    const char *delim, 
+    char *str,
+    const char *delim,
     char **nextp)
 {
     char *ret;
@@ -87,7 +87,7 @@ static SDL_version version =
 	{ SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL };
 
 #if defined(__amigaos4__) || defined(__AMIGA__)
-static const char __attribute((used)) amiga_ver[] = "$VER: SDL1_2_15 1.4 (22.01.2018)\0";
+#include "SDL_amigaversion.h"
 #endif
 
 /* The initialized subsystems */

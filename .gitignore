@@ -6,3 +6,5 @@
 *.ll
 /Default/
 .idea/
+build/
+cmake-build-*/*
