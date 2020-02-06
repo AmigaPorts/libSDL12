@@ -1,29 +1,25 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998, 1999, 2000  Sam Lantinga
+    Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
+    modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    version 2.1 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Sam Lantinga
     slouken@libsdl.org
 */
-
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_cgxvideo.c,v 1.2.3 2008/11/20 08:51:50 bernd roesch Exp $";
-#endif
+#include "SDL_config.h"
 
 /*
  * CGX based SDL video driver implementation by Gabriele Greco
@@ -31,7 +27,7 @@ static char rcsid =
  */
 
 
-#include "SDL_config.h"
+#include "SDL_endian.h"
 #include <intuition/intuitionbase.h>
 #include <intuition/screens.h>
 
@@ -47,7 +43,6 @@ static char rcsid =
 
 #include "SDL_video.h"
 #include "SDL_mouse.h"
-//#include "SDL_endian.h"
 #include "../SDL_sysvideo.h"
 #include "../SDL_pixels_c.h"
 #include "../../events/SDL_events_c.h"
@@ -187,7 +182,7 @@ static void DestroyScreen(_THIS) {
 			this->hidden->SB[0] = this->hidden->SB[1] = NULL;
 
 			if ( SDL_RastPort && SDL_RastPort != &SDL_Display->RastPort )
-				free(SDL_RastPort);
+				SDL_free(SDL_RastPort);
 
 			SDL_RastPort = NULL;
 		}
@@ -215,12 +210,12 @@ static int CGX_Available(void) {
 static void CGX_DeleteDevice(SDL_VideoDevice *device) {
 	if ( device ) {
 		if ( device->hidden ) {
-			free(device->hidden);
+			SDL_free(device->hidden);
 		}
 		if ( device->gl_data ) {
-			free(device->gl_data);
+			SDL_free(device->gl_data);
 		}
-		free(device);
+		SDL_free(device);
 	}
 }
 
@@ -236,15 +231,14 @@ static SDL_VideoDevice *CGX_CreateDevice(int devindex) {
 		device->gl_data = (struct SDL_PrivateGLData *)
 				malloc((sizeof *device->gl_data));
 	}
-	if ((device == NULL) || (device->hidden == NULL) ||
-		(device->gl_data == NULL)) {
+	if ((device == NULL) || (device->hidden == NULL) || (device->gl_data == NULL)) {
 		D(bug("Unable to create video device!\n"));
 		SDL_OutOfMemory();
 		CGX_DeleteDevice(device);
 		return (0);
 	}
-	memset(device->hidden, 0, sizeof(*device->hidden));
-	memset(device->gl_data, 0, sizeof(*device->gl_data));
+	SDL_memset(device->hidden, 0, sizeof(*device->hidden));
+	SDL_memset(device->gl_data, 0, sizeof(*device->gl_data));
 
 	/* Set the driver flags */
 	device->handles_any_size = 1;
@@ -274,7 +268,7 @@ static SDL_VideoDevice *CGX_CreateDevice(int devindex) {
 	device->GetGamma = CGX_GetGamma;
 	device->SetGammaRamp = CGX_SetGammaRamp;
 	device->GetGammaRamp = NULL;
-#ifdef SDL_VIDEO_OPENGL
+#if SDL_VIDEO_OPENGL
 	device->GL_LoadLibrary = CGX_GL_LoadLibrary;
 	device->GL_GetProcAddress = CGX_GL_GetProcAddress;
 	device->GL_GetAttribute = CGX_GL_GetAttribute;
@@ -744,7 +738,7 @@ void CGX_DestroyWindow(_THIS, SDL_Surface *screen) {
 					}
 				}
 			}
-			free(SDL_XPixels);
+			SDL_free(SDL_XPixels);
 			SDL_XPixels = NULL;
 		}
 	}

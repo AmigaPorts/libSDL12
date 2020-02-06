@@ -1,29 +1,25 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998, 1999, 2000  Sam Lantinga
+    Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
+    modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    version 2.1 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Sam Lantinga
     slouken@libsdl.org
 */
-
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_cgxmodes.c,v 1.2 2002/11/20 08:51:47 gabry Exp $";
-#endif
+#include "SDL_config.h"
 
 /* Utilities for getting and setting the X display mode */
 
@@ -31,7 +27,6 @@ static char rcsid =
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL/SDL_config.h>
 #include "SDL_timer.h"
 #include "SDL_error.h"
 #include "SDL_events.h"
@@ -171,7 +166,6 @@ int CGX_GetVideoModes(_THIS) {
 		int n = this->hidden->nvisuals;
 
 		SDL_SetError("Bug in BestCModeIDTags Found use 16 bit screen fallback \n");
-		//return -1;
 
 		this->hidden->visuals[n].depth = 16;
 		this->hidden->visuals[n].visual = 0x50011100;
@@ -180,10 +174,10 @@ int CGX_GetVideoModes(_THIS) {
 	}
 
 	if ( SDL_modelist == NULL ) {
-		SDL_modelist = (SDL_Rect **)malloc((1 + 1) * sizeof(SDL_Rect * ));
+		SDL_modelist = (SDL_Rect **)SDL_malloc((1+1)*sizeof(SDL_Rect *));
 		i = 0;
-		if ( SDL_modelist) {
-			SDL_modelist[i] = (SDL_Rect *)malloc(sizeof(SDL_Rect));
+		if (SDL_modelist) {
+			SDL_modelist[i] = (SDL_Rect *)SDL_malloc(sizeof(SDL_Rect));
 			if ( SDL_modelist[i] ) {
 				SDL_modelist[i]->x = 0;
 				SDL_modelist[i]->y = 0;
@@ -254,9 +248,9 @@ void CGX_FreeVideoModes(_THIS) {
 
 	if ( SDL_modelist) {
 		for ( i = 0; SDL_modelist[i]; ++i ) {
-			free(SDL_modelist[i]);
+			SDL_free(SDL_modelist[i]);
 		}
-		free(SDL_modelist);
+		SDL_free(SDL_modelist);
 		SDL_modelist = NULL;
 	}
 }
@@ -325,7 +319,7 @@ int CGX_EnterFullScreen(_THIS) {
 */
 	}
 //    CGX_GrabInputNoLock(this, this->input_grab | SDL_GRAB_FULLSCREEN);
-	return (okay);
+	return(okay);
 }
 
 int CGX_LeaveFullScreen(_THIS) {

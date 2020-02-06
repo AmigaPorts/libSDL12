@@ -97,6 +97,7 @@ add_library(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/audio/SDL_audiocvt.c
 			${PROJECT_SOURCE_DIR}/audio/SDL_mixer.c
 			${PROJECT_SOURCE_DIR}/audio/SDL_wave.c
+			${PROJECT_SOURCE_DIR}/audio/dummy/SDL_dummyaudio.c
 			${PROJECT_SOURCE_DIR}/audio/amigaos/SDL_ahiaudio.c
 
 			# VIDEO
@@ -117,16 +118,16 @@ add_library(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/video/SDL_gamma.c
 
 			# CYBERGRAPHICS
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_cgxvideo.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_cgxmodes.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_cgximage.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_amigaevents.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_amigamouse.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_cgxgl.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_cgxwm.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_cgxyuv.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_cgxaccel.c
-			${PROJECT_SOURCE_DIR}/video/amigaos/SDL_cgxgl_wrapper.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxvideo.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxmodes.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgximage.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_amigaevents.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_amigamouse.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxgl.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxwm.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxyuv.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxaccel.c
+			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxgl_wrapper.c
 
 			# TIMER
 			${PROJECT_SOURCE_DIR}/timer/amigaos/SDL_systimer.c
@@ -165,6 +166,7 @@ target_include_directories(${LIBNAME}
 		PRIVATE
 			${PROJECT_SOURCE_DIR}/
 			${PROJECT_SOURCE_DIR}/audio
+			${PROJECT_SOURCE_DIR}/dummy
 			${PROJECT_SOURCE_DIR}/audio/amigaos
 			${PROJECT_SOURCE_DIR}/events
 			${PROJECT_SOURCE_DIR}/include
@@ -179,7 +181,7 @@ target_include_directories(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/thread/pthread
 			${PROJECT_SOURCE_DIR}/timer
 			${PROJECT_SOURCE_DIR}/video
-			${PROJECT_SOURCE_DIR}/video/amigaos
+			${PROJECT_SOURCE_DIR}/video/cybergfx
 			${PROJECT_SOURCE_DIR}/video/apollo
 			${PROJECT_SOURCE_DIR}/video/dummy)
 

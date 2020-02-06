@@ -1,20 +1,20 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002  Sam Lantinga
+    Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
+    modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    version 2.1 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Sam Lantinga
     slouken@libsdl.org
@@ -121,9 +121,9 @@ static inline int amiga_WarpedMotion(_THIS, struct IntuiMessage *m)
 	posted = SDL_PrivateMouseMotion(0, 1, deltax, deltay);
 
 	if ( (xevent->xmotion.x < MOUSE_FUDGE_FACTOR) ||
-		 (xevent->xmotion.x > (w-MOUSE_FUDGE_FACTOR)) ||
-		 (xevent->xmotion.y < MOUSE_FUDGE_FACTOR) ||
-		 (xevent->xmotion.y > (h-MOUSE_FUDGE_FACTOR)) ) {
+	     (xevent->xmotion.x > (w-MOUSE_FUDGE_FACTOR)) ||
+	     (xevent->xmotion.y < MOUSE_FUDGE_FACTOR) ||
+	     (xevent->xmotion.y > (h-MOUSE_FUDGE_FACTOR)) ) {
 		/* Get the events that have accumulated */
 		while ( XCheckTypedEvent(SDL_Display, MotionNotify, xevent) ) {
 			deltax = xevent->xmotion.x - mouse_last.x;
@@ -140,15 +140,15 @@ static inline int amiga_WarpedMotion(_THIS, struct IntuiMessage *m)
 		XWarpPointer(SDL_Display, None, SDL_Window, 0, 0, 0, 0,
 					mouse_last.x, mouse_last.y);
 		for ( i=0; i<10; ++i ) {
-				XMaskEvent(SDL_Display, PointerMotionMask, xevent);
+        		XMaskEvent(SDL_Display, PointerMotionMask, xevent);
 			if ( (xevent->xmotion.x >
-					  (mouse_last.x-MOUSE_FUDGE_FACTOR)) &&
-				 (xevent->xmotion.x <
-					  (mouse_last.x+MOUSE_FUDGE_FACTOR)) &&
-				 (xevent->xmotion.y >
-					  (mouse_last.y-MOUSE_FUDGE_FACTOR)) &&
-				 (xevent->xmotion.y <
-					  (mouse_last.y+MOUSE_FUDGE_FACTOR)) ) {
+			          (mouse_last.x-MOUSE_FUDGE_FACTOR)) &&
+			     (xevent->xmotion.x <
+			          (mouse_last.x+MOUSE_FUDGE_FACTOR)) &&
+			     (xevent->xmotion.y >
+			          (mouse_last.y-MOUSE_FUDGE_FACTOR)) &&
+			     (xevent->xmotion.y <
+			          (mouse_last.y+MOUSE_FUDGE_FACTOR)) ) {
 				break;
 			}
 #ifdef DEBUG_XEVENTS
@@ -166,8 +166,10 @@ static inline int amiga_WarpedMotion(_THIS, struct IntuiMessage *m)
 
 #endif
 
-static int amiga_GetButton(int code) {
-	switch ( code ) {
+static int amiga_GetButton(int code)
+{
+	switch(code)
+	{
 		case IECODE_MBUTTON:
 			return SDL_BUTTON_MIDDLE;
 		case IECODE_RBUTTON:
@@ -179,8 +181,9 @@ static int amiga_GetButton(int code) {
 
 static int mousex, mousey, oldtaskpri;
 
-static int amiga_DispatchEvent(_THIS, struct IntuiMessage *msg) {
-	int class = msg->Class, code = msg->Code;
+static int amiga_DispatchEvent(_THIS, struct IntuiMessage *msg)
+{
+	int class=msg->Class,code=msg->Code;
 	int posted;
 	int qual = msg->Qualifier;
 	APTR *fh = 0;
@@ -327,27 +330,7 @@ static int amiga_DispatchEvent(_THIS, struct IntuiMessage *msg) {
 				}
 			}
 			break;
-			// code from powersdl (not work when press a key and release qualifier before key.key is repeat endless
-
-
-
-
-//					{				{
-//						SDL_keysym keysym;
-//						amiga_TranslateKey(code & ~IECODE_UP_PREFIX, qual, &keysym);
-//
-//						if (code > 0x7f || !this->hidden->oldkey || this->hidden->oldkey != keysym.sym)
-//						{
-//							this->hidden->oldkey = code > 0x7f ? 0 : keysym.sym;
-//							SDL_PrivateKeyboard(code > 0x7f ? SDL_RELEASED : SDL_PRESSED, &keysym);
-//						}
-//						this->hidden->oldqual = qual;
-//					}
-
-			break;
-
-
-			/* Have we been iconified? */
+	    /* Have we been iconified? */
 #if 0
 		case UnmapNotify: {
 #ifdef DEBUG_XEVENTS

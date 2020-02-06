@@ -1,36 +1,30 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998, 1999, 2000  Sam Lantinga
+    Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
+    modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    version 2.1 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Sam Lantinga
     slouken@libsdl.org
 */
-#include <SDL_config.h>
+#include "SDL_config.h"
 
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_cgxaccel.c,v 1.2 2002/11/20 08:51:36 gabry Exp $";
-#endif
-
-//#include "SDL_error.h"
-//#include "SDL_endian.h"
+#include "SDL_endian.h"
+#include "SDL_video.h"
 #include "../SDL_sysvideo.h"
 #include "../SDL_blit.h"
-#include "SDL_video.h"
 #include "SDL_cgxvideo.h"
 
 #ifdef AROS
@@ -68,13 +62,13 @@ int CGX_SetHWColorKey(_THIS, SDL_Surface *surface, Uint32 key) {
 	return -1; // do no accel blits
 	if ( surface->hwdata ) {
 		if ( surface->hwdata->mask )
-			free(surface->hwdata->mask);
+			SDL_free(surface->hwdata->mask);
 
-		if ( surface->hwdata->mask = malloc(RASSIZE(surface->w, surface->h))) {
+		if ( surface->hwdata->mask = SDL_malloc(RASSIZE(surface->w, surface->h))) {
 			Uint32 pitch, ok = 0;
 			APTR lock;
 
-			memset(surface->hwdata->mask, 255, RASSIZE(surface->w, surface->h));
+			SDL_memset(surface->hwdata->mask,255,RASSIZE(surface->w,surface->h));
 
 			D(bug("Building colorkey mask: color: %ld, size: %ld x %ld, %ld bytes...Bpp:%ld\n", key, surface->w, surface->h, RASSIZE(surface->w, surface->h), surface->format->BytesPerPixel));
 
@@ -156,7 +150,7 @@ int CGX_SetHWColorKey(_THIS, SDL_Surface *surface, Uint32 key) {
 						break;
 					default:
 						D(bug("Pixel mode non supported for color key..."));
-						free(surface->hwdata->mask);
+						SDL_free(surface->hwdata->mask);
 						surface->hwdata->mask = NULL;
 						ok = -1;
 				}

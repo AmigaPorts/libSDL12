@@ -36,9 +36,9 @@ GOBJS = audio/SDL_audio.go audio/SDL_audiocvt.go audio/SDL_mixer.go audio/SDL_wa
 	joystick/SDL_sysjoystick.go SDL_cdrom.go SDL_syscdrom.go events/SDL_quit.go events/SDL_active.go \
 	events/SDL_keyboard.go events/SDL_mouse.go events/SDL_resize.go file/SDL_rwops.go SDL.go \
 	events/SDL_events.go thread/amigaos/SDL_sysmutex.go thread/amigaos/SDL_syssem.go thread/amigaos/SDL_systhread.go thread/amigaos/SDL_thread.go \
-	thread/amigaos/SDL_syscond.go video/amigaos/SDL_cgxvideo.go video/amigaos/SDL_cgxmodes.go video/amigaos/SDL_cgximage.go video/amigaos/SDL_amigaevents.go \
-	video/amigaos/SDL_amigamouse.go video/amigaos/SDL_cgxgl.go video/amigaos/SDL_cgxwm.go \
-	video/amigaos/SDL_cgxyuv.go video/amigaos/SDL_cgxaccel.go video/amigaos/SDL_cgxgl_wrapper.go \
+	thread/amigaos/SDL_syscond.go video/cybergfx/SDL_cgxvideo.go video/cybergfx/SDL_cgxmodes.go video/cybergfx/SDL_cgximage.go video/cybergfx/SDL_amigaevents.go \
+	video/cybergfx/SDL_amigamouse.go video/cybergfx/SDL_cgxgl.go video/cybergfx/SDL_cgxwm.go \
+	video/cybergfx/SDL_cgxyuv.go video/cybergfx/SDL_cgxaccel.go video/cybergfx/SDL_cgxgl_wrapper.go \
 	video/SDL_gamma.go SDL_lutstub.ll stdlib/SDL_stdlib.go stdlib/SDL_string.go stdlib/SDL_malloc.go stdlib/SDL_getenv.go
 
 #
