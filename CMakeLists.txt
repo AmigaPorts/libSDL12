@@ -98,6 +98,7 @@ add_library(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/audio/SDL_mixer.c
 			${PROJECT_SOURCE_DIR}/audio/SDL_wave.c
 			${PROJECT_SOURCE_DIR}/audio/dummy/SDL_dummyaudio.c
+			${PROJECT_SOURCE_DIR}/audio/disk/SDL_diskaudio.c
 			${PROJECT_SOURCE_DIR}/audio/amigaos/SDL_ahiaudio.c
 
 			# VIDEO
@@ -166,7 +167,8 @@ target_include_directories(${LIBNAME}
 		PRIVATE
 			${PROJECT_SOURCE_DIR}/
 			${PROJECT_SOURCE_DIR}/audio
-			${PROJECT_SOURCE_DIR}/dummy
+			${PROJECT_SOURCE_DIR}/audio/dummy
+			${PROJECT_SOURCE_DIR}/audio/disk
 			${PROJECT_SOURCE_DIR}/audio/amigaos
 			${PROJECT_SOURCE_DIR}/events
 			${PROJECT_SOURCE_DIR}/include
