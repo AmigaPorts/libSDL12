@@ -337,10 +337,10 @@ void SDL_Quit(void)
   printf("[SDL_Quit] : Returning!\n"); fflush(stdout);
 #endif
 
-#ifdef __amigaos4__
+#if defined(__AMIGA__) && defined(__amigaos4__)
 	os4_quit();
 #endif
-#ifdef __AMIGA__
+#if defined(__AMIGA__) && !defined(__amigaos4__)
     amiga_quit_timer();
 #endif
 }
