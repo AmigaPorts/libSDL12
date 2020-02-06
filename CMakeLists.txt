@@ -25,6 +25,10 @@ project(SDL1.2
 		VERSION ${GIT_TAG}
 		LANGUAGES C ASM)
 
+# Lowercase project name for binaries and packaging
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
+
 include(GNUInstallDirs)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
@@ -48,6 +52,20 @@ string(REGEX REPLACE "^0+" "" VER_DAY "${VER_DAY}")
 
 # Set Amiga version
 set(AMIGA_VERSION "${SDL_MAJOR_VERSION}${SDL_MINOR_VERSION}.${SDL_PATCHLEVEL}")
+
+# Final build filename, for example "milkytracker-1.02.00-win32.zip"
+set(BUILD_FILENAME "SDL-${GIT_TAG}-${SYSTEM_NAME_LOWER}")
+
+set(CPACK_GENERATOR ZIP)
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME_LOWER})
+set(CPACK_PACKAGE_VENDOR "AmigaDev Team")
+set(CPACK_PACKAGE_CONTACT "support@amigadev.com")
+set(CPACK_PACKAGE_FILE_NAME ${BUILD_FILENAME})
+set(CPACK_PACKAGE_VERSION_MAJOR ${SDL_MAJOR_VERSION})
+set(CPACK_PACKAGE_VERSION_MINOR ${SDL_MINOR_VERSION})
+set(CPACK_PACKAGE_VERSION_PATCH ${SDL_PATCHLEVEL})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FastTracker II compatible music tracker")
+include(CPack)
 
 # Generate version header from the above
 configure_file(
@@ -199,3 +217,13 @@ file(GLOB GL_INCLUDE_FILES ${PROJECT_SOURCE_DIR}/include/GL/*.h)
 install(FILES ${PROJECT_BINARY_DIR}/libSDL.a DESTINATION "lib${LIB_SUFFIX}")
 install(FILES ${INCLUDE_FILES} DESTINATION include/SDL)
 install(FILES ${GL_INCLUDE_FILES} DESTINATION include/GL)
+
+install(FILES
+		README.md
+		README-SDL.md
+		README-AMIGA.md
+		LICENSE
+		CREDITS
+		COPYING
+		BUGS
+		DESTINATION ./)

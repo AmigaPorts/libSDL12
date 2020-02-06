@@ -122,11 +122,9 @@ SDL1.2.13 Version2 GCC linkerlibs
 * check if enough memory is here before allocbitmap, so it handle low memory situitions better now.
 
 ----------------------------------------------------------
-this is port of SDL 1.2.13 to amigaos 68k 
-This use the directory structure of SDL so a port to newer versions is easy.
-The old amiga SDL 1.2.6 files are currently in the main tree, if maybe something must compare and fail under new versions. 
+This is port of SDL 1.2.15 to AmigaOS 68k.
 
-there are many fixes, timer and semaphore working correct, and faster speed.
+There are many fixes, timer and semaphore working correct, and faster speed.
 
 A HotKey is add CTRL+ALT+H.If press only every 2. second frame is draw to GFX Card.
 
@@ -136,4 +134,4 @@ IMPORTANT: Use the new includes, this work too on old SDL
 
 sources can download here
 
-http://amiga.svn.sourceforge.net/viewvc/amiga/
+https://github.com/AmigaPorts/libSDL12
