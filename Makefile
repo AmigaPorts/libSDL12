@@ -1,11 +1,11 @@
-# Makefile for gcc version of SDL
+# Makefile for gcc version of include
 #
 # changes:
 #  18-Apr: _ApolloKeyRGB565toRGB565: disabled AMMX version of ColorKeying (for now, storem is not working in Gold2)
 #  17-Nov: - fixed Shadow Surfaces (hopefully), they were effectively impossible
 #            in the code base I got
 #          - fixed ARGB32 (CGX code was assuming RGBA all the time)
-#  12-Feb: - deleted redundant includes, now only SDL/ directory remains (as it should)
+#  12-Feb: - deleted redundant includes, now only include/ directory remains (as it should)
 
 PREFX := /opt/m68k-amigaos/
 
@@ -20,35 +20,38 @@ CPU := 68040
 
 INCLUDES = IDIR=./include/SDL
 
-GCCFLAGS = -I$(PREFX)/include -I./include/ -I./include/SDL -I./makefile-support \
+GCCFLAGS = -I$(PREFX)/include -I. -Iinclude/ -Isrc/thread -Iamiga/makefile-support \
 		-O3 -fomit-frame-pointer -m$(CPU) -mhard-float -ffast-math -noixemul \
 		-DNOIXEMUL -D_HAVE_STDINT_H
 GLFLAGS = -DSHARED_LIB -lamiga
 GCCFLAGS += -DNO_AMIGADEBUG
 GLFLAGS  += -DNO_AMIGADEBUG
 
-GOBJS = audio/SDL_audio.go audio/SDL_audiocvt.go audio/SDL_mixer.go audio/SDL_wave.go audio/amigaos/SDL_ahiaudio.go \
-	SDL_error.go SDL_fatal.go video/SDL_RLEaccel.go video/SDL_blit.go video/SDL_blit_0.go \
-	video/SDL_blit_1.go video/SDL_blit_A.go video/SDL_blit_N.go \
-	video/SDL_bmp.go video/SDL_cursor.go video/SDL_pixels.go video/SDL_surface.go video/SDL_stretch.go \
-	video/SDL_yuv.go video/SDL_yuv_sw.go video/SDL_video.go \
-	timer/amigaos/SDL_systimer.go timer/SDL_timer.go joystick/SDL_joystick.go \
-	joystick/SDL_sysjoystick.go SDL_cdrom.go SDL_syscdrom.go events/SDL_quit.go events/SDL_active.go \
-	events/SDL_keyboard.go events/SDL_mouse.go events/SDL_resize.go file/SDL_rwops.go SDL.go \
-	events/SDL_events.go thread/amigaos/SDL_sysmutex.go thread/amigaos/SDL_syssem.go thread/amigaos/SDL_systhread.go thread/amigaos/SDL_thread.go \
-	thread/amigaos/SDL_syscond.go video/cybergfx/SDL_cgxvideo.go video/cybergfx/SDL_cgxmodes.go video/cybergfx/SDL_cgximage.go video/cybergfx/SDL_amigaevents.go \
-	video/cybergfx/SDL_amigamouse.go video/cybergfx/SDL_cgxgl.go video/cybergfx/SDL_cgxwm.go \
-	video/cybergfx/SDL_cgxyuv.go video/cybergfx/SDL_cgxaccel.go video/cybergfx/SDL_cgxgl_wrapper.go \
-	video/SDL_gamma.go SDL_lutstub.ll stdlib/SDL_stdlib.go stdlib/SDL_string.go stdlib/SDL_malloc.go stdlib/SDL_getenv.go
+GOBJS = src/audio/SDL_audio.go src/audio/SDL_audiocvt.go src/audio/SDL_mixer.go src/audio/SDL_wave.go src/audio/amigaos/SDL_ahiaudio.go \
+	src/SDL_error.go src/SDL_fatal.go src/video/SDL_RLEaccel.go src/video/SDL_blit.go src/video/SDL_blit_0.go \
+	src/video/SDL_blit_1.go src/video/SDL_blit_A.go src/video/SDL_blit_N.go \
+	src/video/SDL_bmp.go src/video/SDL_cursor.go src/video/SDL_pixels.go src/video/SDL_surface.go src/video/SDL_stretch.go \
+	src/video/SDL_yuv.go src/video/SDL_yuv_sw.go src/video/SDL_video.go \
+	src/timer/amigaos/SDL_systimer.go src/timer/SDL_timer.go src/joystick/SDL_joystick.go \
+	src/joystick/SDL_sysjoystick.go src/events/SDL_quit.go src/events/SDL_active.go \
+	src/events/SDL_keyboard.go src/events/SDL_mouse.go src/events/SDL_resize.go src/file/SDL_rwops.go src/SDL.go \
+	src/events/SDL_events.go src/thread/amigaos/SDL_sysmutex.go src/thread/amigaos/SDL_syssem.go src/thread/amigaos/SDL_systhread.go src/thread/amigaos/SDL_thread.go \
+	src/thread/amigaos/SDL_syscond.go src/video/cybergfx/SDL_cgxvideo.go src/video/cybergfx/SDL_cgxmodes.go src/video/cybergfx/SDL_cgximage.go src/video/cybergfx/SDL_amigaevents.go \
+	src/video/cybergfx/SDL_amigamouse.go src/video/cybergfx/SDL_cgxgl.go src/video/cybergfx/SDL_cgxwm.go \
+	src/video/cybergfx/SDL_cgxyuv.go src/video/cybergfx/SDL_cgxaccel.go src/video/cybergfx/SDL_cgxgl_wrapper.go \
+	src/video/SDL_gamma.go SDL_lutstub.ll src/stdlib/SDL_stdlib.go src/stdlib/SDL_string.go src/stdlib/SDL_malloc.go src/stdlib/SDL_getenv.go
+
+# Disabled modules
+# src/cdrom/SDL_cdrom.go src/cdrom/amigaos/SDL_syscdrom.go
 
 #
 # BEGIN APOLLO ASM SUPPORT
 # ( build vasm: make CPU=m68k SYNTAX=mot )
 #
 VFLAGS = -devpac -I$(PREFX)/m68k-amigaos/ndk-include -Fhunk
-GCCFLAGS += -DAPOLLO_BLIT -I./video/apollo
+GCCFLAGS += -DAPOLLO_BLIT -I./src/video/apollo
 # -DAPOLLO_BLITDBG
-GOBJS += video/apollo/blitapollo.ao video/apollo/apolloammxenable.ao video/apollo/colorkeyapollo.ao
+GOBJS += src/video/apollo/blitapollo.ao src/video/apollo/apolloammxenable.ao src/video/apollo/colorkeyapollo.ao
 
 %.ao: %.asm
 	$(VASM) $(VFLAGS) -o $@ $*.asm

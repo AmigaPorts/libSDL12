@@ -1,4 +1,4 @@
-# Makefile for gcc version of SDL
+# Makefile for gcc version of include
 #
 # changes:
 #  18-Apr: _ApolloKeyRGB565toRGB565: disabled AMMX version of ColorKeying (for now, storem is not working in Gold2)

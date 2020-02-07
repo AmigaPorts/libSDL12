@@ -69,13 +69,13 @@ include(CPack)
 
 # Generate version header from the above
 configure_file(
-		${PROJECT_SOURCE_DIR}/include/SDL/SDL_version.h.in
-		${PROJECT_BINARY_DIR}/include/SDL/SDL_version.h
+		${PROJECT_SOURCE_DIR}/include/SDL_version.h.in
+		${PROJECT_BINARY_DIR}/include/SDL_version.h
 )
 
 configure_file(
-		${PROJECT_SOURCE_DIR}/include/SDL/SDL_amigaversion.h.in
-		${PROJECT_BINARY_DIR}/include/SDL/SDL_amigaversion.h
+		${PROJECT_SOURCE_DIR}/include/SDL_amigaversion.h.in
+		${PROJECT_BINARY_DIR}/include/SDL_amigaversion.h
 )
 
 set(CMAKE_CXX_STANDARD 14)
@@ -85,107 +85,104 @@ set(CMAKE_CXX_STANDARD 14)
 add_library(${LIBNAME}
 		STATIC
 			# MAIN
-			${PROJECT_SOURCE_DIR}/SDL.c
-			${PROJECT_SOURCE_DIR}/SDL_cdrom.c
-			${PROJECT_SOURCE_DIR}/SDL_syscdrom.c
-			${PROJECT_SOURCE_DIR}/SDL_error.c
-			${PROJECT_SOURCE_DIR}/SDL_fatal.c
+			${PROJECT_SOURCE_DIR}/src/SDL.c
+			${PROJECT_SOURCE_DIR}/src/SDL_error.c
+			${PROJECT_SOURCE_DIR}/src/SDL_fatal.c
 			${PROJECT_SOURCE_DIR}/SDL_lutstub.s
 
 			# AUDIO
-			${PROJECT_SOURCE_DIR}/audio/SDL_audio.c
-			${PROJECT_SOURCE_DIR}/audio/SDL_audiocvt.c
-			${PROJECT_SOURCE_DIR}/audio/SDL_mixer.c
-			${PROJECT_SOURCE_DIR}/audio/SDL_wave.c
-			${PROJECT_SOURCE_DIR}/audio/dummy/SDL_dummyaudio.c
-			${PROJECT_SOURCE_DIR}/audio/disk/SDL_diskaudio.c
-			${PROJECT_SOURCE_DIR}/audio/amigaos/SDL_ahiaudio.c
+			${PROJECT_SOURCE_DIR}/src/audio/SDL_audio.c
+			${PROJECT_SOURCE_DIR}/src/audio/SDL_audiocvt.c
+			${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer.c
+			${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer_m68k.c
+			${PROJECT_SOURCE_DIR}/src/audio/SDL_wave.c
+			${PROJECT_SOURCE_DIR}/src/audio/dummy/SDL_dummyaudio.c
+			${PROJECT_SOURCE_DIR}/src/audio/disk/SDL_diskaudio.c
+			${PROJECT_SOURCE_DIR}/src/audio/amigaos/SDL_ahiaudio.c
 
 			# VIDEO
-			${PROJECT_SOURCE_DIR}/video/SDL_RLEaccel.c
-			${PROJECT_SOURCE_DIR}/video/SDL_blit.c
-			${PROJECT_SOURCE_DIR}/video/SDL_blit_0.c
-			${PROJECT_SOURCE_DIR}/video/SDL_blit_1.c
-			${PROJECT_SOURCE_DIR}/video/SDL_blit_A.c
-			${PROJECT_SOURCE_DIR}/video/SDL_blit_N.c
-			${PROJECT_SOURCE_DIR}/video/SDL_bmp.c
-			${PROJECT_SOURCE_DIR}/video/SDL_cursor.c
-			${PROJECT_SOURCE_DIR}/video/SDL_pixels.c
-			${PROJECT_SOURCE_DIR}/video/SDL_surface.c
-			${PROJECT_SOURCE_DIR}/video/SDL_stretch.c
-			${PROJECT_SOURCE_DIR}/video/SDL_yuv.c
-			${PROJECT_SOURCE_DIR}/video/SDL_yuv_sw.c
-			${PROJECT_SOURCE_DIR}/video/SDL_video.c
-			${PROJECT_SOURCE_DIR}/video/SDL_gamma.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_RLEaccel.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_blit.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_blit_0.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_blit_1.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_blit_A.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_blit_N.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_bmp.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_cursor.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_pixels.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_surface.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_stretch.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_yuv.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_yuv_sw.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_video.c
+			${PROJECT_SOURCE_DIR}/src/video/SDL_gamma.c
 
 			# CYBERGRAPHICS
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxvideo.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxmodes.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgximage.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_amigaevents.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_amigamouse.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxgl.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxwm.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxyuv.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxaccel.c
-			${PROJECT_SOURCE_DIR}/video/cybergfx/SDL_cgxgl_wrapper.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxvideo.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxmodes.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgximage.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_amigaevents.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_amigamouse.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxgl.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxwm.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxyuv.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxaccel.c
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxgl_wrapper.c
 
 			# TIMER
-			${PROJECT_SOURCE_DIR}/timer/amigaos/SDL_systimer.c
-			${PROJECT_SOURCE_DIR}/timer/SDL_timer.c
+			${PROJECT_SOURCE_DIR}/src/timer/amigaos/SDL_systimer.c
+			${PROJECT_SOURCE_DIR}/src/timer/SDL_timer.c
 
 			# JOYSTICK
-			${PROJECT_SOURCE_DIR}/joystick/SDL_joystick.c
-			${PROJECT_SOURCE_DIR}/joystick/SDL_sysjoystick.c
+			${PROJECT_SOURCE_DIR}/src/joystick/SDL_joystick.c
+			${PROJECT_SOURCE_DIR}/src/joystick/SDL_sysjoystick.c
 
 			# EVENTS
-			${PROJECT_SOURCE_DIR}/events/SDL_quit.c
-			${PROJECT_SOURCE_DIR}/events/SDL_active.c
-			${PROJECT_SOURCE_DIR}/events/SDL_keyboard.c
-			${PROJECT_SOURCE_DIR}/events/SDL_mouse.c
-			${PROJECT_SOURCE_DIR}/events/SDL_resize.c
-			${PROJECT_SOURCE_DIR}/events/SDL_events.c
+			${PROJECT_SOURCE_DIR}/src/events/SDL_quit.c
+			${PROJECT_SOURCE_DIR}/src/events/SDL_active.c
+			${PROJECT_SOURCE_DIR}/src/events/SDL_keyboard.c
+			${PROJECT_SOURCE_DIR}/src/events/SDL_mouse.c
+			${PROJECT_SOURCE_DIR}/src/events/SDL_resize.c
+			${PROJECT_SOURCE_DIR}/src/events/SDL_events.c
 
 			# FILE
-			${PROJECT_SOURCE_DIR}/file/SDL_rwops.c
+			${PROJECT_SOURCE_DIR}/src/file/SDL_rwops.c
 
 			# THREADS
-			${PROJECT_SOURCE_DIR}/thread/amigaos/SDL_sysmutex.c
-			${PROJECT_SOURCE_DIR}/thread/amigaos/SDL_syssem.c
-			${PROJECT_SOURCE_DIR}/thread/amigaos/SDL_systhread.c
-			${PROJECT_SOURCE_DIR}/thread/amigaos/SDL_thread.c
-			${PROJECT_SOURCE_DIR}/thread/amigaos/SDL_syscond.c
-
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos/SDL_sysmutex.c
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos/SDL_syssem.c
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos/SDL_systhread.c
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos/SDL_thread.c
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos/SDL_syscond.c
 
 			# STDLIB
-			${PROJECT_SOURCE_DIR}/stdlib/SDL_stdlib.c
-			${PROJECT_SOURCE_DIR}/stdlib/SDL_string.c
-			${PROJECT_SOURCE_DIR}/stdlib/SDL_malloc.c
-			${PROJECT_SOURCE_DIR}/stdlib/SDL_getenv.c)
+			${PROJECT_SOURCE_DIR}/src/stdlib/SDL_stdlib.c
+			${PROJECT_SOURCE_DIR}/src/stdlib/SDL_string.c
+			${PROJECT_SOURCE_DIR}/src/stdlib/SDL_malloc.c
+			${PROJECT_SOURCE_DIR}/src/stdlib/SDL_getenv.c)
 
 target_include_directories(${LIBNAME}
 		PRIVATE
 			${PROJECT_SOURCE_DIR}/
-			${PROJECT_SOURCE_DIR}/audio
-			${PROJECT_SOURCE_DIR}/audio/dummy
-			${PROJECT_SOURCE_DIR}/audio/disk
-			${PROJECT_SOURCE_DIR}/audio/amigaos
-			${PROJECT_SOURCE_DIR}/events
 			${PROJECT_SOURCE_DIR}/include
-			${PROJECT_SOURCE_DIR}/include/GL
-			${PROJECT_SOURCE_DIR}/include/SDL
-			${PROJECT_BINARY_DIR}/include/SDL
-			${PROJECT_SOURCE_DIR}/joystick
-			${PROJECT_SOURCE_DIR}/main/amigaos
-			${PROJECT_SOURCE_DIR}/thread
-			${PROJECT_SOURCE_DIR}/thread/amigaos
-			${PROJECT_SOURCE_DIR}/thread/pth
-			${PROJECT_SOURCE_DIR}/thread/pthread
-			${PROJECT_SOURCE_DIR}/timer
-			${PROJECT_SOURCE_DIR}/video
-			${PROJECT_SOURCE_DIR}/video/cybergfx
-			${PROJECT_SOURCE_DIR}/video/apollo
-			${PROJECT_SOURCE_DIR}/video/dummy)
+			${PROJECT_BINARY_DIR}/include
+			${PROJECT_SOURCE_DIR}/include-GL
+			${PROJECT_SOURCE_DIR}/src/audio
+			${PROJECT_SOURCE_DIR}/src/audio/dummy
+			${PROJECT_SOURCE_DIR}/src/audio/disk
+			${PROJECT_SOURCE_DIR}/src/audio/amigaos
+			${PROJECT_SOURCE_DIR}/src/events
+			${PROJECT_SOURCE_DIR}/src/joystick
+			${PROJECT_SOURCE_DIR}/src/main/amigaos
+			${PROJECT_SOURCE_DIR}/src/thread
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos
+			${PROJECT_SOURCE_DIR}/src/thread/pth
+			${PROJECT_SOURCE_DIR}/src/thread/pthread
+			${PROJECT_SOURCE_DIR}/src/timer
+			${PROJECT_SOURCE_DIR}/src/video
+			${PROJECT_SOURCE_DIR}/src/video/cybergfx
+			${PROJECT_SOURCE_DIR}/src/video/apollo
+			${PROJECT_SOURCE_DIR}/src/video/dummy)
 
 target_compile_definitions(${LIBNAME} PRIVATE $<$<COMPILE_LANGUAGE:C>:NOIXEMUL _HAVE_STDINT_H>)
 
@@ -206,19 +203,19 @@ if(AMIGA)
 		target_sources(${LIBNAME}
 				PRIVATE
 					# APOLLO AMMX
-					${PROJECT_SOURCE_DIR}/video/apollo/blitapollo.asm
-					${PROJECT_SOURCE_DIR}/video/apollo/apolloammxenable.asm
-					${PROJECT_SOURCE_DIR}/video/apollo/colorkeyapollo.asm)
+					src/video/apollo/blitapollo.asm
+					src/video/apollo/apolloammxenable.asm
+					src/video/apollo/colorkeyapollo.asm)
 
 	endif()
 endif()
 
 
-file(GLOB INCLUDE_FILES ${PROJECT_SOURCE_DIR}/include/SDL/*.h)
-file(GLOB BIN_INCLUDE_FILES ${PROJECT_BINARY_DIR}/include/SDL/*.h)
+file(GLOB INCLUDE_FILES ${PROJECT_SOURCE_DIR}/include/*.h)
+file(GLOB BIN_INCLUDE_FILES ${PROJECT_BINARY_DIR}/include/*.h)
 list(APPEND INCLUDE_FILES ${BIN_INCLUDE_FILES})
 
-file(GLOB GL_INCLUDE_FILES ${PROJECT_SOURCE_DIR}/include/GL/*.h)
+file(GLOB GL_INCLUDE_FILES include-GL/*.h)
 
 install(FILES ${PROJECT_BINARY_DIR}/libSDL.a DESTINATION "lib${LIB_SUFFIX}")
 install(FILES ${INCLUDE_FILES} DESTINATION include/SDL)

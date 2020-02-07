@@ -1,11 +1,11 @@
-# Makefile for gcc version of SDL
+# Makefile for gcc version of include
 
 CC = m68k-amigaos-gcc
 
 GCCFLAGS = -O2 -fomit-frame-pointer -I. -I./include -noixemul
 GLFLAGS = -resident -DSHARED_LIB
 
-CFLAGS = -I./include 
+CFLAGS = -I./include
 
 GCCDEFINES = -DENABLE_CYBERGRAPHICS -DENABLE_AHI -DNO_SIGNAL_H -DNO_AMIGADEBUG
 # -DHAVE_OPENGL -DMORPHOS
@@ -62,20 +62,20 @@ LOBJS =  SDL_error.lo SDL_fatal.lo SDL_RLEaccel.lo SDL_blit.lo SDL_blit_0.lo \
 %.mo: %.c
 	ppc-morphos-gcc $(GCCFLAGS) $(GCCDEFINES) -DMORPHOS -o $@ -c $*.c
 
-all: SDL.library libSDL.a libSDLstub.a libSDL_mos.a 
+all: SDL.library libSDL.a libSDLstub.a libSDL_mos.a
 
 libSDLstub.a: SDLstub.go
 	m68k-amigaos-ar cru libSDLstub.a SDLstub.go
 	m68k-amigaos-ranlib libSDLstub.a
 
 SDL.library: $(LOBJS)
-	m68k-amigaos-gcc -v -s -resident -nostdlib /opt/gg/m68k-amigaos/lib/libnix/libinitr.o $(LOBJS) /opt/gg/lib/gcc-lib/m68k-amigaos/2.95.3/libgcc.a /opt/gg/m68k-amigaos/lib/libb/libnix/libnix.a  /opt/gg/m68k-amigaos/lib/libb/libnix/libm.a -o $@ 
+	m68k-amigaos-gcc -v -s -resident -nostdlib /opt/gg/m68k-amigaos/lib/libnix/libinitr.o $(LOBJS) /opt/gg/lib/gcc-lib/m68k-amigaos/2.95.3/libgcc.a /opt/gg/m68k-amigaos/lib/libb/libnix/libnix.a  /opt/gg/m68k-amigaos/lib/libb/libnix/libm.a -o $@
 
 #-ldebug
 
 # gg:lib/libb/libnix/libnix.a gg:lib/libb/libnix/libstubs.a  gg:lib/libb/libnix/libm.a -o $@ -ldebug
 
-#	slink to $@ LIBFD SDL.fd lib lib:sc.lib lib:scm.lib lib:debug.lib noicons libversion 1 librevision 2 smalldata stripdebug libprefix _LIB from lib:libent.o lib:libinitr.o $(OBJS) SDL_amigasas.so
+#	slink to $@ LIBFD include.fd lib lib:sc.lib lib:scm.lib lib:debug.lib noicons libversion 1 librevision 2 smalldata stripdebug libprefix _LIB from lib:libent.o lib:libinitr.o $(OBJS) SDL_amigasas.so
 #	gcc -v -fbaserel -nostartfiles -noixemul gg:lib/libnix/libinitr.o $(LOBJS) -o $@ -lm -ldebug
 #	gcc -v -s -resident -nostdlib gg:lib/libnix/libinitr.o $(LOBJS) -o $@ -ldebug
 
