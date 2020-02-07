@@ -27,6 +27,14 @@
 #include "SDL_blit.h"
 
 /* Functions to blit from N-bit surfaces to other surfaces */
+
+enum blit_features {
+	BLIT_FEATURE_HAS_MMX = 1,
+	BLIT_FEATURE_HAS_ALTIVEC = 2,
+	BLIT_FEATURE_ALTIVEC_DONT_USE_PREFETCH = 4,
+	BLIT_FEATURE_HAS_ARM_SIMD = 8
+};
+
 #if defined(APOLLO_BLIT)
 #include "blitapollo.h"
 #include "colorkeyapollo.h"
@@ -862,24 +870,25 @@ static void ConvertAltivec32to32_prefetch(SDL_BlitInfo *info)
     vec_dss(DST_CHAN_DEST);
 }
 
-static Uint32 GetBlitFeatures( void )
+static enum blit_features GetBlitFeatures( void )
 {
-    static Uint32 features = 0xffffffff;
-    if (features == 0xffffffff) {
+    static enum blit_features features = -1;
+    if (features == (enum blit_features) -1) {
         /* Provide an override for testing .. */
         char *override = SDL_getenv("SDL_ALTIVEC_BLIT_FEATURES");
         if (override) {
-            features = 0;
-            SDL_sscanf(override, "%u", &features);
+            unsigned int features_as_uint = 0;
+            SDL_sscanf(override, "%u", &features_as_uint);
+            features = (enum blit_features) features_as_uint;
         } else {
             features = ( 0
                 /* Feature 1 is has-MMX */
-                | ((SDL_HasMMX()) ? 1 : 0)
+                | ((SDL_HasMMX()) ? BLIT_FEATURE_HAS_MMX : 0)
                 /* Feature 2 is has-AltiVec */
-                | ((SDL_HasAltiVec()) ? 2 : 0)
+                | ((SDL_HasAltiVec()) ? BLIT_FEATURE_HAS_ALTIVEC : 0)
                 /* Feature 4 is dont-use-prefetch */
                 /* !!!! FIXME: Check for G5 or later, not the cache size! Always prefetch on a G4. */
-                | ((GetL3CacheSize() == 0) ? 4 : 0)
+                | ((GetL3CacheSize() == 0) ? BLIT_FEATURE_ALTIVEC_DONT_USE_PREFETCH : 0)
             );
         }
     }
@@ -890,7 +899,37 @@ static Uint32 GetBlitFeatures( void )
 #endif
 #else
 /* Feature 1 is has-MMX */
-#define GetBlitFeatures() ((Uint32)(SDL_HasMMX() ? 1 : 0))
+#define GetBlitFeatures() ((SDL_HasMMX() ? BLIT_FEATURE_HAS_MMX : 0) | (SDL_HasARMSIMD() ? BLIT_FEATURE_HAS_ARM_SIMD : 0))
+#endif
+
+#if SDL_ARM_SIMD_BLITTERS
+void Blit_BGR888_RGB888ARMSIMDAsm(int32_t w, int32_t h, uint32_t *dst, int32_t dst_stride, uint32_t *src, int32_t src_stride);
+
+static void Blit_BGR888_RGB888ARMSIMD(SDL_BlitInfo *info)
+{
+	int32_t width = info->d_width;
+	int32_t height = info->d_height;
+	uint32_t *dstp = (uint32_t *)info->d_pixels;
+	int32_t dststride = width + (info->d_skip >> 2);
+	uint32_t *srcp = (uint32_t *)info->s_pixels;
+	int32_t srcstride = width + (info->s_skip >> 2);
+
+	Blit_BGR888_RGB888ARMSIMDAsm(width, height, dstp, dststride, srcp, srcstride);
+}
+
+void Blit_RGB444_RGB888ARMSIMDAsm(int32_t w, int32_t h, uint32_t *dst, int32_t dst_stride, uint16_t *src, int32_t src_stride);
+
+static void Blit_RGB444_RGB888ARMSIMD(SDL_BlitInfo *info)
+{
+	int32_t width = info->d_width;
+	int32_t height = info->d_height;
+	uint32_t *dstp = (uint32_t *)info->d_pixels;
+	int32_t dststride = width + (info->d_skip >> 2);
+	uint16_t *srcp = (uint16_t *)info->s_pixels;
+	int32_t srcstride = width + (info->s_skip >> 1);
+
+	Blit_RGB444_RGB888ARMSIMDAsm(width, height, dstp, dststride, srcp, srcstride);
+}
 #endif
 
 /* This is now endian dependent */
@@ -2391,7 +2430,7 @@ struct blit_table {
 	Uint32 srcR, srcG, srcB;
 	int dstbpp;
 	Uint32 dstR, dstG, dstB;
-	Uint32 blit_features;
+	enum blit_features blit_features;
 	void *aux_data;
 	SDL_loblit blitfunc;
 	enum { NO_ALPHA=1, SET_ALPHA=2, COPY_ALPHA=4 } alpha;
@@ -2411,9 +2450,13 @@ static const struct blit_table normal_blit_2[] = {
 #elif SDL_ALTIVEC_BLITTERS
     /* has-altivec */
     { 0x0000F800,0x000007E0,0x0000001F, 4, 0x00000000,0x00000000,0x00000000,
-      2, NULL, Blit_RGB565_32Altivec, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
+      BLIT_FEATURE_HAS_ALTIVEC, NULL, Blit_RGB565_32Altivec, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
     { 0x00007C00,0x000003E0,0x0000001F, 4, 0x00000000,0x00000000,0x00000000,
-      2, NULL, Blit_RGB555_32Altivec, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
+      BLIT_FEATURE_HAS_ALTIVEC, NULL, Blit_RGB555_32Altivec, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
+#endif
+#if SDL_ARM_SIMD_BLITTERS
+    { 0x00000F00,0x000000F0,0x0000000F, 4, 0x00FF0000,0x0000FF00,0x000000FF,
+      BLIT_FEATURE_HAS_ARM_SIMD, NULL, Blit_RGB444_RGB888ARMSIMD, NO_ALPHA | COPY_ALPHA },
 #endif
     { 0x0000F800,0x000007E0,0x0000001F, 4, 0x00FF0000,0x0000FF00,0x000000FF,
       0, NULL, Blit_RGB565_ARGB8888, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
@@ -2442,23 +2485,23 @@ static const struct blit_table normal_blit_3[] = {
 static const struct blit_table normal_blit_4[] = {
 #if SDL_HERMES_BLITTERS
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000F800,0x000007E0,0x0000001F,
-      1, ConvertMMXpII32_16RGB565, ConvertMMX, NO_ALPHA },
+      BLIT_FEATURE_HAS_MMX, ConvertMMXpII32_16RGB565, ConvertMMX, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000F800,0x000007E0,0x0000001F,
       0, ConvertX86p32_16RGB565, ConvertX86, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000001F,0x000007E0,0x0000F800,
-      1, ConvertMMXpII32_16BGR565, ConvertMMX, NO_ALPHA },
+      BLIT_FEATURE_HAS_MMX, ConvertMMXpII32_16BGR565, ConvertMMX, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000001F,0x000007E0,0x0000F800,
       0, ConvertX86p32_16BGR565, ConvertX86, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x00007C00,0x000003E0,0x0000001F,
-      1, ConvertMMXpII32_16RGB555, ConvertMMX, NO_ALPHA },
+      BLIT_FEATURE_HAS_MMX, ConvertMMXpII32_16RGB555, ConvertMMX, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x00007C00,0x000003E0,0x0000001F,
       0, ConvertX86p32_16RGB555, ConvertX86, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000001F,0x000003E0,0x00007C00,
-      1, ConvertMMXpII32_16BGR555, ConvertMMX, NO_ALPHA },
+      BLIT_FEATURE_HAS_MMX, ConvertMMXpII32_16BGR555, ConvertMMX, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000001F,0x000003E0,0x00007C00,
       0, ConvertX86p32_16BGR555, ConvertX86, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 3, 0x00FF0000,0x0000FF00,0x000000FF,
-      1, ConvertMMXpII32_24RGB888, ConvertMMX, NO_ALPHA },
+      BLIT_FEATURE_HAS_MMX, ConvertMMXpII32_24RGB888, ConvertMMX, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 3, 0x00FF0000,0x0000FF00,0x000000FF,
       0, ConvertX86p32_24RGB888, ConvertX86, NO_ALPHA },
     { 0x00FF0000,0x0000FF00,0x000000FF, 3, 0x000000FF,0x0000FF00,0x00FF0000,
@@ -2473,13 +2516,17 @@ static const struct blit_table normal_blit_4[] = {
 #if SDL_ALTIVEC_BLITTERS
     /* has-altivec | dont-use-prefetch */
     { 0x00000000,0x00000000,0x00000000, 4, 0x00000000,0x00000000,0x00000000,
-      6, NULL, ConvertAltivec32to32_noprefetch, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
+      BLIT_FEATURE_HAS_ALTIVEC | BLIT_FEATURE_ALTIVEC_DONT_USE_PREFETCH, NULL, ConvertAltivec32to32_noprefetch, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
     /* has-altivec */
     { 0x00000000,0x00000000,0x00000000, 4, 0x00000000,0x00000000,0x00000000,
-      2, NULL, ConvertAltivec32to32_prefetch, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
+      BLIT_FEATURE_HAS_ALTIVEC, NULL, ConvertAltivec32to32_prefetch, NO_ALPHA | COPY_ALPHA | SET_ALPHA },
     /* has-altivec */
     { 0x00000000,0x00000000,0x00000000, 2, 0x0000F800,0x000007E0,0x0000001F,
-      2, NULL, Blit_RGB888_RGB565Altivec, NO_ALPHA },
+      BLIT_FEATURE_HAS_ALTIVEC, NULL, Blit_RGB888_RGB565Altivec, NO_ALPHA },
+#endif
+#if SDL_ARM_SIMD_BLITTERS
+    { 0x000000FF,0x0000FF00,0x00FF0000, 4, 0x00FF0000,0x0000FF00,0x000000FF,
+      BLIT_FEATURE_HAS_ARM_SIMD, NULL, Blit_BGR888_RGB888ARMSIMD, NO_ALPHA | COPY_ALPHA },
 #endif
 #if defined(APOLLO_BLIT)
     { 0x00FF0000,0x0000FF00,0x000000FF, 2, 0x0000F800,0x000007E0,0x0000001F,

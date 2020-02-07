@@ -61,6 +61,8 @@
 #define CPU_HAS_SSE	0x00000040
 #define CPU_HAS_SSE2	0x00000080
 #define CPU_HAS_ALTIVEC	0x00000100
+#define CPU_HAS_ARM_SIMD 0x00000200
+#define CPU_HAS_ARM_NEON 0x00000400
 
 #if SDL_ALTIVEC_BLITTERS && HAVE_SETJMP && !__MACOSX__ && !__OpenBSD__
 /* This is the brute force way of detecting instruction sets...
@@ -427,6 +429,106 @@ static __inline__ int CPU_haveAltiVec(void)
 	return altivec; 
 }
 
+#ifdef __linux__
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <elf.h>
+
+static __inline__ int CPU_haveARMSIMD(void)
+{
+	int arm_simd = 0;
+	int fd;
+
+	fd = open("/proc/self/auxv", O_RDONLY);
+	if (fd >= 0)
+	{
+		Elf32_auxv_t aux;
+		while (read(fd, &aux, sizeof aux) == sizeof aux)
+		{
+			if (aux.a_type == AT_PLATFORM)
+			{
+				const char *plat = (const char *) aux.a_un.a_val;
+				arm_simd = strncmp(plat, "v6l", 3) == 0 ||
+				           strncmp(plat, "v7l", 3) == 0;
+			}
+		}
+		close(fd);
+	}
+	return arm_simd;
+}
+
+static __inline__ int CPU_haveARMNEON(void)
+{
+	int arm_neon = 0;
+	int fd;
+
+	fd = open("/proc/self/auxv", O_RDONLY);
+	if (fd >= 0)
+	{
+		Elf32_auxv_t aux;
+		while (read(fd, &aux, sizeof aux) == sizeof aux)
+		{
+			if (aux.a_type == AT_HWCAP)
+				arm_neon = (aux.a_un.a_val & 4096) != 0;
+		}
+		close(fd);
+	}
+	return arm_neon;
+}
+
+#elif defined(__RISCOS__)
+
+#include <kernel.h>
+#include <swis.h>
+
+static __inline__ int CPU_haveARMSIMD(void)
+{
+	_kernel_swi_regs regs;
+	regs.r[0] = 0;
+	if (_kernel_swi(OS_PlatformFeatures, &regs, &regs) != NULL)
+		return 0;
+
+	if (!(regs.r[0] & (1<<31)))
+		return 0;
+
+	regs.r[0] = 34;
+	regs.r[1] = 29;
+	if (_kernel_swi(OS_PlatformFeatures, &regs, &regs) != NULL)
+		return 0;
+
+	return regs.r[0];
+}
+
+static __inline__ int CPU_haveARMNEON(void)
+{
+	/* Use the VFPSupport_Features SWI to access the MVFR registers */
+	_kernel_swi_regs regs;
+	regs.r[0] = 0;
+	if (_kernel_swi(VFPSupport_Features, &regs, &regs) == NULL) {
+		if ((regs.r[2] & 0xFFF000) == 0x111000) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+#else
+
+static __inline__ int CPU_haveARMSIMD(void)
+{
+	return 0;
+}
+
+static __inline__ int CPU_haveARMNEON(void)
+{
+	return 0;
+}
+
+#endif
+
 static Uint32 SDL_CPUFeatures = 0xFFFFFFFF;
 
 static Uint32 SDL_GetCPUFeatures(void)
@@ -456,6 +558,12 @@ static Uint32 SDL_GetCPUFeatures(void)
 		}
 		if ( CPU_haveAltiVec() ) {
 			SDL_CPUFeatures |= CPU_HAS_ALTIVEC;
+		}
+		if ( CPU_haveARMSIMD() ) {
+			SDL_CPUFeatures |= CPU_HAS_ARM_SIMD;
+		}
+		if ( CPU_haveARMNEON() ) {
+			SDL_CPUFeatures |= CPU_HAS_ARM_NEON;
 		}
 	}
 	return SDL_CPUFeatures;
@@ -525,6 +633,22 @@ SDL_bool SDL_HasAltiVec(void)
 	return SDL_FALSE;
 }
 
+SDL_bool SDL_HasARMSIMD(void)
+{
+	if ( SDL_GetCPUFeatures() & CPU_HAS_ARM_SIMD ) {
+		return SDL_TRUE;
+	}
+	return SDL_FALSE;
+}
+
+SDL_bool SDL_HasARMNEON(void)
+{
+	if ( SDL_GetCPUFeatures() & CPU_HAS_ARM_NEON ) {
+		return SDL_TRUE;
+	}
+	return SDL_FALSE;
+}
+
 #ifdef TEST_MAIN
 
 #include <stdio.h>
@@ -539,6 +663,8 @@ int main()
 	printf("SSE: %d\n", SDL_HasSSE());
 	printf("SSE2: %d\n", SDL_HasSSE2());
 	printf("AltiVec: %d\n", SDL_HasAltiVec());
+	printf("ARM SIMD: %d\n", SDL_HasARMSIMD());
+	printf("ARM NEON: %d\n", SDL_HasARMNEON());
 	return 0;
 }
 

@@ -559,7 +559,7 @@ int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained)
 	audio->convert.needed = 0;
 	audio->enabled = 1;
 	audio->paused  = 1;
- 
+
 #ifndef ENABLE_AHI
 	D(bug("AHI OpenAudio\n"));
 	/* AmigaOS opens audio inside the main loop */
@@ -654,7 +654,6 @@ int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained)
 #else
 	SDL_mutexV(audio->mixer_lock);
 	D(bug("SDL_OpenAudio USCITA...\n"));
-    
 #endif
 
 	return(0);

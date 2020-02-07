@@ -1,37 +1,27 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002  Sam Lantinga
+    Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
+    modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    version 2.1 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Sam Lantinga
     slouken@libsdl.org
-
-
-	20040210	atexit(close_timer) removed
-			static struct definitions removed
-
-	20040208	extern struct GfxBase removed
-
 */
-#include <SDL_config.h>
+#include "SDL_config.h"
 
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_systimer.c,v 1.4 2008/09/29 20:54:05 r� Exp $";
-#endif
+#ifdef SDL_TIMER_AMIGA
 
 #include <SDL.h>
 #include <devices/timer.h>
@@ -45,7 +35,6 @@ static char rcsid =
 
 #include <exec/execbase.h>
 
-//#include <clib/alib_protos.h>
 #ifdef MORPHOS
 #include <ppcinline/dos.h>
 #include <ppcinline/exec.h>
@@ -326,3 +315,5 @@ int SDL_SYS_StartTimer(void) {
 void SDL_SYS_StopTimer(void) {
 	return;
 }
+
+#endif /* SDL_TIMER_AMIGA */
