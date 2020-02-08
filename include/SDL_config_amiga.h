@@ -154,6 +154,7 @@ typedef unsigned long long				uint64_t;
 //#define SDL_AUDIO_DRIVER_DUMMY			1
 
 /* Enable various cdrom drivers */
+#define SDL_CDROM_DISABLED				1
 //#define SDL_CDROM_AMIGA				1
 
 /* Enable various input drivers */

@@ -65,10 +65,6 @@ SDL_AmigaNoLowerTaskpri() {
 	_sdl_no_lower_taskpri = 1;
 }
 
-SDL_bool SDL_HasMMX(void) {
-	return SDL_FALSE;
-}
-
 //extern size_t SDL_strlcpy(char *, const char *, size_t);
 /*
 	char *dst;

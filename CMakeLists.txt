@@ -91,6 +91,9 @@ add_library(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/src/SDL_fatal.c
 			${PROJECT_SOURCE_DIR}/SDL_lutstub.s
 
+			# CPUINFO
+			${PROJECT_SOURCE_DIR}/src/cpuinfo/SDL_cpuinfo.c
+
 			# AUDIO
 			${PROJECT_SOURCE_DIR}/src/audio/SDL_audio.c
 			${PROJECT_SOURCE_DIR}/src/audio/SDL_audiocvt.c
