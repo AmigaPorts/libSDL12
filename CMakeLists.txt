@@ -28,6 +28,7 @@ project(SDL1.2
 # Lowercase project name for binaries and packaging
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
+string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYSTEM_ARCH_LOWER)
 
 include(GNUInstallDirs)
 
@@ -54,7 +55,7 @@ string(REGEX REPLACE "^0+" "" VER_DAY "${VER_DAY}")
 set(AMIGA_VERSION "${SDL_MAJOR_VERSION}${SDL_MINOR_VERSION}.${SDL_PATCHLEVEL}")
 
 # Final build filename, for example "milkytracker-1.02.00-win32.zip"
-set(BUILD_FILENAME "SDL-${GIT_TAG}-${SYSTEM_NAME_LOWER}")
+set(BUILD_FILENAME "SDL-${GIT_TAG}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}")
 
 set(CPACK_GENERATOR ZIP)
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME_LOWER})
@@ -96,8 +97,8 @@ add_library(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer.c
 			${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer_m68k.c
 			${PROJECT_SOURCE_DIR}/src/audio/SDL_wave.c
-			${PROJECT_SOURCE_DIR}/src/audio/dummy/SDL_dummyaudio.c
-			${PROJECT_SOURCE_DIR}/src/audio/disk/SDL_diskaudio.c
+			#${PROJECT_SOURCE_DIR}/src/audio/dummy/SDL_dummyaudio.c
+			#${PROJECT_SOURCE_DIR}/src/audio/disk/SDL_diskaudio.c
 			${PROJECT_SOURCE_DIR}/src/audio/amigaos/SDL_ahiaudio.c
 
 			# VIDEO
