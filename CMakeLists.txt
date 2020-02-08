@@ -96,8 +96,8 @@ add_library(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer.c
 			${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer_m68k.c
 			${PROJECT_SOURCE_DIR}/src/audio/SDL_wave.c
-			${PROJECT_SOURCE_DIR}/src/audio/dummy/SDL_dummyaudio.c
-			${PROJECT_SOURCE_DIR}/src/audio/disk/SDL_diskaudio.c
+			#${PROJECT_SOURCE_DIR}/src/audio/dummy/SDL_dummyaudio.c
+			#${PROJECT_SOURCE_DIR}/src/audio/disk/SDL_diskaudio.c
 			${PROJECT_SOURCE_DIR}/src/audio/amigaos/SDL_ahiaudio.c
 
 			# VIDEO

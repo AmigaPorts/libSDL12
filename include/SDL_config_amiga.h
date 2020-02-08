@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@
 #include <exec/types.h>
 
 #ifndef _HAVE_STDINT_H
-/* This is a set of defines to configure the include features */
+/* This is a set of defines to configure the SDL features */
 
 #ifndef _INT8_T_DECLARED
 typedef signed char         			int8_t;
@@ -150,8 +150,8 @@ typedef unsigned long long				uint64_t;
 
 /* Enable various audio drivers */
 #define SDL_AUDIO_DRIVER_AHI			1
-#define SDL_AUDIO_DRIVER_DISK			1
-#define SDL_AUDIO_DRIVER_DUMMY			1
+//#define SDL_AUDIO_DRIVER_DISK			1
+//#define SDL_AUDIO_DRIVER_DUMMY			1
 
 /* Enable various cdrom drivers */
 //#define SDL_CDROM_AMIGA				1
