@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -92,7 +92,7 @@ static SDL_AudioDevice *DUMMYAUD_CreateDevice(int devindex)
 }
 
 AudioBootStrap DUMMYAUD_bootstrap = {
-	DUMMYAUD_DRIVER_NAME, "include dummy audio driver",
+	DUMMYAUD_DRIVER_NAME, "SDL dummy audio driver",
 	DUMMYAUD_Available, DUMMYAUD_CreateDevice
 };
 
@@ -144,7 +144,7 @@ static int DUMMYAUD_OpenAudio(_THIS, SDL_AudioSpec *spec)
 	 *  a given audio spec, so timing stays fairly faithful.
 	 * Also, we have it not block at all for the first two calls, so
 	 *  it seems like we're filling two audio fragments right out of the
-	 *  gate, like other include drivers tend to do.
+	 *  gate, like other SDL drivers tend to do.
 	 */
 	this->hidden->initial_calls = 2;
 	this->hidden->write_delay =

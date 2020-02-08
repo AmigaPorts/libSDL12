@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@
 #include "SDL_cgxvideo.h"
 
 /* Define this if you want to grab the keyboard in fullscreen mode.
-   If you do not define this, include will return from SDL_SetVideoMode()
+   If you do not define this, SDL will return from SDL_SetVideoMode()
    immediately, but will not actually go fullscreen until the window
    manager is idle.
 */

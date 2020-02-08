@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 */
 #include "SDL_config.h"
 
-/* General cursor handling code for include */
+/* General cursor handling code for SDL */
 
 #include "SDL_mutex.h"
 #include "SDL_video.h"
@@ -163,7 +163,7 @@ SDL_Cursor * SDL_CreateCursor (Uint8 *data, Uint8 *mask,
 
 /* SDL_SetCursor(NULL) can be used to force the cursor redraw,
    if this is desired for any reason.  This is used when setting
-   the video mode and when the include window gains the mouse focus.
+   the video mode and when the SDL window gains the mouse focus.
  */
 void SDL_SetCursor (SDL_Cursor *cursor)
 {

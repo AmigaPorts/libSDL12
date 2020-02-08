@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -173,7 +173,8 @@ int SDL_SYS_CreateThread(SDL_Thread *thread, void *args) {
 
 	D(bug("Sending %lx to the new thread...\n", args));
 
-	sprintf(buffer, "%ld", args);
+	if( args )
+		SDL_snprintf(buffer, SDL_arraysize(buffer), "%ld", args);
 
 
 #ifdef WARPOS

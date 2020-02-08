@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
 #include "SDL_config.h"
 
 /*
- * CGX based include video driver implementation by Gabriele Greco
+ * CGX based SDL video driver implementation by Gabriele Greco
  * gabriele.greco@aruba.it
  */
 
@@ -64,7 +64,7 @@
 #include <proto/alib.h>
 #endif
 
-#include "../../../mydebug.h"
+#include "mydebug.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -294,7 +294,7 @@ static SDL_VideoDevice *CGX_CreateDevice(int devindex) {
 }
 
 VideoBootStrap CGX_bootstrap = {
-		"CGX", "AmigaOS CyberGraphics", CGX_Available, CGX_CreateDevice
+	"CGX", "AmigaOS CyberGraphics", CGX_Available, CGX_CreateDevice
 };
 
 Uint32 MakeBitMask(_THIS, int type, int format, int *bpp, struct SDL_Surface *screen) {
@@ -547,7 +547,7 @@ static int CGX_VideoInit(_THIS, SDL_PixelFormat *vformat) {
 
 	D(bug("Checking if we are using a CGX native display...\n"));
 
-	if ( !IsCyberModeID(GetVPModeID(&SDL_Display->ViewPort))) {  //selden reach
+	if ( !IsCyberModeID(GetVPModeID(&SDL_Display->ViewPort)) ) {  //selden reach
 
 		Uint32 okid = INVALID_ID;
 		if ( bpp == 32 ) {

@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -19,7 +19,6 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-
 #include "SDL_config.h"
 
 #ifdef AROS
@@ -321,8 +320,7 @@ int CGX_GetWMInfo(_THIS, SDL_SysWMinfo *info) {
 #endif
 		return (1);
 	} else {
-		SDL_SetError("Application not compiled with include %d.%d\n",
-					 SDL_MAJOR_VERSION, SDL_MINOR_VERSION);
+		SDL_SetError("Application not compiled with SDL %d.%d\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION);
 		return (-1);
 	}
 }

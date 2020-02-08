@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -63,7 +63,7 @@ extern void SDL_UnlockCursor(void);
 extern SDL_Cursor *SDL_cursor;
 extern void SDL_MouseRect(SDL_Rect *area);
 
-/* State definitions for the include cursor */
+/* State definitions for the SDL cursor */
 #define CURSOR_VISIBLE	0x01
 #define CURSOR_USINGSW	0x10
 #define SHOULD_DRAWCURSOR(X) 						\

@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -21,19 +21,19 @@
 */
 #include "SDL_config.h"
 
-/* Dummy include video driver implementation; this is just enough to make an
- *  include-based application THINK it's got a working video driver, for
+/* Dummy SDL video driver implementation; this is just enough to make an
+ *  SDL-based application THINK it's got a working video driver, for
  *  applications that call SDL_Init(SDL_INIT_VIDEO) when they don't need it,
- *  and also for use as a collection of stubs when porting include to a new
+ *  and also for use as a collection of stubs when porting SDL to a new
  *  platform for which you haven't yet written a valid video driver.
  *
- * This is also a great way to determine bottlenecks: if you think that include
+ * This is also a great way to determine bottlenecks: if you think that SDL
  *  is a performance problem for a given platform, enable this driver, and
  *  then see if your application runs faster without video overhead.
  *
  * Initial work by Ryan C. Gordon (icculus@icculus.org). A good portion
  *  of this was cut-and-pasted from Stephane Peter's work in the AAlib
- *  include video driver.  Renamed to "DUMMY" by Sam Lantinga.
+ *  SDL video driver.  Renamed to "DUMMY" by Sam Lantinga.
  */
 
 #include "SDL_video.h"
@@ -133,7 +133,7 @@ static SDL_VideoDevice *DUMMY_CreateDevice(int devindex)
 }
 
 VideoBootStrap DUMMY_bootstrap = {
-	DUMMYVID_DRIVER_NAME, "include dummy video driver",
+	DUMMYVID_DRIVER_NAME, "SDL dummy video driver",
 	DUMMY_Available, DUMMY_CreateDevice
 };
 
@@ -141,7 +141,7 @@ VideoBootStrap DUMMY_bootstrap = {
 int DUMMY_VideoInit(_THIS, SDL_PixelFormat *vformat)
 {
 	/*
-	fprintf(stderr, "WARNING: You are using the include dummy video driver!\n");
+	fprintf(stderr, "WARNING: You are using the SDL dummy video driver!\n");
 	*/
 
 	/* Determine the screen depth (use default 8-bit depth) */
@@ -227,7 +227,7 @@ int DUMMY_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
 }
 
 /* Note:  If we are terminated, this could be called in the middle of
-   another include video routine -- notably UpdateRects.
+   another SDL video routine -- notably UpdateRects.
 */
 void DUMMY_VideoQuit(_THIS)
 {

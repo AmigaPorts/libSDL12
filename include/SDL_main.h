@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -57,7 +57,7 @@
 extern C_LINKAGE int SDL_main(int argc, char *argv[]);
 
 
-/** @name From the include library code -- needed for registering the app on Win32 */
+/** @name From the SDL library code -- needed for registering the app on Win32 */
 /*@{*/
 #ifdef __WIN32__
 
@@ -79,7 +79,7 @@ extern DECLSPEC void SDLCALL SDL_UnregisterApp(void);
 #endif
 /*@}*/
 
-/** @name From the include library code -- needed for registering QuickDraw on MacOS */
+/** @name From the SDL library code -- needed for registering QuickDraw on MacOS */
 /*@{*/
 #if defined(__MACOS__)
 

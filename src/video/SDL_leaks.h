@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
 /* Define this if you want surface leak detection code enabled */
 /*#define CHECK_LEAKS*/
 
-/* Global variables used to check leaks in code using include */
+/* Global variables used to check leaks in code using SDL */
 
 #ifdef CHECK_LEAKS
 extern int surfaces_allocated;

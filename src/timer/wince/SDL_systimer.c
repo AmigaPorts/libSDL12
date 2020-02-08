@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ static Sint32 wce_rel_date(void)
   return((Sint32)(wce_date()-start_date));
 }
 
-/* Return time in ms relative to when include was started */
+/* Return time in ms relative to when SDL was started */
 Uint32 SDL_GetTicks()
 {
   Sint32 offset=wce_rel_date()-wce_rel_ticks();

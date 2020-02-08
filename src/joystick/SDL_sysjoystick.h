@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is SDL_free software; you can redistribute it and/or
@@ -21,11 +21,11 @@
 */
 #include "SDL_config.h"
 
-/* This is the system specific header for the include joystick API */
+/* This is the system specific header for the SDL joystick API */
 
 #include "SDL_joystick.h"
 
-/* The include joystick structure */
+/* The SDL joystick structure */
 struct _SDL_Joystick {
 	Uint8 index;		/* Device index */
 	const char *name;	/* Joystick name - system dependent */

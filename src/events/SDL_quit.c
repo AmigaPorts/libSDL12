@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 */
 #include "SDL_config.h"
 
-/* General quit handling code for include */
+/* General quit handling code for SDL */
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>

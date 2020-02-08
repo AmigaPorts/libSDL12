@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
 #undef HAVE_ICONV
 #endif
 
-/* This file contains portable iconv functions for include */
+/* This file contains portable iconv functions for SDL */
 
 #include "SDL_stdinc.h"
 #include "SDL_endian.h"

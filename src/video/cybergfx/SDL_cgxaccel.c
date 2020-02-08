@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -32,8 +32,7 @@
 #endif
 #define Bug
 
-static int CGX_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
-						   SDL_Surface *dst, SDL_Rect *dstrect);
+static int CGX_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
 
 // These are needed to avoid register troubles with gcc -O2!
 
@@ -44,9 +43,9 @@ static int CGX_HWAccelBlit(SDL_Surface *src, SDL_Rect *srcrect,
  * This is a workaround for an old gcc 2.7.x bug...
  */
 
-#define BMKBRP(a, b, c, d, e, f, g, h, i, j) BltMaskBitMapRastPort(a,b,c,d,e,f,g,h,i,j)
-#define    BBRP(a, b, c, d, e, f, g, h, i) BltBitMapRastPort(a,b,c,d,e,f,g,h,i)
-#define BBB(a, b, c, d, e, f, g, h, i, j, k) BltBitMap(a,b,c,d,e,f,g,h,i,j,k)
+#define	BMKBRP(a, b, c, d, e, f, g, h, i, j)	BltMaskBitMapRastPort(a,b,c,d,e,f,g,h,i,j)
+#define	BBRP(a, b, c, d, e, f, g, h, i)		BltBitMapRastPort(a,b,c,d,e,f,g,h,i)
+#define	BBB(a, b, c, d, e, f, g, h, i, j, k)	BltBitMap(a,b,c,d,e,f,g,h,i,j,k)
 #else
 void BMKBRP(struct BitMap *a,long b, long c,struct RastPort *d,long e,long f,long g,long h,unsigned long i,APTR j)
 {BltMaskBitMapRastPort(a,b,c,d,e,f,g,h,i,j);}

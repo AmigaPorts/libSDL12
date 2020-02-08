@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@
 #include <string.h>
 
 #include <devices/ahi.h>
-#include "../../../mydebug.h"
+#include "mydebug.h"
 
 #include "../SDL_sysaudio.h"
 

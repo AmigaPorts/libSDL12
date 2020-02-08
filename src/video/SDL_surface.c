@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	SDL_Surface *surface;
 
 	/* Make sure the size requested doesn't overflow our datatypes */
-	/* Next time I write a library like include, I'll use int for size. :) */
+	/* Next time I write a library like SDL, I'll use int for size. :) */
 	if ( width >= 16384 || height >= 65536 ) {
 		SDL_SetError("Width or height is too large");
 		return(NULL);

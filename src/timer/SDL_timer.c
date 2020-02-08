@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -141,7 +141,7 @@ void SDL_ThreadedTimerCheck(void)
 				} else {
 					/* Remove timer from the list */
 #ifdef DEBUG_TIMERS
-					printf("include: Removing timer %p\n", t);
+					printf("SDL: Removing timer %p\n", t);
 #endif
 					if ( prev ) {
 						prev->next = next;

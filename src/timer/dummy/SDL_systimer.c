@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
 #if defined(SDL_TIMER_DUMMY) || defined(SDL_TIMERS_DISABLED)
 
 #include "SDL_timer.h"
-#include "../SDL_timer_c.h"
+#include "SDL_timer_c.h"
 
 void SDL_StartTicks(void)
 {

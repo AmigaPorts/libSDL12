@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -366,7 +366,7 @@ int SDL_AudioInit(const char *driver_name)
 	}
 
 #if SDL_AUDIO_DRIVER_PULSE
-	/* include 2.0 uses the name "pulseaudio", so we'll support both */
+	/* SDL 2.0 uses the name "pulseaudio", so we'll support both */
 	if ( driver_name && SDL_strcasecmp(driver_name, "pulseaudio") == 0 ) {
 		driver_name = "pulse";
 	}

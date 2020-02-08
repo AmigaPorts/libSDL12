@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -943,7 +943,7 @@ static void Blit_RGB444_RGB888ARMSIMD(SDL_BlitInfo *info)
 
 #if SDL_HERMES_BLITTERS
 
-/* Heheheh, we coerce Hermes into using include blit information */
+/* Heheheh, we coerce Hermes into using SDL blit information */
 #define X86_ASSEMBLER
 #define HermesConverterInterface	SDL_BlitInfo
 #define HermesClearInterface		void

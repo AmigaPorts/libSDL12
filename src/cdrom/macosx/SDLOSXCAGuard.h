@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
     Note: This file hasn't been modified so technically we have to keep the disclaimer :-(
 
 
-    Copyright:  ï¿½ Copyright 2002 Apple Computer, Inc. All rights reserved.
+    Copyright:  © Copyright 2002 Apple Computer, Inc. All rights reserved.
 
     Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
             ("Apple") in consideration of your agreement to the following terms, and your
@@ -34,7 +34,7 @@
             please do not use, install, modify or redistribute this Apple software.
 
             In consideration of your agreement to abide by the following terms, and subject
-            to these terms, Apple grants you a personal, non-exclusive license, under Appleï¿½s
+            to these terms, Apple grants you a personal, non-exclusive license, under AppleÕs
             copyrights in this original Apple software (the "Apple Software"), to use,
             reproduce, modify and redistribute the Apple Software, with or without
             modifications, in source and/or binary forms; provided that if you redistribute

@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -24,19 +24,16 @@
 #endif
 long _sdl_no_lower_taskpri;
 long _sdl_audiovolume;
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_amigaevents.c,v 1.2 2008/11/20 08:51:17 roesch bernd Exp $";
-#endif
 
 #include "SDL_config.h"
-/* Handle the event stream, converting Amiga events into include events */
+
+/* Handle the event stream, converting Amiga events into SDL events */
 #include "SDL.h"
 
 #include "SDL_syswm.h"
-#include "../../events/SDL_sysevents.h"
-#include "../SDL_sysvideo.h"
-#include "../../events/SDL_events_c.h"
+#include "../events/SDL_sysevents.h"
+#include "SDL_sysvideo.h"
+#include "../events/SDL_events_c.h"
 #include "SDL_cgxvideo.h"
 #include "SDL_cgxmodes_c.h"
 #include "SDL_cgximage_c.h"
@@ -49,7 +46,7 @@ static char rcsid =
 #include <inline/dos.h>
 #include <inline/keymap.h>
 
-/* The translation tables from an Amiga keysym to a include keysym */
+/* The translation tables from an Amiga keysym to a SDL keysym */
 static SDLKey MISC_keymap[256];
 
 SDL_keysym *amiga_TranslateKey(int code, int qual, SDL_keysym *keysym);

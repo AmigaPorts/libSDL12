@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -238,7 +238,7 @@ static int SDL_SYS_CDGetTOC(SDL_CD *cdrom)
 				cdrom->track[i].offset;
 		}
 
-	/* Apparently include wants a fake last entry */
+	/* Apparently SDL wants a fake last entry */
 	cdrom->track[i].offset = leadout;
 	cdrom->track[i].length = 0;
 
@@ -344,7 +344,7 @@ static int SDL_SYS_CDPlay(SDL_CD *cdrom, int start, int length)
 	cdpb.csCode = kSetPlayMode;
 	cdpb.csParam.bytes[0] = false;			/* Repeat? */
 	cdpb.csParam.bytes[1] = kPlayModeSequential;	/* Play mode */
-	/* ï¿½ï¿½ï¿½ï¿½Treat as soft error, NEC Drive doesnt support this call ï¿½ï¿½ï¿½ */
+	/* ¥¥¥ÊTreat as soft error, NEC Drive doesnt support this call ¥¥¥ */
 	PBControlSync((ParmBlkPtr) &cdpb);
 
 #if 1

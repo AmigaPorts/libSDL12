@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
 
 #include "SDL_platform.h"
 
-/* This is a set of defines to configure the include features */
+/* This is a set of defines to configure the SDL features */
 
 #if defined(__GNUC__) || defined(__DMC__) || defined(__WATCOMC__)
 #define HAVE_STDINT_H	1
@@ -70,7 +70,7 @@ typedef unsigned int uintptr_t;
 #endif /* __GNUC__ || _MSC_VER */
 #define SDL_HAS_64BIT_TYPE	1
 
-/* Enabled for include 1.2 (binary compatibility) */
+/* Enabled for SDL 1.2 (binary compatibility) */
 #define HAVE_LIBC	1
 #ifdef HAVE_LIBC
 /* Useful headers */

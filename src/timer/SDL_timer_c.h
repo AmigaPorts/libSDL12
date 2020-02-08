@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -42,5 +42,5 @@ extern int SDL_SetTimerThreaded(int value);
 extern int SDL_TimerInit(void);
 extern void SDL_TimerQuit(void);
 
-/* This function is called from the include event thread if it is available */
+/* This function is called from the SDL event thread if it is available */
 extern void SDL_ThreadedTimerCheck(void);

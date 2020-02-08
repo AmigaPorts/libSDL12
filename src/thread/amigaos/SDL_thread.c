@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 */
 #include "SDL_config.h"
 
-/* System independent thread management routines for include */
+/* System independent thread management routines for SDL */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +30,7 @@
 #include "SDL_error.h"
 #include "SDL_mutex.h"
 #include "SDL_thread.h"
-#include "../SDL_thread_c.h"
+#include "SDL_thread_c.h"
 //#include "SDL_systhread.h"
 
 #define ARRAY_CHUNKSIZE    32

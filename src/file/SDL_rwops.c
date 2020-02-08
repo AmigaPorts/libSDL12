@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 */
 #include "SDL_config.h"
 
-/* This file provides a general interface for include to read and write
+/* This file provides a general interface for SDL to read and write
    data sources.  It can easily be extended to files, memory, etc.
 */
 
@@ -141,7 +141,7 @@ static int SDLCALL win32_file_open(SDL_RWops *context, const char *filename, con
 		SDL_stack_free(filenameW);
 	} else {
 		/* CP_UTF8 might not be supported (Win95), so use SDL_iconv to get wchars. */
-		/* Use UCS2: no UTF-16 support here. Try again in include 1.3.  :) */
+		/* Use UCS2: no UTF-16 support here. Try again in SDL 1.3.  :) */
 		char *utf16 = SDL_iconv_string("UCS2", "UTF8", filename, SDL_strlen(filename) + 1);
 		char *filenameA = SDL_stack_alloc(char, size * 6);  /* 6, just in case. */
 		BOOL bDefCharUsed = FALSE;
@@ -522,7 +522,7 @@ SDL_RWops *SDL_RWFromFile(const char *file, const char *mode)
 		rwops = SDL_RWFromFP(fp, 1);
 	}
 #else
-	SDL_SetError("include not compiled with stdio support");
+	SDL_SetError("SDL not compiled with stdio support");
 #endif /* !HAVE_STDIO_H */
 
 	return(rwops);

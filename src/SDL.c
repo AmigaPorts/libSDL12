@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -21,14 +21,14 @@
 */
 #include "SDL_config.h"
 
-/* Initialization code for include */
+/* Initialization code for SDL */
 
 #include "SDL.h"
 #include "SDL_fatal.h"
 #if !SDL_VIDEO_DISABLED
 #include "video/SDL_leaks.h"
 #endif
-#include "../mydebug.h"
+#include "mydebug.h"
 
 #if SDL_THREAD_PTH
 #include <pth.h>
@@ -82,7 +82,7 @@ extern int  SDL_TimerInit(void);
 extern void SDL_TimerQuit(void);
 #endif
 
-/* The current include version */
+/* The current SDL version */
 static SDL_version version =
 	{ SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL };
 
@@ -116,7 +116,7 @@ int SDL_InitSubSystem(Uint32 flags)
 	}
 #else
 	if ( flags & SDL_INIT_TIMER ) {
-		SDL_SetError("include not built with timer support");
+		SDL_SetError("SDL not built with timer support");
 		return(-1);
 	}
 #endif
@@ -132,7 +132,7 @@ int SDL_InitSubSystem(Uint32 flags)
 	}
 #else
 	if ( flags & SDL_INIT_VIDEO ) {
-		SDL_SetError("include not built with video support");
+		SDL_SetError("SDL not built with video support");
 		return(-1);
 	}
 #endif
@@ -147,7 +147,7 @@ int SDL_InitSubSystem(Uint32 flags)
 	}
 #else
 	if ( flags & SDL_INIT_AUDIO ) {
-		SDL_SetError("include not built with audio support");
+		SDL_SetError("SDL not built with audio support");
 		return(-1);
 	}
 #endif
@@ -163,7 +163,7 @@ int SDL_InitSubSystem(Uint32 flags)
 	}
 #else
 	if ( flags & SDL_INIT_JOYSTICK ) {
-		SDL_SetError("include not built with joystick support");
+		SDL_SetError("SDL not built with joystick support");
 		return(-1);
 	}
 #endif
@@ -178,7 +178,7 @@ int SDL_InitSubSystem(Uint32 flags)
 	}
 #else
 	if ( flags & SDL_INIT_CDROM ) {
-		SDL_SetError("include not built with cdrom support");
+		SDL_SetError("SDL not built with cdrom support");
 		return(-1);
 	}
 #endif
@@ -203,7 +203,7 @@ static SDL_bool initialized = SDL_FALSE;
 
 static void os4_initialize(void)
 {
-	dprintf("include %d.%d.%d\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+	dprintf("SDL %d.%d.%d\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
 
 	if (!initialized) {
 		// Call "constructor" functions manually
@@ -230,7 +230,7 @@ static void os4_quit(void)
 		dprintf("Not initialized\n");
 	}
 
-	dprintf("include QUIT\n");
+	dprintf("SDL QUIT\n");
 }
 #endif
 
@@ -319,7 +319,7 @@ void SDL_Quit(void)
 
 	/* Print the number of surfaces not freed */
 	if ( surfaces_allocated != 0 ) {
-		fprintf(stderr, "include Warning: %d include surfaces extant\n",
+		fprintf(stderr, "SDL Warning: %d SDL surfaces extant\n",
 							surfaces_allocated);
 	}
 #endif
@@ -399,7 +399,7 @@ unsigned _System LibMain(unsigned hmod, unsigned termination)
   if (termination)
   {
 #ifdef DEBUG_BUILD
-/*    printf("[include DLL Unintialization] : Removing exception handler\n"); */
+/*    printf("[SDL DLL Unintialization] : Removing exception handler\n"); */
 #endif
     DosUnsetExceptionHandler(&SDL_Main_xcpthand);
     return 1;
@@ -412,7 +412,7 @@ unsigned _System LibMain(unsigned hmod, unsigned termination)
 #endif
     /* Fire up exception handler */
 #ifdef DEBUG_BUILD
-/*    printf("[include DLL Initialization] : Setting exception handler\n"); */
+/*    printf("[SDL DLL Initialization] : Setting exception handler\n"); */
 #endif
     /* Set exception handler */
     DosSetExceptionHandler(&SDL_Main_xcpthand);

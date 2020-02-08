@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -110,13 +110,13 @@ struct SDL_SysWMinfo {
 		void (*unlock_func)(void);
                 /*@}*/
 
-		/** @name Introduced in include 1.0.2 */
+		/** @name Introduced in SDL 1.0.2 */
                 /*@{*/
 	    	Window fswindow;	/**< The X11 fullscreen window */
 	    	Window wmwindow;	/**< The X11 managed input window */
                 /*@}*/
 
-		/** @name Introduced in include 1.2.12 */
+		/** @name Introduced in SDL 1.2.12 */
                 /*@{*/
 		Display *gfxdisplay;	/**< The X11 display to which rendering is done */
                 /*@}*/

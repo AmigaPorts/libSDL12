@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 
 #if defined(SDL_JOYSTICK_DUMMY) || defined(SDL_JOYSTICK_DISABLED)
 
-/* This is the system specific header for the include joystick API */
+/* This is the system specific header for the SDL joystick API */
 
 #include "SDL_joystick.h"
 #include "../SDL_sysjoystick.h"

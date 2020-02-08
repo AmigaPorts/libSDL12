@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -3106,12 +3106,12 @@ extern "C" {
 
 #include <stddef.h>
 #ifndef GL_VERSION_2_0
-/* include-GL type for program/shader text */
+/* GL type for program/shader text */
 typedef char GLchar;			/* native character */
 #endif
 
 #ifndef GL_VERSION_1_5
-/* include-GL types for handling large vertex buffer objects */
+/* GL types for handling large vertex buffer objects */
 #ifdef __APPLE__
 typedef long GLintptr;
 typedef long GLsizeiptr;
@@ -3122,7 +3122,7 @@ typedef ptrdiff_t GLsizeiptr;
 #endif
 
 #ifndef GL_ARB_vertex_buffer_object
-/* include-GL types for handling large vertex buffer objects */
+/* GL types for handling large vertex buffer objects */
 #ifdef __APPLE__
 typedef long GLintptrARB;
 typedef long GLsizeiptrARB;
@@ -3133,7 +3133,7 @@ typedef ptrdiff_t GLsizeiptrARB;
 #endif
 
 #ifndef GL_ARB_shader_objects
-/* include-GL types for handling shader object handles and program/shader text */
+/* GL types for handling shader object handles and program/shader text */
 typedef char GLcharARB;		/* native character */
 #if defined(__APPLE__)
 typedef void *GLhandleARB;	/* shader object handle */
@@ -3142,7 +3142,7 @@ typedef unsigned int GLhandleARB;	/* shader object handle */
 #endif
 #endif
 
-/* include-GL types for "half" precision (s10e5) float data in host memory */
+/* GL types for "half" precision (s10e5) float data in host memory */
 #ifndef GL_ARB_half_float_pixel
 typedef unsigned short GLhalfARB;
 #endif
@@ -6270,7 +6270,7 @@ typedef void (APIENTRYP PFNGLDRAWBUFFERSATIPROC) (GLsizei n, const GLenum *bufs)
 
 #ifndef GL_ATI_pixel_format_float
 #define GL_ATI_pixel_format_float 1
-/* This is really a WGL extension, but defines some associated include-GL enums.
+/* This is really a WGL extension, but defines some associated GL enums.
  * ATI does not export "GL_ATI_pixel_format_float" in the GL_EXTENSIONS string.
  */
 #endif

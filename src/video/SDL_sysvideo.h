@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -37,10 +37,10 @@
 #include "SDL_opengl.h"
 #endif /* SDL_VIDEO_OPENGL */
 
-/* The include video driver */
+/* The SDL video driver */
 typedef struct SDL_VideoDevice SDL_VideoDevice;
 
-/* Define the include video driver structure */
+/* Define the SDL video driver structure */
 #define _THIS	SDL_VideoDevice *_this
 #ifndef _STATUS
 #define _STATUS	SDL_status *status
@@ -275,7 +275,7 @@ struct SDL_VideoDevice {
 	int handles_any_size;	/* Driver handles any size video mode */
 
 	/* * * */
-	/* Data used by the include-GL drivers */
+	/* Data used by the GL drivers */
 	struct {
 		int red_size;
 		int green_size;

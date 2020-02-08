@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -53,11 +53,11 @@ static int Audio_Available(void) {
 	struct MsgPort *p;
 	struct AHIRequest *req;
 
-	if ( p = CreateMsgPort()) {
+	if ( p = CreateMsgPort() ) {
 		if ( req = (struct AHIRequest *)CreateIORequest(p, sizeof(struct AHIRequest))) {
 			req->ahir_Version = 4;
 
-			if ( !OpenDevice(AHINAME, 0, (struct IORequest *)req, NULL)) {
+			if ( !OpenDevice(AHINAME, 0, (struct IORequest *)req, NULL) ) {
 				D(bug("AHI available.\n"));
 				ok = 1;
 				CloseDevice((struct IORequest *)req);
@@ -112,11 +112,11 @@ static SDL_AudioDevice *Audio_CreateDevice(int devindex) {
 }
 
 AudioBootStrap AHI_bootstrap = {
-		"AHI", Audio_Available, Audio_CreateDevice
+	"AHI", Audio_Available, Audio_CreateDevice
 };
 
 void static AHI_WaitAudio(_THIS) {
-	if ( !CheckIO((struct IORequest *)audio_req[current_buffer])) {
+	if ( !CheckIO((struct IORequest *)audio_req[current_buffer]) ) {
 		WaitIO((struct IORequest *)audio_req[current_buffer]);
 		//		AbortIO((struct IORequest *)audio_req[current_buffer]);
 	}
@@ -127,16 +127,16 @@ static void AHI_PlayAudio(_THIS) {
 		WaitIO((struct IORequest *)audio_req[current_buffer]);
 
 	/* Write the audio data out */
-	audio_req[current_buffer]->ahir_Std.io_Message.mn_Node.ln_Pri = 60;
-	audio_req[current_buffer]->ahir_Std.io_Data = mixbuf[current_buffer];
-	audio_req[current_buffer]->ahir_Std.io_Length = this->hidden->size;
-	audio_req[current_buffer]->ahir_Std.io_Offset = 0;
-	audio_req[current_buffer]->ahir_Std.io_Command = CMD_WRITE;
-	audio_req[current_buffer]->ahir_Frequency = this->hidden->freq;
-	audio_req[current_buffer]->ahir_Volume = 0x10000;
-	audio_req[current_buffer]->ahir_Type = this->hidden->type;
-	audio_req[current_buffer]->ahir_Position = 0x8000;
-	audio_req[current_buffer]->ahir_Link = (playing > 0 ? audio_req[current_buffer ^ 1] : NULL);
+	audio_req[current_buffer]->ahir_Std.io_Message.mn_Node.ln_Pri	= 60;
+	audio_req[current_buffer]->ahir_Std.io_Data			= mixbuf[current_buffer];
+	audio_req[current_buffer]->ahir_Std.io_Length			= this->hidden->size;
+	audio_req[current_buffer]->ahir_Std.io_Offset			= 0;
+	audio_req[current_buffer]->ahir_Std.io_Command			= CMD_WRITE;
+	audio_req[current_buffer]->ahir_Frequency			= this->hidden->freq;
+	audio_req[current_buffer]->ahir_Volume				= 0x10000;
+	audio_req[current_buffer]->ahir_Type				= this->hidden->type;
+	audio_req[current_buffer]->ahir_Position			= 0x8000;
+	audio_req[current_buffer]->ahir_Link				= (playing > 0 ? audio_req[current_buffer ^ 1] : NULL);
 
 	SendIO((struct IORequest *)audio_req[current_buffer]);
 	current_buffer ^= 1;
@@ -166,14 +166,13 @@ static void AHI_CloseAudio(_THIS) {
 		AbortIO((struct IORequest *)audio_req[0]);
 		WaitIO((struct IORequest *)audio_req[0]);
 
+		// Abort again to be sure to break the dbuffering process.
 		if(audio_req[1] && playing>1)
 		{
 			D(bug("Break AGAIN req[1]...\n"));
 			AbortIO((struct IORequest *)audio_req[1]);
 			WaitIO((struct IORequest *)audio_req[1]);
 		}
-		// Double abort to be sure to break the dbuffering process.
-
 
 
 		D(bug("Reqs breaked, closing device...\n"));

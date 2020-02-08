@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -48,14 +48,14 @@ typedef struct SDL_Thread SDL_Thread;
 /** Create a thread */
 #if ((defined(__WIN32__) && !defined(HAVE_LIBC)) || defined(__OS2__)) &&  !defined(__SYMBIAN32__)
 /**
- *  We compile include into a DLL on OS/2. This means, that it's the DLL which
+ *  We compile SDL into a DLL on OS/2. This means, that it's the DLL which
  *  creates a new thread for the calling process with the SDL_CreateThread()
- *  API. There is a problem with this, that only the RTL of the include.DLL will
+ *  API. There is a problem with this, that only the RTL of the SDL.DLL will
  *  be initialized for those threads, and not the RTL of the calling application!
  *  To solve this, we make a little hack here.
  *  We'll always use the caller's _beginthread() and _endthread() APIs to
- *  start a new thread. This way, if it's the include.DLL which uses this API,
- *  then the RTL of include.DLL will be used to create the new thread, and if it's
+ *  start a new thread. This way, if it's the SDL.DLL which uses this API,
+ *  then the RTL of SDL.DLL will be used to create the new thread, and if it's
  *  the application, then the RTL of the application will be used.
  *  So, in short:
  *  Always use the _beginthread() and _endthread() of the calling runtime library!

@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -62,9 +62,9 @@
 #endif
 #endif
 
-#include "../../../mydebug.h"
 #include "SDL_mouse.h"
 #include "../SDL_sysvideo.h"
+#include "mydebug.h"
 
 #define USE_CGX_WRITELUTPIXEL
 
@@ -182,7 +182,6 @@ struct SDL_PrivateVideoData {
 // extern Cursor SDL_GetWMXCursor(WMcursor *cursor);
 
 extern int CGX_CreateWindow(_THIS, SDL_Surface *screen, int w, int h, int bpp, Uint32 flags);
-
 extern int CGX_ResizeWindow(_THIS, SDL_Surface *screen, int w, int h, Uint32 flags);
 
 extern void CGX_DestroyWindow(_THIS, SDL_Surface *screen);
@@ -203,9 +202,7 @@ struct private_hwdata {
 };
 
 int CGX_CheckHWBlit(_THIS, SDL_Surface *src, SDL_Surface *dst);
-
 int CGX_FillHWRect(_THIS, SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color);
-
 int CGX_SetHWColorKey(_THIS, SDL_Surface *surface, Uint32 key);
 
 #endif /* _SDL_x11video_h */

@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -20,11 +20,6 @@
     slouken@libsdl.org
 */
 #include "SDL_config.h"
-
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_amigamouse.c,v 1.2 2002/11/20 08:51:19 gabry Exp $";
-#endif
 
 //#include "SDL_error.h"
 //#include "SDL_mouse.h"

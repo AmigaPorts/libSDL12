@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -80,7 +80,6 @@ static FSRef* GetFileForOffset (SDL_CD *cdrom, int start, int length,  int *outS
     int i;
 
     for (i = 0; i < cdrom->numtracks; i++) {
-
         if (cdrom->track[i].offset <= start &&
             start < (cdrom->track[i].offset + cdrom->track[i].length))
             break;
@@ -250,7 +249,6 @@ void SDL_SYS_CDQuit(void)
         free (volumes);
 
     if (tracks != NULL) {
-
         FSRef **ptr;
         for (ptr = tracks; *ptr != (FSRef*)-1; ptr++)
             if (*ptr != NULL)

@@ -1,5 +1,5 @@
 
-/* Include the include main definition header */
+/* Include the SDL main definition header */
 #include "SDL_main.h"
 
 #ifdef main

@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 /* This gets us MAC_OS_X_VERSION_MIN_REQUIRED... */
 #include <AvailabilityMacros.h>
 
-/* This is a set of defines to configure the include features */
+/* This is a set of defines to configure the SDL features */
 
 #define SDL_HAS_64BIT_TYPE	1
 

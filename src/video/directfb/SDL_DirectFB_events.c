@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 */
 #include "SDL_config.h"
 
-/* Handle the event stream, converting DirectFB input events into include events */
+/* Handle the event stream, converting DirectFB input events into SDL events */
 
 #include <sys/types.h>
 #include <sys/time.h>
@@ -38,7 +38,7 @@
 #include "SDL_DirectFB_video.h"
 #include "SDL_DirectFB_events.h"
 
-/* The translation tables from a DirectFB keycode to a include keysym */
+/* The translation tables from a DirectFB keycode to a SDL keysym */
 static SDLKey keymap[256];
 static SDL_keysym *DirectFB_TranslateKey (DFBInputEvent *ev, SDL_keysym *keysym);
 static int DirectFB_TranslateButton (DFBInputEvent *ev);

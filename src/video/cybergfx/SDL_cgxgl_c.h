@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 */
 #include "SDL_config.h"
 
-/* StormMesa implementation of include OpenGL support */
+/* StormMesa implementation of SDL OpenGL support */
 
 #include "../SDL_sysvideo.h"
 

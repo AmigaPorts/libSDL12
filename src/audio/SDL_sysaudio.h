@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is SDL_free software; you can redistribute it and/or
@@ -48,10 +48,10 @@
 #endif
 #include "../../mydebug.h"
 
-/* The include audio driver */
+/* The SDL audio driver */
 typedef struct SDL_AudioDevice SDL_AudioDevice;
 
-/* Define the include audio driver structure */
+/* Define the SDL audio driver structure */
 #define _THIS	SDL_AudioDevice *_this
 #ifndef _STATUS
 #define _STATUS	SDL_status *status

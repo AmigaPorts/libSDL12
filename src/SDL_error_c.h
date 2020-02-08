@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ typedef struct SDL_error {
 	int error;
 
 	/* This is a key used to index into a language hashtable containing
-	   internationalized versions of the include error messages.  If the key
+	   internationalized versions of the SDL error messages.  If the key
 	   is not in the hashtable, or no hashtable is available, the key is
 	   used directly as an error message format string.
 	*/

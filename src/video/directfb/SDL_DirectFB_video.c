@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -594,7 +594,7 @@ static SDL_Surface *DirectFB_SetVideoMode(_THIS, SDL_Surface *current, int width
   DFBSurfacePixelFormat  pixelformat;
   IDirectFBSurface      *surface;
 
-  fprintf (stderr, "include DirectFB_SetVideoMode: %dx%d@%d, flags: 0x%08x\n",
+  fprintf (stderr, "SDL DirectFB_SetVideoMode: %dx%d@%d, flags: 0x%08x\n",
            width, height, bpp, flags);
 
   flags |= SDL_FULLSCREEN;
@@ -804,7 +804,7 @@ static int DirectFB_AllocHWSurface(_THIS, SDL_Surface *surface)
   DFBResult             ret;
   DFBSurfaceDescription dsc;
 
-  /*  fprintf(stderr, "include: DirectFB_AllocHWSurface (%dx%d@%d, flags: 0x%08x)\n",
+  /*  fprintf(stderr, "SDL: DirectFB_AllocHWSurface (%dx%d@%d, flags: 0x%08x)\n",
       surface->w, surface->h, surface->format->BitsPerPixel, surface->flags);*/
 
   if (surface->w < 8 || surface->h < 8)
@@ -856,7 +856,7 @@ static void DirectFB_FreeHWSurface(_THIS, SDL_Surface *surface)
 
 static int DirectFB_CheckHWBlit(_THIS, SDL_Surface *src, SDL_Surface *dst)
 {
-  /*  fprintf(stderr, "include: DirectFB_CheckHWBlit (src->hwdata: %p, dst->hwdata: %p)\n",
+  /*  fprintf(stderr, "SDL: DirectFB_CheckHWBlit (src->hwdata: %p, dst->hwdata: %p)\n",
       src->hwdata, dst->hwdata);*/
 
   if (!src->hwdata || !dst->hwdata)

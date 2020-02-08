@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -168,7 +168,7 @@ static int DISKAUD_OpenAudio(_THIS, SDL_AudioSpec *spec)
 	}
 
 #if HAVE_STDIO_H
-	fprintf(stderr, "WARNING: You are using the include disk writer"
+	fprintf(stderr, "WARNING: You are using the SDL disk writer"
                     " audio driver!\n Writing to file [%s].\n", fname);
 #endif
 

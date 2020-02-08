@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -186,7 +186,7 @@ static int SDL_SYS_CDGetTOC(SDL_CD *cdrom)
 		SDL_free(mtr);
 		return(CD_ERROR);
 	}
-	/* Fill include Tracks Structure */
+	/* Fill SDL Tracks Structure */
 	for (i=0; i<cdrom->numtracks; i++) {
 		/* Set Track ID */
 		cdrom->track[i].id = (mtr+i)->TrackNum;
@@ -252,7 +252,7 @@ static CDstatus SDL_SYS_CDStatus(SDL_CD *cdrom, int *position)
 	}
 
 	/* Determine position */
-	if (position != NULL) { /* The include $&$&%# CDROM call sends NULL pointer here! */
+	if (position != NULL) { /* The SDL $&$&%# CDROM call sends NULL pointer here! */
 		if ((status == CD_PLAYING) || (status == CD_PAUSED)) {
 			/* Get Position */
 			msp.hwndCallback = NULLHANDLE; /* None */

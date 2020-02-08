@@ -136,7 +136,7 @@ benefit!
  *                    Tweak comments very slightly.
  */
 
-/* BEGIN include CHANGE ... commented this out with an #if 0 block. --ryan. */
+/* BEGIN SDL CHANGE ... commented this out with an #if 0 block. --ryan. */
 #if 0
 #include <assert.h>
 #include <stdlib.h>
@@ -146,7 +146,7 @@ benefit!
 
 static char _ID[]="<qsort.c gjm 1.15 2016-03-10>";
 #endif
-/* END include CHANGE ... commented this out with an #if 0 block. --ryan. */
+/* END SDL CHANGE ... commented this out with an #if 0 block. --ryan. */
 
 /* How many bytes are there per word? (Must be a power of 2,
  * and must in fact equal sizeof(int).)

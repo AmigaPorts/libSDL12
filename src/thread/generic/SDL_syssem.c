@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 
 SDL_sem *SDL_CreateSemaphore(Uint32 initial_value)
 {
-	SDL_SetError("include not configured with thread support");
+	SDL_SetError("SDL not configured with thread support");
 	return (SDL_sem *)0;
 }
 
@@ -43,19 +43,19 @@ void SDL_DestroySemaphore(SDL_sem *sem)
 
 int SDL_SemTryWait(SDL_sem *sem)
 {
-	SDL_SetError("include not configured with thread support");
+	SDL_SetError("SDL not configured with thread support");
 	return -1;
 }
 
 int SDL_SemWaitTimeout(SDL_sem *sem, Uint32 timeout)
 {
-	SDL_SetError("include not configured with thread support");
+	SDL_SetError("SDL not configured with thread support");
 	return -1;
 }
 
 int SDL_SemWait(SDL_sem *sem)
 {
-	SDL_SetError("include not configured with thread support");
+	SDL_SetError("SDL not configured with thread support");
 	return -1;
 }
 
@@ -66,7 +66,7 @@ Uint32 SDL_SemValue(SDL_sem *sem)
 
 int SDL_SemPost(SDL_sem *sem)
 {
-	SDL_SetError("include not configured with thread support");
+	SDL_SetError("SDL not configured with thread support");
 	return -1;
 }
 

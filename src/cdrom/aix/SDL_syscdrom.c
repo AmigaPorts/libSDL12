@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -577,7 +577,7 @@ static int SDL_SYS_CDPlay(SDL_CD *cdrom, int start, int length)
 
     /*
      * My CD Rom is muted by default. I think I read that this is new with
-     * AIX 4.3. include does not change the volume, so I need a kludge. Maybe
+     * AIX 4.3. SDL does not change the volume, so I need a kludge. Maybe
      * its better to do this elsewhere?
      */
     cmd.audio_cmds = CD_PLAY_AUDIO | CD_SET_VOLUME;

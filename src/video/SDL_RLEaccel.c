@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@
  *
  * Original version by Sam Lantinga
  *
- * Mattias Engdegï¿½rd (Yorick): Rewrite. New encoding format, encoder and
+ * Mattias Engdegård (Yorick): Rewrite. New encoding format, encoder and
  * decoder. Added per-surface alpha blitter. Added per-pixel alpha
  * format, encoder and blitter.
  *

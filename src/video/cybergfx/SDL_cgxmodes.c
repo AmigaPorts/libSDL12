@@ -1,5 +1,5 @@
 /*
-    include - Simple DirectMedia Layer
+    SDL - Simple DirectMedia Layer
     Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@
 #include "SDL_cgxwm_c.h"
 #include "SDL_cgxmodes_c.h"
 
-#include "../../../mydebug.h"
+#include "mydebug.h"
 
 #ifdef AROS
 #include "SDL_cgximage_c.h"
@@ -48,7 +48,7 @@ static void set_best_resolution(_THIS, int width, int height) {
 	Uint32 idok;
 	int depth = 8;
 
-	if ( SDL_Display)
+	if ( SDL_Display )
 		depth = GetCyberMapAttr(SDL_Display->RastPort.BitMap, CYBRMATTR_DEPTH);
 
 	idok = BestCModeIDTags(CYBRBIDTG_NominalWidth, width,
@@ -57,7 +57,7 @@ static void set_best_resolution(_THIS, int width, int height) {
 						   TAG_DONE);
 	D(bug(" depth %ld display id %ld \n", depth, idok));
 	if ( idok != INVALID_ID ) {
-		if ( SDL_Display) {
+		if ( SDL_Display ) {
 			if ( currently_fullscreen)
 				CloseScreen(SDL_Display);
 			else
