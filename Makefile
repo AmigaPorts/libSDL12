@@ -20,7 +20,7 @@ CPU := 68040
 
 INCLUDES = IDIR=./include/SDL
 
-GCCFLAGS = -I$(PREFX)/include -I. -Iinclude/ -Isrc/thread -Iamiga/makefile-support \
+GCCFLAGS = -I$(PREFX)/include -I. -Iinclude/ -Isrc/thread -Isrc/video -Iamiga/makefile-support \
 		-O3 -fomit-frame-pointer -m$(CPU) -mhard-float -ffast-math -noixemul \
 		-DNOIXEMUL -D_HAVE_STDINT_H
 GLFLAGS = -DSHARED_LIB -lamiga
@@ -34,7 +34,7 @@ GOBJS = src/audio/SDL_audio.go src/audio/SDL_audiocvt.go src/audio/SDL_mixer.go 
 	src/video/SDL_yuv.go src/video/SDL_yuv_sw.go src/video/SDL_video.go \
 	src/timer/amigaos/SDL_systimer.go src/timer/SDL_timer.go src/joystick/SDL_joystick.go \
 	src/joystick/SDL_sysjoystick.go src/events/SDL_quit.go src/events/SDL_active.go \
-	src/events/SDL_keyboard.go src/events/SDL_mouse.go src/events/SDL_resize.go src/file/SDL_rwops.go src/SDL.go \
+	src/cpuinfo/SDL_cpuinfo.go src/events/SDL_keyboard.go src/events/SDL_mouse.go src/events/SDL_resize.go src/file/SDL_rwops.go src/SDL.go \
 	src/events/SDL_events.go src/thread/amigaos/SDL_sysmutex.go src/thread/amigaos/SDL_syssem.go src/thread/amigaos/SDL_systhread.go src/thread/amigaos/SDL_thread.go \
 	src/thread/amigaos/SDL_syscond.go src/video/cybergfx/SDL_cgxvideo.go src/video/cybergfx/SDL_cgxmodes.go src/video/cybergfx/SDL_cgximage.go src/video/cybergfx/SDL_amigaevents.go \
 	src/video/cybergfx/SDL_amigamouse.go src/video/cybergfx/SDL_cgxgl.go src/video/cybergfx/SDL_cgxwm.go \
