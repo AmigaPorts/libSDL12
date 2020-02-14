@@ -42,11 +42,11 @@
 #endif
 #endif
 
-#ifdef ENABLE_AHI
+#ifdef SDL_AUDIO_DRIVER_AHI
 #include <devices/ahi.h>
 #endif
 #endif
-#include "../../mydebug.h"
+#include "mydebug.h"
 
 /* The SDL audio driver */
 typedef struct SDL_AudioDevice SDL_AudioDevice;
