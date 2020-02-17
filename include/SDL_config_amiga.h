@@ -158,7 +158,7 @@ typedef unsigned long long				uint64_t;
 //#define SDL_CDROM_AMIGA				1
 
 /* Enable various input drivers */
-//#define SDL_JOYSTICK_AMIGA			1
+#define SDL_JOYSTICK_AMIGA				1
 
 /* Enable various shared object loading systems */
 //#define SDL_LOADSO_AMIGA				1

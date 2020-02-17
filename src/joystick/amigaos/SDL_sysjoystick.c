@@ -1,34 +1,29 @@
 /*
-    include - Simple DirectMedia Layer
-    Copyright (C) 1997, 1998, 1999, 2000, 2001  Sam Lantinga
+    SDL - Simple DirectMedia Layer
+    Copyright (C) 1997-2006 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
+    modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    version 2.1 of the License, or (at your option) any later version.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Sam Lantinga
     slouken@libsdl.org
 */
+#include "SDL_config.h"
 
+#ifdef SDL_JOYSTICK_AMIGA
 
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id: SDL_sysjoystick.c,v 1.2 2002/11/20 08:52:34 gabry Exp $";
-#endif
-
-/* This is the system specific header for the include joystick API */
-
-#include <stdio.h>		/* For the definition of NULL */
+/* This is the system specific header for the SDL joystick API */
 
 #include <libraries/lowlevel.h>
 #if defined(__SASC) || defined(WARPOS) || defined(AROS)
@@ -48,7 +43,7 @@ static char rcsid =
 #include <inline/graphics.h>
 #endif
 #endif
-#include "../../mydebug.h"
+#include "mydebug.h"
 
 extern struct ExecBase *SysBase;
 extern struct GfxBase *GfxBase;
@@ -130,7 +125,7 @@ int SDL_SYS_JoystickOpen(SDL_Joystick *joystick)
 	ULONG temp,i;
 	D(bug("Opening joystick %ld\n",joystick->index));
 
-	if(!(joystick->hwdata=malloc(sizeof(struct joystick_hwdata))))
+	if(!(joystick->hwdata=SDL_malloc(sizeof(struct joystick_hwdata))))
 		return -1;
 
 /* This loop is to check if the controller is a joypad */
@@ -184,7 +179,7 @@ void SDL_SYS_JoystickUpdate(SDL_Joystick *joystick)
 					if(!(joystick->hwdata->joystate&JPF_JOY_DOWN))
 						SDL_PrivateJoystickAxis(joystick,1,257);
 				}
-				else 
+				else
 				{
 					if(!(joystick->hwdata->joystate&JPF_JOY_UP))
 						SDL_PrivateJoystickAxis(joystick,1,-257);
@@ -193,7 +188,7 @@ void SDL_SYS_JoystickUpdate(SDL_Joystick *joystick)
 			else
 			 if(joystick->hwdata->joystate&(JPF_JOY_UP|JPF_JOY_DOWN))
 				SDL_PrivateJoystickAxis(joystick,1,0);
-				
+
 			if( data & (JPF_JOY_LEFT|JPF_JOY_RIGHT) )
 			{
 
@@ -202,7 +197,7 @@ void SDL_SYS_JoystickUpdate(SDL_Joystick *joystick)
 					if(!(joystick->hwdata->joystate&JPF_JOY_LEFT))
 						SDL_PrivateJoystickAxis(joystick,0,-257);
 				}
-				else 
+				else
 				{
 					if(!(joystick->hwdata->joystate&JPF_JOY_RIGHT))
 						SDL_PrivateJoystickAxis(joystick,0,257);
@@ -211,7 +206,7 @@ void SDL_SYS_JoystickUpdate(SDL_Joystick *joystick)
 			else
 			 if(joystick->hwdata->joystate&(JPF_JOY_LEFT|JPF_JOY_RIGHT))
 				SDL_PrivateJoystickAxis(joystick,0,0);
-	
+
 		}
 		else
 		{
@@ -229,7 +224,7 @@ void SDL_SYS_JoystickUpdate(SDL_Joystick *joystick)
 		{
 			if(data&JPF_JOY_DOWN)
 			{
-				
+
 				if(!(joystick->hwdata->joystate&JPF_JOY_DOWN))
 					SDL_PrivateJoystickAxis(joystick,1,257);
 			}
@@ -262,7 +257,7 @@ void SDL_SYS_JoystickUpdate(SDL_Joystick *joystick)
 		{
 				SDL_PrivateJoystickAxis(joystick,1,0);
 		}
- #endif
+#endif
 		for(i=0;i<joystick->nbuttons;i++)
 		{
 			if( (data&joybut[i]) )
@@ -287,7 +282,7 @@ void SDL_SYS_JoystickUpdate(SDL_Joystick *joystick)
 void SDL_SYS_JoystickClose(SDL_Joystick *joystick)
 {
 	if(joystick->hwdata)
-		free(joystick->hwdata);
+		SDL_free(joystick->hwdata);
 	return;
 }
 
@@ -301,7 +296,7 @@ void SDL_SYS_JoystickQuit(void)
 		LowLevelBase=NULL;
 		SDL_numjoysticks=0;
 	}
-
 	return;
 }
 
+#endif /* SDL_JOYSTICK_AMIGA */

@@ -139,7 +139,7 @@ add_library(${LIBNAME}
 
 			# JOYSTICK
 			${PROJECT_SOURCE_DIR}/src/joystick/SDL_joystick.c
-			${PROJECT_SOURCE_DIR}/src/joystick/SDL_sysjoystick.c
+			${PROJECT_SOURCE_DIR}/src/joystick/amigaos/SDL_sysjoystick.c
 
 			# EVENTS
 			${PROJECT_SOURCE_DIR}/src/events/SDL_quit.c
