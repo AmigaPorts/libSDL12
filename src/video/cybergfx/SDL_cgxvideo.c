@@ -43,9 +43,11 @@
 
 #include "SDL_video.h"
 #include "SDL_mouse.h"
-#include "../SDL_sysvideo.h"
-#include "../SDL_pixels_c.h"
-#include "../../events/SDL_events_c.h"
+#include "SDL_sysvideo.h"
+#include "SDL_thread.h"
+
+#include "SDL_pixels_c.h"
+#include "SDL_events_c.h"
 #include "SDL_cgxgl_c.h"
 #include "SDL_cgxvideo.h"
 #include "SDL_cgxwm_c.h"
@@ -1578,6 +1580,5 @@ static void CGX_VideoQuit(_THIS) {
 		this->screen->pixels = NULL;
 	}
 	D(bug("End of CGX_VideoQuit.\n"));
-
 }
 

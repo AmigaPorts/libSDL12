@@ -19,11 +19,11 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#include "SDL_config.h"
 
+#include "SDL_config.h"
+#include "SDL_events_c.h"
 //#include "SDL_error.h"
 //#include "SDL_mouse.h"
-//#include "SDL_events_c.h"
 //#include "SDL_cursor_c.h"
 #include "SDL_amigamouse_c.h"
 
@@ -47,7 +47,6 @@ int amiga_ShowWMCursor(_THIS, WMcursor *cursor) {
 	}
 
 	/* Set the Amiga prefs cursor cursor, or blank if cursor is NULL */
-
 	if ( SDL_Window) {
 		SDL_Lock_EventThread();
 		if ( cursor == NULL ) {

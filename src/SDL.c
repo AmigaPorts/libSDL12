@@ -34,39 +34,6 @@
 #include <pth.h>
 #endif
 
-char* strtok_r(
-    char *str,
-    const char *delim,
-    char **nextp)
-{
-    char *ret;
-
-    if (str == NULL)
-    {
-        str = *nextp;
-    }
-
-    str += strspn(str, delim);
-
-    if (*str == '\0')
-    {
-        return NULL;
-    }
-
-    ret = str;
-
-    str += strcspn(str, delim);
-
-    if (*str)
-    {
-        *str++ = '\0';
-    }
-
-    *nextp = str;
-
-    return ret;
-}
-
 /* Initialization/Cleanup routines */
 #if !SDL_JOYSTICK_DISABLED
 extern int  SDL_JoystickInit(void);
@@ -80,6 +47,9 @@ extern void SDL_CDROMQuit(void);
 extern void SDL_StartTicks(void);
 extern int  SDL_TimerInit(void);
 extern void SDL_TimerQuit(void);
+#if defined(__AMIGA__) && !defined(__amigaos4__)
+#include "SDL_systimer.h"
+#endif
 #endif
 
 /* The current SDL version */

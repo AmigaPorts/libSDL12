@@ -164,7 +164,9 @@ int SDLCALL SDL_RunAudio(void *audiop)
 		audio->ThreadInit(audio);
 	}
 	audio->threadid = SDL_ThreadID();
+#if SDL_AUDIO_DRIVER_AHI
 	SetTaskPri(audio->threadid,11);
+#endif
 	/* Set up the mixing function */
 	fill  = audio->spec.callback;
 	udata = audio->spec.userdata;
@@ -242,7 +244,8 @@ int SDLCALL SDL_RunAudio(void *audiop)
 				stream = audio->fake_stream;
 			}
 		}
-		memset(stream, silence, stream_len);
+
+		SDL_memset(stream, silence, stream_len);
 
 		if ( ! audio->paused ) {
 			SDL_mutexP(audio->mixer_lock);
@@ -257,7 +260,7 @@ int SDLCALL SDL_RunAudio(void *audiop)
 			if ( stream == NULL ) {
 				stream = audio->fake_stream;
 			}
-			memcpy(stream, audio->convert.buf,
+			SDL_memcpy(stream, audio->convert.buf,
 			               audio->convert.len_cvt);
 		}
 
@@ -561,7 +564,7 @@ int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained)
 	audio->enabled = 1;
 	audio->paused  = 1;
 
-#if SDL_AUDIO_DRIVER_AHI
+#ifndef SDL_AUDIO_DRIVER_AHI
 	D(bug("AHI OpenAudio\n"));
 	/* AmigaOS opens audio inside the main loop */
 	audio->opened = audio->OpenAudio(audio, &audio->spec)+1;
