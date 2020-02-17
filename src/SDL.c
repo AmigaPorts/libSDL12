@@ -173,7 +173,7 @@ static SDL_bool initialized = SDL_FALSE;
 
 static void os4_initialize(void)
 {
-	dprintf("SDL %d.%d.%d\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+	dprintf("SDL %d.%d.%d (%s)\n", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL, __DATE__);
 
 	if (!initialized) {
 		// Call "constructor" functions manually
