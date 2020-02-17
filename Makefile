@@ -1,4 +1,4 @@
-# Makefile for gcc version of include
+# Makefile for gcc version of SDL
 #
 # changes:
 #  18-Apr: _ApolloKeyRGB565toRGB565: disabled AMMX version of ColorKeying (for now, storem is not working in Gold2)
@@ -16,18 +16,18 @@ LD := $(PREFX)/bin/m68k-amigaos-ld
 RL := $(PREFX)/bin/m68k-amigaos-ranlib
 VASM := $(PREFX)/bin/vasmm68k_mot
 
-CPU := 68040
+CPU := 68030
 
 INCLUDES = IDIR=./include/SDL
 
 GCCFLAGS = -I$(PREFX)/include -I. -Iinclude/ -Isrc/thread -Isrc/video -Iamiga/makefile-support \
-		-O3 -fomit-frame-pointer -m$(CPU) -mhard-float -ffast-math -noixemul \
+		-Ofast -fomit-frame-pointer -m$(CPU) -mhard-float -ffast-math -noixemul \
 		-DNOIXEMUL -D_HAVE_STDINT_H
 GLFLAGS = -DSHARED_LIB -lamiga
 GCCFLAGS += -DNO_AMIGADEBUG
 GLFLAGS  += -DNO_AMIGADEBUG
 
-GOBJS = src/audio/SDL_audio.go src/audio/SDL_audiocvt.go src/audio/SDL_mixer.go src/audio/SDL_wave.go src/audio/amigaos/SDL_ahiaudio.go \
+GOBJS = src/audio/SDL_audio.go src/audio/SDL_audiocvt.go src/audio/SDL_mixer.go src/audio/SDL_mixer_m68k.go src/audio/SDL_wave.go src/audio/amigaos/SDL_ahiaudio.go \
 	src/SDL_error.go src/SDL_fatal.go src/video/SDL_RLEaccel.go src/video/SDL_blit.go src/video/SDL_blit_0.go \
 	src/video/SDL_blit_1.go src/video/SDL_blit_A.go src/video/SDL_blit_N.go \
 	src/video/SDL_bmp.go src/video/SDL_cursor.go src/video/SDL_pixels.go src/video/SDL_surface.go src/video/SDL_stretch.go \
