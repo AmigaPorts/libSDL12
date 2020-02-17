@@ -9,18 +9,20 @@
 
 PREFX := /opt/m68k-amigaos
 
-CC := $(PREFX)/bin/m68k-amigaos-gcc
-AS := $(PREFX)/bin/m68k-amigaos-as
-AR := $(PREFX)/bin/m68k-amigaos-ar
-LD := $(PREFX)/bin/m68k-amigaos-ld
-RL := $(PREFX)/bin/m68k-amigaos-ranlib
-VASM := $(PREFX)/bin/vasmm68k_mot
+CC			:= $(PREFX)/bin/m68k-amigaos-gcc
+AS			:= $(PREFX)/bin/m68k-amigaos-as
+AR			:= $(PREFX)/bin/m68k-amigaos-ar
+LD			:= $(PREFX)/bin/m68k-amigaos-ld
+RL			:= $(PREFX)/bin/m68k-amigaos-ranlib
+VASM		:= $(PREFX)/bin/vasmm68k_mot
+AMIGADATE	:= $(shell date +"%-d.%-m.%Y")
 
 CPU := 68030
 
 GCCFLAGS = -I$(PREFX)/include -I. -Iinclude -Isrc/thread -Isrc/video -Isrc/main/amigaos -Isrc/timer -Isrc/events -Isrc/joystick -Iamiga/makefile-support \
 		-Ofast -fomit-frame-pointer -m$(CPU) -mhard-float -ffast-math -noixemul \
-		-DNOIXEMUL -D_HAVE_STDINT_H
+		-DNOIXEMUL -D_HAVE_STDINT_H \
+		-D__AMIGADATE__=\"$(AMIGADATE)\"
 GLFLAGS = -DSHARED_LIB -lamiga
 GCCFLAGS += -DNO_AMIGADEBUG
 GLFLAGS  += -DNO_AMIGADEBUG
