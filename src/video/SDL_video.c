@@ -31,11 +31,11 @@
 #include "../events/SDL_sysevents.h"
 #include "../events/SDL_events_c.h"
 
-#ifdef __AMIGA__
+#if defined(APOLLO_BLIT)
 #include <dos/dos.h>
 #include <exec/exec.h>
 
-#include "../mydebug.h"
+#include "SDL_os3debug.h"
 
 extern struct ExecBase *SysBase;
 short ac68080 = 0;
@@ -179,7 +179,7 @@ int SDL_VideoInit(const char *driver_name, Uint32 flags) {
 	int i;
 	SDL_PixelFormat vformat;
 	Uint32 video_flags;
-#ifdef __AMIGA__
+#if defined(APOLLO_BLIT)
 	ac68080 = is_vampire();
 #endif
 	/* Toggle the event thread flags, based on OS requirements */
@@ -208,7 +208,7 @@ int SDL_VideoInit(const char *driver_name, Uint32 flags) {
 #endif
 		for ( i = 0; bootstrap[i]; ++i ) {
 			if ( SDL_strcasecmp(bootstrap[i]->name, driver_name) == 0 ) {
-				if ( bootstrap[i]->available()) {
+				if ( bootstrap[i]->available() ) {
 					video = bootstrap[i]->create(index);
 					break;
 				}
@@ -468,7 +468,6 @@ static int SDL_GetVideoMode(int *w, int *h, int *BitsPerPixel, Uint32 flags) {
 
 	/* Try the original video mode, get the closest depth */
 	native_bpp = SDL_VideoModeOK(*w, *h, *BitsPerPixel, flags);
-	D(bug("screen depth %ld\n", native_bpp));
 
 	if ( native_bpp == *BitsPerPixel ) {
 		return (1);
@@ -730,8 +729,6 @@ SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 	 */
 	SDL_VideoSurface = (mode != NULL) ? mode : prev_mode;
 
-	D(bug("surface depth of SDL_VideoSurface %ld \n", SDL_VideoSurface->format->BitsPerPixel));
-
 	if ( (mode != NULL) && (!is_opengl) ) {
 		/* Sanity check */
 		if ( (mode->w < width) || (mode->h < height) ) {
@@ -925,7 +922,6 @@ SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 				  (SDL_VideoSurface->flags & SDL_HWSURFACE) &&
 				  !(SDL_VideoSurface->flags & SDL_DOUBLEBUF))
 		 )) {
-		D(bug("Create Shadow surface\n"));
 
 		SDL_CreateShadowSurface(bpp); //mode->format->BitsPerPixel);
 
@@ -935,14 +931,13 @@ SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 		}
 		SDL_PublicSurface = SDL_ShadowSurface;
 	} else {
-		D(bug("Using no Shadowsurface \n"));
 		SDL_PublicSurface = SDL_VideoSurface;
 	}
 	video->info.vfmt = SDL_VideoSurface->format;
 	video->info.current_w = SDL_VideoSurface->w;
 	video->info.current_h = SDL_VideoSurface->h;
 
-#ifdef __AMIGA__
+#if defined(__AMIGA__) && defined(APOLLO_BLIT)
 	if (!(flags&SDL_FULLSCREEN))
 		ac68080 = 0;
 #endif
@@ -1196,7 +1191,7 @@ int SDL_Flip(SDL_Surface *screen)
 	return(0);
 }
 
-#ifdef __AMIGA__
+#if defined(__AMIGA__) && defined(APOLLO_BLIT)
 int SDL_Flip(SDL_Surface *screen) {
 	if ( ac68080 ) {
 		old_buffer = screen->pixels;

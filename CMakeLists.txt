@@ -54,7 +54,7 @@ string(REGEX REPLACE "^0+" "" VER_DAY "${VER_DAY}")
 # Set Amiga version
 set(AMIGA_VERSION "${SDL_MAJOR_VERSION}${SDL_MINOR_VERSION}.${SDL_PATCHLEVEL}")
 
-# Final build filename, for example "milkytracker-1.02.00-win32.zip"
+# Final build filename, for example "SDL1.2-1.2.16-AmigaOS.zip"
 set(BUILD_FILENAME "SDL-${GIT_TAG}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}")
 
 set(CPACK_GENERATOR ZIP)
@@ -81,47 +81,91 @@ configure_file(
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(SOURCE_FILES
+		# MAIN
+		${PROJECT_SOURCE_DIR}/src/SDL.c
+		${PROJECT_SOURCE_DIR}/src/SDL_error.c
+		${PROJECT_SOURCE_DIR}/src/SDL_fatal.c
+
+		# CDROM
+		${PROJECT_SOURCE_DIR}/src/cdrom/SDL_cdrom.c
+
+		# CPUINFO
+		${PROJECT_SOURCE_DIR}/src/cpuinfo/SDL_cpuinfo.c
+
+		# AUDIO
+		${PROJECT_SOURCE_DIR}/src/audio/SDL_audio.c
+		${PROJECT_SOURCE_DIR}/src/audio/SDL_audiocvt.c
+		${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer.c
+		${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer_m68k.c
+		${PROJECT_SOURCE_DIR}/src/audio/SDL_wave.c
+		#${PROJECT_SOURCE_DIR}/src/audio/dummy/SDL_dummyaudio.c
+		#${PROJECT_SOURCE_DIR}/src/audio/disk/SDL_diskaudio.c
+
+		# VIDEO
+		${PROJECT_SOURCE_DIR}/src/video/SDL_RLEaccel.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_blit.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_blit_0.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_blit_1.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_blit_A.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_blit_N.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_bmp.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_cursor.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_pixels.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_surface.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_stretch.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_yuv.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_yuv_sw.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_video.c
+		${PROJECT_SOURCE_DIR}/src/video/SDL_gamma.c
+
+		# TIMER
+		${PROJECT_SOURCE_DIR}/src/timer/SDL_timer.c
+
+		# JOYSTICK
+		${PROJECT_SOURCE_DIR}/src/joystick/SDL_joystick.c
+
+		# EVENTS
+		${PROJECT_SOURCE_DIR}/src/events/SDL_active.c
+		${PROJECT_SOURCE_DIR}/src/events/SDL_events.c
+		${PROJECT_SOURCE_DIR}/src/events/SDL_expose.c
+		${PROJECT_SOURCE_DIR}/src/events/SDL_keyboard.c
+		${PROJECT_SOURCE_DIR}/src/events/SDL_mouse.c
+		${PROJECT_SOURCE_DIR}/src/events/SDL_quit.c
+		${PROJECT_SOURCE_DIR}/src/events/SDL_resize.c
+
+		# FILE
+		${PROJECT_SOURCE_DIR}/src/file/SDL_rwops.c
+
+		# THREADS
+		${PROJECT_SOURCE_DIR}/src/thread/SDL_thread.c
+		${PROJECT_SOURCE_DIR}/src/thread/generic/SDL_syscond.c
+
+		# STDLIB
+		${PROJECT_SOURCE_DIR}/src/stdlib/SDL_getenv.c
+		${PROJECT_SOURCE_DIR}/src/stdlib/SDL_iconv.c
+		${PROJECT_SOURCE_DIR}/src/stdlib/SDL_malloc.c
+		${PROJECT_SOURCE_DIR}/src/stdlib/SDL_qsort.c
+		${PROJECT_SOURCE_DIR}/src/stdlib/SDL_stdlib.c
+		${PROJECT_SOURCE_DIR}/src/stdlib/SDL_string.c
 
 
-add_library(${LIBNAME}
-		STATIC
+		)
+
+if(AMIGA)
+	if(AMIGAOS3)
+		list(APPEND SOURCE_FILES
 			# MAIN
-			${PROJECT_SOURCE_DIR}/src/SDL.c
-			${PROJECT_SOURCE_DIR}/src/SDL_error.c
-			${PROJECT_SOURCE_DIR}/src/SDL_fatal.c
 			${PROJECT_SOURCE_DIR}/src/main/amigaos/SDL_lutstub.s
 
-			# CPUINFO
-			${PROJECT_SOURCE_DIR}/src/cpuinfo/SDL_cpuinfo.c
+			# CDROM
+			${PROJECT_SOURCE_DIR}/src/cdrom/dummy/SDL_syscdrom.c
+			#${PROJECT_SOURCE_DIR}/src/cdrom/amigaos/SDL_syscdrom.c
 
 			# AUDIO
-			${PROJECT_SOURCE_DIR}/src/audio/SDL_audio.c
-			${PROJECT_SOURCE_DIR}/src/audio/SDL_audiocvt.c
-			${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer.c
-			${PROJECT_SOURCE_DIR}/src/audio/SDL_mixer_m68k.c
-			${PROJECT_SOURCE_DIR}/src/audio/SDL_wave.c
-			#${PROJECT_SOURCE_DIR}/src/audio/dummy/SDL_dummyaudio.c
-			#${PROJECT_SOURCE_DIR}/src/audio/disk/SDL_diskaudio.c
 			${PROJECT_SOURCE_DIR}/src/audio/amigaos/SDL_ahiaudio.c
 
 			# VIDEO
-			${PROJECT_SOURCE_DIR}/src/video/SDL_RLEaccel.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_blit.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_blit_0.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_blit_1.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_blit_A.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_blit_N.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_bmp.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_cursor.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_pixels.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_surface.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_stretch.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_yuv.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_yuv_sw.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_video.c
-			${PROJECT_SOURCE_DIR}/src/video/SDL_gamma.c
-
-			# CYBERGRAPHICS
 			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxvideo.c
 			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgxmodes.c
 			${PROJECT_SOURCE_DIR}/src/video/cybergfx/SDL_cgximage.c
@@ -135,22 +179,9 @@ add_library(${LIBNAME}
 
 			# TIMER
 			${PROJECT_SOURCE_DIR}/src/timer/amigaos/SDL_systimer.c
-			${PROJECT_SOURCE_DIR}/src/timer/SDL_timer.c
 
 			# JOYSTICK
-			${PROJECT_SOURCE_DIR}/src/joystick/SDL_joystick.c
 			${PROJECT_SOURCE_DIR}/src/joystick/amigaos/SDL_sysjoystick.c
-
-			# EVENTS
-			${PROJECT_SOURCE_DIR}/src/events/SDL_quit.c
-			${PROJECT_SOURCE_DIR}/src/events/SDL_active.c
-			${PROJECT_SOURCE_DIR}/src/events/SDL_keyboard.c
-			${PROJECT_SOURCE_DIR}/src/events/SDL_mouse.c
-			${PROJECT_SOURCE_DIR}/src/events/SDL_resize.c
-			${PROJECT_SOURCE_DIR}/src/events/SDL_events.c
-
-			# FILE
-			${PROJECT_SOURCE_DIR}/src/file/SDL_rwops.c
 
 			# THREADS
 			${PROJECT_SOURCE_DIR}/src/thread/amigaos/SDL_sysmutex.c
@@ -159,11 +190,51 @@ add_library(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/src/thread/amigaos/SDL_thread.c
 			${PROJECT_SOURCE_DIR}/src/thread/amigaos/SDL_syscond.c
 
-			# STDLIB
-			${PROJECT_SOURCE_DIR}/src/stdlib/SDL_stdlib.c
-			${PROJECT_SOURCE_DIR}/src/stdlib/SDL_string.c
-			${PROJECT_SOURCE_DIR}/src/stdlib/SDL_malloc.c
-			${PROJECT_SOURCE_DIR}/src/stdlib/SDL_getenv.c)
+			# LOADSO
+			${PROJECT_SOURCE_DIR}/src/loadso/dummy/SDL_sysloadso.c
+				)
+	elseif(AMIGAOS4)
+		list(APPEND SOURCE_FILES
+			# MAIN
+			${PROJECT_SOURCE_DIR}/src/main/amigaos4/SDL_os4timer.c
+
+			# CDROM
+			${PROJECT_SOURCE_DIR}/src/cdrom/amigaos4/SDL_syscdrom.c
+
+			# AUDIO
+			${PROJECT_SOURCE_DIR}/src/audio/amigaos4/SDL_os4audio.c
+
+			# VIDEO
+			${PROJECT_SOURCE_DIR}/src/video/amigaos4/SDL_os4_wrapper.c
+			${PROJECT_SOURCE_DIR}/src/video/amigaos4/SDL_os4blit.c
+			${PROJECT_SOURCE_DIR}/src/video/amigaos4/SDL_os4events.c
+			${PROJECT_SOURCE_DIR}/src/video/amigaos4/SDL_os4gl.c
+			${PROJECT_SOURCE_DIR}/src/video/amigaos4/SDL_os4surface.c
+			${PROJECT_SOURCE_DIR}/src/video/amigaos4/SDL_os4utils.c
+			${PROJECT_SOURCE_DIR}/src/video/amigaos4/SDL_os4video.c
+			${PROJECT_SOURCE_DIR}/src/video/amigaos4/SDL_os4wm.c
+
+			# TIMER
+			${PROJECT_SOURCE_DIR}/src/timer/amigaos4/SDL_systimer.c
+
+			# JOYSTICK
+			${PROJECT_SOURCE_DIR}/src/joystick/amigaos4/SDL_sysjoystick.c
+
+			# THREADS
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos4/SDL_sysmutex.c
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos4/SDL_syssem.c
+			${PROJECT_SOURCE_DIR}/src/thread/amigaos4/SDL_systhread.c
+
+			# LOADSO
+			${PROJECT_SOURCE_DIR}/src/loadso/amigaos4/SDL_sysloadso.c
+
+			)
+	endif()
+endif()
+
+add_library(${LIBNAME}
+		STATIC
+			${SOURCE_FILES})
 
 target_include_directories(${LIBNAME}
 		PRIVATE
@@ -199,7 +270,7 @@ if(AMIGA)
 		target_compile_definitions(${LIBNAME} PRIVATE $<$<COMPILE_LANGUAGE:C>:NO_AMIGADEBUG>)
 	endif()
 
-	if(APOLLOBLIT)
+	if(APOLLOBLIT AND AMIGAOS3)
 		target_compile_definitions(${LIBNAME} PRIVATE $<$<COMPILE_LANGUAGE:C>:APOLLO_BLIT>)
 		target_compile_options(${LIBNAME} PRIVATE -I${CMAKE_SYSROOT}/m68k-amigaos/ndk-include)
 		target_include_directories(${LIBNAME} PUBLIC video/apollo)

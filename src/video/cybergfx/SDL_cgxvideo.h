@@ -64,7 +64,7 @@
 
 #include "SDL_mouse.h"
 #include "../SDL_sysvideo.h"
-#include "mydebug.h"
+#include "SDL_os3debug.h"
 
 #define USE_CGX_WRITELUTPIXEL
 

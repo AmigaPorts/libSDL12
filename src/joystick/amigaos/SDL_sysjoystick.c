@@ -43,7 +43,7 @@
 #include <inline/graphics.h>
 #endif
 #endif
-#include "mydebug.h"
+#include "SDL_os3debug.h"
 
 extern struct ExecBase *SysBase;
 extern struct GfxBase *GfxBase;

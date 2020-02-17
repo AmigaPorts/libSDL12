@@ -230,7 +230,7 @@ int SDLCALL SDL_RunAudio(void *audiop)
 #endif
 			audio->WaitAudio(audio);
 		}
-        
+
 		/* Fill the current buffer with sound */
 		if ( audio->convert.needed ) {
 			if ( audio->convert.buf ) {
@@ -272,7 +272,7 @@ int SDLCALL SDL_RunAudio(void *audiop)
 			started++;
 #endif
 		}
-		
+
 	}
 	/* Wait for the audio to drain.. */
 	if ( audio->WaitDone ) {
@@ -565,7 +565,6 @@ int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained)
 	audio->paused  = 1;
 
 #ifndef SDL_AUDIO_DRIVER_AHI
-	D(bug("AHI OpenAudio\n"));
 	/* AmigaOS opens audio inside the main loop */
 	audio->opened = audio->OpenAudio(audio, &audio->spec)+1;
 

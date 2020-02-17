@@ -33,7 +33,7 @@ __UserLibInit(register __a6 struct Library *libbase) {
 	/* required !!! */
 	SysBase = *(struct ExecBase **)4;
 
-	D(bug("***include.library init: %lx\n", libbase));
+	D(bug("***SDL.library init: %lx\n", libbase));
 
 	if ( !(DOSBase = (struct DosLibrary *)OpenLibrary("dos.library", 39L))) {
 		D(bug("unable to open dos.library\n"));
@@ -60,7 +60,7 @@ __UserLibInit(register __a6 struct Library *libbase) {
 void __saveds __asm
 
 __UserLibCleanup(register __a6 struct Library *myLib) {
-	D(bug("***include.library cleanup\n"));
+	D(bug("***SDL.library cleanup\n"));
 	CloseLibrary(UtilityBase);
 	CloseLibrary((struct Library *)DOSBase);
 }
@@ -149,7 +149,7 @@ ADDTABL_4(SDL_PeepEvents, a0, d0, d1, d2)
 // ADDTABL_END()
 
 void _XCEXIT(void) {
-	D(bug("Warning include.library attempted exit, sleeping forever!\n"));
+	D(bug("Warning SDL.library attempted exit, sleeping forever!\n"));
 	Wait(0); // resto in wait forever
 }
 

@@ -45,7 +45,7 @@
 #include <string.h>
 
 #include <devices/ahi.h>
-#include "mydebug.h"
+#include "SDL_os3debug.h"
 
 #include "../SDL_sysaudio.h"
 

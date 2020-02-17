@@ -66,7 +66,7 @@
 #include <proto/alib.h>
 #endif
 
-#include "mydebug.h"
+#include "SDL_os3debug.h"
 
 #ifdef __cplusplus
 extern "C" {

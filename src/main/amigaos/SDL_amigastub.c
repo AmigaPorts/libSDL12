@@ -8,9 +8,10 @@
 #include <exec/execbase.h>
 #include <dos/dosextens.h>
 #include <inline/exec.h>
-#include <sdl_config.h>
+#include <SDL_config.h>
 #include "stabs.h"
-#include "../../../mydebug.h"
+#include "SDL_os3debug.h"
+#include "SDL_version.h"
 
 /******************************************************************************/
 /*                                                                            */
@@ -18,11 +19,11 @@
 /*                                                                            */
 /******************************************************************************/
 
-const BYTE LibName[] = "include.library";
+const BYTE LibName[] = "SDL.library";
 #include "SDL_amigaversion.h"
 
-const UWORD LibVersion = 12;
-const UWORD LibRevision = 6;
+const UWORD LibVersion = SDL_MAJOR_VERSION "" SDL_MINOR_VERSION;
+const UWORD LibRevision = SDL_PATCHLEVEL;
 
 /******************************************************************************/
 /*                                                                            */
@@ -109,7 +110,7 @@ int __UserLibInit(struct Library *myLib) {
 /******************************************************************************/
 
 void __UserLibCleanup() {
-	D(bug("***include.library cleanup\n"));
+	D(bug("***SDL.library cleanup\n"));
 
 	__exitmalloc();
 	__exitstdio();

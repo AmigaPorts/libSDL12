@@ -35,7 +35,7 @@
 #include "SDL_cgxwm_c.h"
 #include "SDL_cgxmodes_c.h"
 
-#include "mydebug.h"
+#include "SDL_os3debug.h"
 
 #ifdef AROS
 #include "SDL_cgximage_c.h"

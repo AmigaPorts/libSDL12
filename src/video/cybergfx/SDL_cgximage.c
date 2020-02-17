@@ -41,7 +41,7 @@
 #define RECTFMT_RAW    (5UL)
 #endif
 
-#include "mydebug.h"
+#include "SDL_os3debug.h"
 
 // this is an undocumented feature of CGX, and recently of AROS
 // and P96, if it's not defined let define it ourselves.

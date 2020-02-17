@@ -48,7 +48,7 @@
 
 #endif
 
-#include "../../mydebug.h"
+#include "SDL_os3debug.h"
 
 #include "SDL_error.h"
 #include "SDL_timer.h"

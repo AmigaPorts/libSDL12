@@ -31,7 +31,7 @@
 #include "SDL_thread.h"
 #include "SDL_thread_c.h"
 #include "SDL_systhread.h"
-#include "mydebug.h"
+#include "SDL_os3debug.h"
 
 #ifdef APOLLO_BLIT
 #include "apolloammxenable.h"
@@ -246,13 +246,13 @@ void SDL_SYS_WaitThread(SDL_Thread *thread) {
 		for ( n = t->lh_Head;
 			  n;
 			  n = n->ln_Succ )
-			if ( thread->handle == n ) found = 1;
+			if ( thread->handle == n )found = 1;
 		t = &SysBase->TaskReady;
 
 		for ( n = t->lh_Head;
 			  n;
 			  n = n->ln_Succ )
-			if ( thread->handle == n ) found = 1;
+			if ( thread->handle == n )found = 1;
 		if ( FindTask(0) == n )found = 1;
 		Enable();
 

@@ -49,7 +49,7 @@
 #endif
 
 #include <string.h>
-#include "../../../mydebug.h"
+#include "SDL_os3debug.h"
 
 extern struct ExecBase *SysBase;
 extern struct DosLibrary *DOSBase;
@@ -75,4 +75,3 @@ extern struct DosLibrary *DOSBase;
 
 #define SYS_ThreadHandle struct Task *
 #endif /* WARPOS */
-

@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -19,31 +19,32 @@
     Sam Lantinga
     slouken@libsdl.org
 */
+#include "SDL_config.h"
 
-#ifndef _SDL_config_h
-#define _SDL_config_h
+#if defined(SDL_LOADSO_DUMMY) || defined(SDL_LOADSO_DISABLED)
 
-#include "SDL_platform.h"
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* System dependent library loading routines                           */
 
-/* Add any platform that doesn't build using the configure system */
-#if defined(__DREAMCAST__)
-#include "SDL_config_dreamcast.h"
-#elif defined(__MACOS__)
-#include "SDL_config_macos.h"
-#elif defined(__MACOSX__)
-#include "SDL_config_macosx.h"
-#elif defined(__SYMBIAN32__)
-#include "SDL_config_symbian.h"  /* must be before win32! */
-#elif defined(__WIN32__)
-#include "SDL_config_win32.h"
-#elif defined(__OS2__)
-#include "SDL_config_os2.h"
-#elif defined(__amigaos4__)
-#include "SDL_config_amigaos4.h"
-#elif defined(__AMIGA__) && !defined(__amigaos4__)
-#include "SDL_config_amiga.h"
-#else
-#include "SDL_config_minimal.h"
-#endif /* platform config */
+#include "SDL_loadso.h"
 
-#endif /* _SDL_config_h */
+void *SDL_LoadObject(const char *sofile)
+{
+	const char *loaderror = "SDL_LoadObject() not implemented";
+	SDL_SetError("Failed loading %s: %s", sofile, loaderror);
+	return(NULL);
+}
+
+void *SDL_LoadFunction(void *handle, const char *name)
+{
+	const char *loaderror = "SDL_LoadFunction() not implemented";
+	SDL_SetError("Failed loading %s: %s", name, loaderror);
+	return(NULL);
+}
+
+void SDL_UnloadObject(void *handle)
+{
+    /* no-op. */
+}
+
+#endif /* SDL_LOADSO_DUMMY || SDL_LOADSO_DISABLED */
