@@ -10,7 +10,7 @@ extern struct ExecBase *SysBase;
 int SDL_Init(unsigned long flags)
 {
 	if(!SDLBase)
-		if(!(SDLBase=OpenLibrary("include.library",0L)))
+		if(!(SDLBase=OpenLibrary("SDL.library",0L)))
 			return -1;
 
 	return SDL_RealInit(flags);

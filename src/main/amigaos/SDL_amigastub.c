@@ -9,7 +9,7 @@
 #include <dos/dosextens.h>
 #include <inline/exec.h>
 #include <sdl_config.h>
-#include "../../../stabs.h"
+#include "stabs.h"
 #include "../../../mydebug.h"
 
 /******************************************************************************/

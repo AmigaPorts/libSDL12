@@ -7,7 +7,7 @@
 #          - fixed ARGB32 (CGX code was assuming RGBA all the time)
 #  12-Feb: - deleted redundant includes, now only include/ directory remains (as it should)
 
-PREFX := /opt/m68k-amigaos/
+PREFX := /opt/m68k-amigaos
 
 CC := $(PREFX)/bin/m68k-amigaos-gcc
 AS := $(PREFX)/bin/m68k-amigaos-as
@@ -18,9 +18,7 @@ VASM := $(PREFX)/bin/vasmm68k_mot
 
 CPU := 68030
 
-INCLUDES = IDIR=./include/SDL
-
-GCCFLAGS = -I$(PREFX)/include -I. -Iinclude/ -Isrc/thread -Isrc/video -Iamiga/makefile-support \
+GCCFLAGS = -I$(PREFX)/include -I. -Iinclude -Isrc/thread -Isrc/video -Isrc/main/amigaos -Isrc/timer -Isrc/events -Iamiga/makefile-support \
 		-Ofast -fomit-frame-pointer -m$(CPU) -mhard-float -ffast-math -noixemul \
 		-DNOIXEMUL -D_HAVE_STDINT_H
 GLFLAGS = -DSHARED_LIB -lamiga
@@ -39,7 +37,7 @@ GOBJS = src/audio/SDL_audio.go src/audio/SDL_audiocvt.go src/audio/SDL_mixer.go 
 	src/thread/amigaos/SDL_syscond.go src/video/cybergfx/SDL_cgxvideo.go src/video/cybergfx/SDL_cgxmodes.go src/video/cybergfx/SDL_cgximage.go src/video/cybergfx/SDL_amigaevents.go \
 	src/video/cybergfx/SDL_amigamouse.go src/video/cybergfx/SDL_cgxgl.go src/video/cybergfx/SDL_cgxwm.go \
 	src/video/cybergfx/SDL_cgxyuv.go src/video/cybergfx/SDL_cgxaccel.go src/video/cybergfx/SDL_cgxgl_wrapper.go \
-	src/video/SDL_gamma.go SDL_lutstub.ll src/stdlib/SDL_stdlib.go src/stdlib/SDL_string.go src/stdlib/SDL_malloc.go src/stdlib/SDL_getenv.go
+	src/video/SDL_gamma.go src/main/amigaos/SDL_lutstub.ll src/stdlib/SDL_stdlib.go src/stdlib/SDL_string.go src/stdlib/SDL_malloc.go src/stdlib/SDL_getenv.go
 
 # Disabled modules
 # src/cdrom/SDL_cdrom.go src/cdrom/amigaos/SDL_syscdrom.go
@@ -49,7 +47,7 @@ GOBJS = src/audio/SDL_audio.go src/audio/SDL_audiocvt.go src/audio/SDL_mixer.go 
 # ( build vasm: make CPU=m68k SYNTAX=mot )
 #
 VFLAGS = -devpac -I$(PREFX)/m68k-amigaos/ndk-include -Fhunk
-GCCFLAGS += -DAPOLLO_BLIT -I./src/video/apollo
+GCCFLAGS += -DAPOLLO_BLIT -Isrc/video/apollo
 # -DAPOLLO_BLITDBG
 GOBJS += src/video/apollo/blitapollo.ao src/video/apollo/apolloammxenable.ao src/video/apollo/colorkeyapollo.ao
 

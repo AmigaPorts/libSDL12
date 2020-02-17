@@ -89,7 +89,7 @@ add_library(${LIBNAME}
 			${PROJECT_SOURCE_DIR}/src/SDL.c
 			${PROJECT_SOURCE_DIR}/src/SDL_error.c
 			${PROJECT_SOURCE_DIR}/src/SDL_fatal.c
-			${PROJECT_SOURCE_DIR}/SDL_lutstub.s
+			${PROJECT_SOURCE_DIR}/src/main/amigaos/SDL_lutstub.s
 
 			# CPUINFO
 			${PROJECT_SOURCE_DIR}/src/cpuinfo/SDL_cpuinfo.c
