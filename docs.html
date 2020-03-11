@@ -16,6 +16,307 @@ The latest stable release may be found on the
 
 <IMG SRC="docs/images/rainbow.gif" ALT="[separator]" WIDTH="100%">
 
+<H2> SDL 1.2.16 Release Notes </H2>
+<P>
+SDL 1.2.16 is mostly multiple bug fixes since the previous version.
+Changes include:
+</P>
+<BLOCKQUOTE>
+<P>
+  Audio, wav loader: security fixes for ADPCM decoding (CVE-2019-7572,
+  CVE-2019-7573, CVE-2019-7574, CVE-2019-7575, CVE-2019-7576,
+  CVE-2019-7577, CVE-2019-7578 -- bugs <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4490">4490</a>, <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4491">4491</a>, <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4492">4492</a>, <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4493">4493</a>, <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4494">4494</a>,
+  <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4495">4495</a>, <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4496">4496</a>, and <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4522">4522</a>.)
+</P>
+<P>
+  Video, bmp loader:  security fixes for CVE-2019-7635, CVE-2019-7636,
+  CVE-2019-7638, CVE-2019-13616 (bugs <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4498">4498</a>, <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4499">4499</a>, <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4500">4500</a>,
+  <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4517">4517</a> and <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4538">4538</a>.)
+</P>
+<P>
+  Video, blit: fix handling of alpha channel in Altivec accelerated
+  blit functions (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1424">1424</a>.)
+</P>
+<P>
+  Video, blit: correct vec_perm() application on little-endian 64-bit
+  PowerPC (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4791">4791</a>.  cf.: RedHat bug <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1392465">1392465</a>.)
+</P>
+<P>
+  Video, blit: use fast path for RGB 565 -&gt; 32-bit XRGB 8888
+</P>
+<P>
+  Video, blit: fix RGBA&lt;-&gt;RGBA blit broken with the optimization from
+  <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=11">bug 11</a> (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=2976">2976</a>.)
+</P>
+<P>
+  Video, blit, Linux: ARM assembly to address performance of blit and
+  fill routines, thanks to Ben Avison (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4365">4365</a>.)
+</P>
+<P>
+  Video: fix integer overflow in SDL_CalculatePitch (CVE-2019-7637,
+  bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4497">4497</a>.)
+</P>
+<P>
+  Mouse: fix SDL_ResetMouse() using a bogus mouse button causing a
+  negative shift (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=3593">3593</a>.)
+</P>
+<P>
+  Cdrom: fix SDL_CDResume() and SDL_CDStop() not returning failure
+  when they should (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4108">4108</a>.)
+</P>
+<P>
+  Unix, pthread: Fix SDL_SemWaitTimeout() returning -1 instead of
+  SDL_MUTEX_TIMEDOUT upon timeout (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1426">1426</a>.)
+</P>
+<P>
+  NetBSD: wscons support.
+</P>
+<P>
+  NetBSD, audio: use AUDIO_GETBUFINFO when available.
+</P>
+<P>
+  OpenBSD, audio: add sndio support.
+</P>
+<P>
+  Haiku/BeOS, audio: fix error in buffer size setting (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1679">1679</a>.)
+</P>
+<P>
+  OpenBSD: fix dynamic loading of X libs (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1434">1434</a>.)
+</P>
+<P>
+  X11video: fix missing symbol X11_KeyToUnicode in .so file (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1390">1390</a>.
+  not being an official SDL function, the use of X11_KeyToUnicode() is
+  strongly discouraged.)
+</P>
+<P>
+  X11video: fix compilation with libX11 &gt;= 1.5.99.902 (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1769">1769</a>.)
+</P>
+<P>
+  X11video: fix for XChangeProperty() crash (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1427">1427</a>.)
+</P>
+<P>
+  X11video: fix SDL_EnableUNICODE sometimes dropping keyboard events
+  completely (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=2325">2325</a>.)
+</P>
+<P>
+  X11video: fix no SDL_VIDEORESIZE event being generated when the
+  window manager sets the window size (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1859">1859</a>.)
+</P>
+<P>
+  X11video: fix X11_SetGammaRamp not checking the return value of
+  XStoreColors (bugs <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1979">1979</a>, <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=3770">3770</a>.)
+</P>
+<P>
+  X11video: fix SDL_VIDEORESIZE events not received when resizing
+  window from the corner (inverted logic in X11 ConfigureNotify, i.e.
+  resize handling - bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1430">1430</a>.)
+</P>
+<P>
+  X11video: unblock SDL_WM_GrabInput() GrabNotViewable case (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1155">1155</a>.)
+</P>
+<P>
+  Mac OS X: fix crash on any input in Quartz code (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=2560">2560</a>.)
+</P>
+<P>
+  Mac OS X: fix crash in Quartz gamma ramp code.
+</P>
+<P>
+  Mac OS X: fix build for 10.9 Mavericks or newer (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=2085">2085</a>.)
+</P>
+<P>
+  Mac OS X, Quartz: fix cursor transparency (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4076">4076</a>.)
+</P>
+<P>
+  Mac OS X, joystick: update to support Saitek p2500 gamepad (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=2025">2025</a>)
+</P>
+<P>
+  Mac OS X, main: updates for -psn_XXX command line arg for Finder
+  launches in new macOS versions.
+</P>
+<P>
+  Windows, video: fix other window positions/sizes when exiting
+  fullscreen (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=3315">3315</a>.)
+</P>
+<P>
+  Windows, keyboard: reset deadkeys upon SDL_EnableUNICODE() or upon
+  quit (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=3332">3332</a>.)
+</P>
+<P>
+  Windows: Visual Studio project file updates.
+</P>
+<P>
+  OS/2: Watcom makefile updates.
+</P>
+<P>
+  FreeBSD, joystick: compile fixes.
+</P>
+<P>
+  BSD, joystick: increase the number of uhid devices to scan (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1561">1561</a>)
+</P>
+<P>
+  Linux, evdev: ignore joystick axis events if they aren't in a sane
+  range.
+</P>
+<P>
+  Linux, joystick: fix Dualshock 3's motion sensors overwrite analog
+  stick: protect against any axis that isn't reported by EVIOCGBIT but
+  still sending EV_ABS events (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=3193">3193</a>.)
+</P>
+<P>
+  FreeBSD, cdrom: fix CDROM detection misbehaviour for 7.x and newer
+  (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=1529">1529</a>.)
+</P>
+<P>
+  Solaris, audio: fix pulseaudio dynamic linking.
+</P>
+<P>
+  Solaris, cpuinfo: fix asm syntax error causing build failures.
+</P>
+<P>
+  Atari: multiple platform code updates.
+</P>
+<P>
+  RISC OS: cleanups to platform code.
+</P>
+<P>
+  RISC OS: fix thread starvation in fullscreen mode.
+</P>
+<P>
+  RISC OS: fix returning from full-screen to 16M colour modes.
+</P>
+<P>
+  RISC OS: fix receiving PreQuit messages.
+</P>
+<P>
+  RISC OS: ensure the window size is consistent at different DPIs.
+</P>
+<P>
+  RISC OS, video: add support for more pixel formats.
+</P>
+<P>
+  RISC OS: mouse fixes. restore mouse palette when exiting while mouse
+  is in focus. don't reset mouse focus when recreating the window.
+</P>
+<P>
+  RISC OS: support Windows and Menu key input.
+</P>
+<P>
+  RISC OS: implement SDL_WM_IconifyWindow()
+</P>
+<P>
+  RISC OS: send SDL_APPACTIVE events when iconizing the window.
+</P>
+<P>
+  Configuration: fix library detection selecting wrong lib (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=2795">2795</a>.)
+</P>
+<P>
+  Configuration: fix detecting dynamic library support on powerpc64le
+  (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=3481">3481</a>.)
+</P>
+<P>
+  SDL error: string formatting fixes to deal with nasty corner cases
+  (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=2049">2049</a>.)
+</P>
+<P>
+  SDL_error: handle %lu, %li and %ld in format string (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=3739">3739</a>.)
+</P>
+<P>
+  stdlib: updated SDL_qsort() code.
+</P>
+<P>
+  stdlib: use _strtoi64() and _strtoui64() when available for windows.
+</P>
+<P>
+  headers, close_code.h: fix unbalanced #pragma pack(pop) for watcom
+  builds (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=3781">3781</a>.)
+</P>
+<P>
+  headers, begin_code.h, close_code.h: updates to SDLCALL and DECLSPEC
+  macros for OS/2.
+</P>
+<P>
+  headers, endian: add Watcom inline asm for SDL_Swap16 and SDL_Swap32
+</P>
+<P>
+  headers, config: updates to default windows and os2 config files.
+</P>
+<P>
+  headers, SDL_syswm.h, SDL_stdinc.h: include system headers before
+  packing alignment changes (bug <a href="https://bugzilla.libsdl.org/show_bug.cgi?id=4149">4149</a>.)
+</P>
+</BLOCKQUOTE>
+
+<IMG SRC="docs/images/rainbow.gif" ALT="[separator]" WIDTH="100%">
+
+<H2> SDL 1.2.15 Release Notes </H2>
+<P>
+SDL 1.2.15 is a minor bug fix release.
+</P>
+
+<H3> General Notes </H3>
+
+<BLOCKQUOTE>
+<P>
+	Fixed assembly register clobbering in CPU info routines
+</P>
+<P>
+	Fixed memory stomp when using stretch blit on large images
+</P>
+<P>
+	Fixed pixel corruption with overlapping blits
+</P>
+<P>
+	SDL_JOYSTICK_DEVICE can be a colon separated list of joystick devices
+</P>
+<P>
+	Disabled MMX blitters since they don't compile on modern compilers
+</P>
+</BLOCKQUOTE>
+
+<H3> Unix Notes </H3>
+
+<BLOCKQUOTE>
+<P>
+	Fixed crash in joystick code on newer Linux kernels
+</P>
+<P>
+	Fixed channel swizzling for ALSA target with 6-channel output
+</P>
+<P>
+	Use the OpenGL GLX_EXT_swap_control extension if available
+</P>
+<P>
+	XRandR support is disabled by default because it causes desktop reconfiguring.  It can be enabled with the SDL_VIDEO_X11_XRANDR=1 environment variable, or by applying this patch: <a href="http://hg.libsdl.org/SDL/raw-rev/8ec3036098df">http://hg.libsdl.org/SDL/raw-rev/8ec3036098df</a>
+</P>
+</BLOCKQUOTE>
+
+<H3> Windows Notes </H3>
+
+<BLOCKQUOTE>
+<P>
+	Fixed SDL_GL_ACCELERATED_VISUAL handling
+</P>
+<P>
+	Fixed application state handling with ALT-Tab
+</P>
+<P>
+	Fixed occasional crash handling WM_ACTIVATEAPP in Direct X code
+</P>
+<P>
+	Fixed UTF-8 decoding of Russian characters
+</P>
+</BLOCKQUOTE>
+
+<H3> Mac OS X Notes </H3>
+
+<BLOCKQUOTE>
+<P>
+	Fixed building and running on Mac OS X 10.7 (Lion)
+</P>
+</BLOCKQUOTE>
+
+<IMG SRC="docs/images/rainbow.gif" ALT="[separator]" WIDTH="100%">
+
 <H2> SDL 1.2.14 Release Notes </H2>
 <P>
 SDL 1.2.14 is a significant bug fix release and a recommended update.

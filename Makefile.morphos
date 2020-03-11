@@ -1,4 +1,4 @@
-# Makefile for gcc version of SDL
+# Makefile for gcc version of include
 #
 # changes:
 #  18-Apr: _ApolloKeyRGB565toRGB565: disabled AMMX version of ColorKeying (for now, storem is not working in Gold2)
@@ -19,7 +19,7 @@ DEFINES= DEFINE=ENABLE_CYBERGRAPHICS DEFINE=inline=__inline  DEFINE=NO_SIGNAL_H 
 
 # DEFINE=HAVE_OPENGL
 INCLUDES= IDIR=./include/SDL
-#-I$(PREF)/m68k-unknown-amigaos/include -I$(PREF)/env/m68k-unknown-amigaos/sys-include
+#-I$(PREF)/m68k-unknown-cybergfx/include -I$(PREF)/env/m68k-unknown-cybergfx/sys-include
 #CFLAGS = CPU=68060  CODE=FAR DATA=FAR -I. -I../include -DNOIXEMUL
 #DEBUG=FULL VERBOSE
 

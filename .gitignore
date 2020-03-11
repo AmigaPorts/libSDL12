@@ -1,5 +1,10 @@
 #objects
 *.go
 *.a
+*.ao
+*.o
+*.ll
 /Default/
 .idea/
+build/
+cmake-build-*/*

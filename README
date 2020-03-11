@@ -1,0 +1,95 @@
+
+                         Simple DirectMedia Layer
+
+                                  (SDL)
+
+                                Version 1.2
+
+---
+http://www.libsdl.org/
+
+This is the Simple DirectMedia Layer, a general API that provides low
+level access to audio, keyboard, mouse, joystick, 3D hardware via OpenGL,
+and 2D framebuffer across multiple platforms.
+
+The current version supports Linux, Windows CE/95/98/ME/XP/Vista, BeOS,
+MacOS Classic, Mac OS X, FreeBSD, NetBSD, OpenBSD, BSD/OS, Solaris, IRIX,
+and QNX.  The code contains support for Dreamcast, Atari, AIX, OSF/Tru64,
+RISC OS, SymbianOS, Nintendo DS, and OS/2, but these are not officially
+supported.
+
+SDL is written in C, but works with C++ natively, and has bindings to
+several other languages, including Ada, C#, Eiffel, Erlang, Euphoria,
+Guile, Haskell, Java, Lisp, Lua, ML, Objective C, Pascal, Perl, PHP,
+Pike, Pliant, Python, Ruby, and Smalltalk.
+
+This library is distributed under GNU LGPL version 2, which can be
+found in the file  "COPYING".  This license allows you to use SDL
+freely in commercial programs as long as you link with the dynamic
+library.
+
+The best way to learn how to use SDL is to check out the header files in
+the "include" subdirectory and the programs in the "test" subdirectory.
+The header files and test programs are well commented and always up to date.
+More documentation is available in HTML format in "docs/index.html", and
+a documentation wiki is available online at:
+	http://www.libsdl.org/cgi/docwiki.cgi
+
+The test programs in the "test" subdirectory are in the public domain.
+
+Frequently asked questions are answered online:
+	http://www.libsdl.org/faq.php
+
+If you need help with the library, or just want to discuss SDL related
+issues, you can join the developers mailing list:
+	http://www.libsdl.org/mailing-list.php
+
+Enjoy!
+	Sam Lantinga				(slouken@libsdl.org)
+
+Introduction
+------------
+
+This is one of the ports of SDL to the AmigaOS3/68k platform. I cannot
+comment much on the origins of the code contributions to this port. I've
+kept the files I got into my hands, along with the various existing Makefiles.
+
+The main purpose of this branch (based on SDL 1.2.14, AFAIK) was to provide 
+some bugfixes and performance improvements. Towards the latter point, most of
+the blitting functions have been rewritten in 68k ASM. Also, some of the routines
+can switch to AMMX usage (where applicable). 
+
+This SDL version should work on all Amigas with RTG (Picasso96 or CyberGraphX).
+
+
+Building
+--------
+
+Several Makefiles for different targets are present in this codebase. The one
+I was using for the AMMX enabled builds is "Makefile". The compilers I've 
+successfully used were gcc2.95 and gcc6.3.1b (20171120).
+
+The static libSDL.a can be built by
+
+    make CPU=68040 PREFX=/path/to/amiga-gcc/root
+
+If no PREFX is defined during make, the default will be /opt/m68k-amigaos. Change the prefix path
+as necessary. Compiler, Assembler and Linker binary names might need adjusting, too.
+Please also have a look at VFLAGS. The old cross-compile toolchain I had was putting
+the AmigaOS includes into "os-include". The recently released GCC6 toolchain by Bebbo
+refers to "sys-include" instead.
+
+My regular AMMX build is for libnix. If ixemul or clib2 is desired, then please refer to 
+the other Makefiles to mix up an appropriate environment.
+
+
+Usage
+-----
+
+When compiling SDL programs, I usually set the following flags to gcc: 
+
+    -noixemul -O3 -fomit-frame-pointer -m68020-60 -mhard-float 
+
+-mhard-float should only be used for binaries compiled for systems that has an FPU installed. For FPU-less setups use -msoft-float
+
+The Linker commands should include -noixemul and -lSDL
